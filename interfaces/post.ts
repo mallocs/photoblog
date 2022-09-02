@@ -1,4 +1,5 @@
 import type Author from './author'
+import type { SlideExternal } from './slide'
 
 type PostType = {
   slug: string
@@ -7,6 +8,10 @@ type PostType = {
   coverImage: string
   author: Author
   excerpt: string
+  slideshow?: {
+    path: string
+    slides: SlideExternal[]
+  }
   ogImage: {
     url: string
   }
