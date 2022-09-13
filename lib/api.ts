@@ -20,7 +20,7 @@ export function getPostSlideshow({
   slides = [], // Slides should have filename and caption
   path: slideshowDirectory, // path to slideshow directory in filesystem
 }: {
-  slides: SlideInternal[] //
+  slides: SlideInternal[]
   path: string
 }): SlideExternal[] {
   // console.log(slides)
