@@ -2,10 +2,10 @@ import Avatar from './avatar'
 import DateFormatter from './date-formatter'
 import CoverImage from './cover-image'
 import Link from 'next/link'
-import type Author from '../interfaces/author'
 import type Post from '../interfaces/post'
 import Slideshow from './slideshow'
 import { Fragment } from 'react'
+import SectionSeparator from './section-separator'
 
 type Props = {
   posts: Post[]
@@ -20,7 +20,7 @@ const PostList = ({ posts }: Props) => {
             <Fragment key={slug}>
               <div className="mb-8 md:mb-16">
                 {slideshow.slides ? (
-                  <Slideshow slides={slideshow.slides} />
+                  <Slideshow slides={slideshow.slides} slug={slug} />
                 ) : (
                   <CoverImage slug={slug} title={title} src={coverImage} />
                 )}
@@ -41,6 +41,7 @@ const PostList = ({ posts }: Props) => {
                   <Avatar name={author.name} picture={author.picture} />
                 </div>
               </div>
+              <SectionSeparator />
             </Fragment>
           )
         )}
