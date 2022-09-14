@@ -3,9 +3,22 @@
   display: flex;
   justify-content:space-between;
   min-width: 90vw;
+/*  background-color: lightgray; */
+ /* padding:40px; */
+/*  border: solid black; */
+}
+
+.slideshowFigure {
+
+}
+
+.slideshowCaption {
   background-color: lightgray;
-  padding:40px;
-  border: solid black;
+  padding: 4px 15px;
+}
+
+.hideCaption {
+  visibility: hidden;
 }
 
 

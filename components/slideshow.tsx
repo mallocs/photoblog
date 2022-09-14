@@ -16,32 +16,38 @@ function Slideshow({ slides, slug }: Props) {
   // console.log(slides)
   return (
     <>
-      <div className={`${css.slideshow}`}>
-        <button onClick={() => setSlideIndex(getSlideIndex(slideIndex - 1))}>
-          <span className={`${css.arrow} ${css.left}`}></span>
-        </button>
-        <Link as={`/posts/${slug}#slide-${slideIndex}`} href="/posts/[slug]">
-          <div className={`${css.slider}`}>
-            <figure>
+      <figure className={`${css.slideshowFigure}`}>
+        <div className={`${css.slideshow}`}>
+          <button onClick={() => setSlideIndex(getSlideIndex(slideIndex - 1))}>
+            <span className={`${css.arrow} ${css.left}`}></span>
+          </button>
+          <Link as={`/posts/${slug}#slide-${slideIndex}`} href="/posts/[slug]">
+            <div className={`${css.slider}`}>
               <img
                 className={`${css.sliderImage}`}
                 alt="slideshow"
                 src={slides[slideIndex].url}
               />
-              <figcaption>{slides[slideIndex].caption}</figcaption>
-            </figure>
-          </div>
-        </Link>
+            </div>
+          </Link>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            setSlideIndex(getSlideIndex(slideIndex + 1))
-          }}
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              setSlideIndex(getSlideIndex(slideIndex + 1))
+            }}
+          >
+            <span className={`${css.arrow} ${css.right}`}></span>
+          </button>
+        </div>
+        <figcaption
+          className={`${css.slideshowCaption} ${
+            slides[slideIndex].caption !== undefined ? '' : css.hideCaption
+          }`}
         >
-          <span className={`${css.arrow} ${css.right}`}></span>
-        </button>
-      </div>
+          {slides[slideIndex].caption || '\u00A0'}
+        </figcaption>
+      </figure>
     </>
   )
 }

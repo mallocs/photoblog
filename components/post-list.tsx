@@ -18,24 +18,24 @@ const PostList = ({ posts }: Props) => {
         {posts.map(
           ({ slideshow, slug, title, date, excerpt, author, coverImage }) => (
             <Fragment key={slug}>
-              <div>
+              <div className="ml-12 mb-8">
                 <div className="mb-4 md:mb-0 text-lg">
                   <DateFormatter dateString={date} />
                 </div>
-                <h3 className="mb-4 text-4xl lg:text-5xl leading-tight">
+                <h3 className=" text-4xl lg:text-5xl leading-tight">
                   <Link as={`/posts/${slug}`} href="/posts/[slug]">
                     <a className="hover:underline">{title}</a>
                   </Link>
                 </h3>
               </div>
-              <div className="mb-8 md:mb-16">
+              <div className="mb-8">
                 {slideshow.slides ? (
                   <Slideshow slides={slideshow.slides} slug={slug} />
                 ) : (
                   <CoverImage slug={slug} title={title} src={coverImage} />
                 )}
               </div>
-              <div>
+              <div className="ml-12">
                 <div className="float-left mr-8">
                   <Avatar name={author.name} picture={author.picture} />
                 </div>
