@@ -5,6 +5,13 @@ coverImage: '/assets/blog/preview/cover.jpg'
 date: '2021-03-16T05:35:07.322Z'
 slideshow:
   path: '20120820-goat_life'
+  slides:
+    - 
+      filename: '37074396272_9287cff838_o.jpg'
+      caption: 'Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.'
+    - 
+      filename: '36993604272_b8e2dfc0b3_o.jpg'
+      caption: 'Egestas tellus rutrum tellus pellentesque.'
 author:
   name: Joe
   picture: '/assets/blog/authors/joe.jpeg'
