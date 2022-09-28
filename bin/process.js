@@ -277,8 +277,8 @@ async function processor(opts = {}) {
           .composite([
             {
               input: opaqueWatermark,
-              top: mainMetadata.height - 2 * newHeight,
-              left: mainMetadata.width - newWidth - newHeight,
+              top: mainMetadata.height - 1.5 * newHeight,
+              left: mainMetadata.width - newWidth - 0.5 * newHeight,
             },
           ])
           .toBuffer()
@@ -323,11 +323,11 @@ async function processor(opts = {}) {
             mainTransformer.webp({ quality })
           }
         } else if (extension === 'webp' || storePicturesInWEBP) {
-          transformer.webp({ quality })
+          mainTransformer.webp({ quality })
         } else if (extension === 'png') {
-          transformer.png({ quality })
+          mainTransformer.png({ quality })
         } else if (extension === 'jpeg' || extension === 'jpg') {
-          transformer.jpeg({ quality })
+          mainTransformer.jpeg({ quality })
         }
 
         // Write the optimized image to the file system
