@@ -35,8 +35,10 @@ export function getPostSlideshow({
     .filter((filename) =>
       IMG_EXTENSIONS.some(
         (ext) =>
-          filename.endsWith(ext) &&
-          !slides.find((slide) => slide.filename === filename)
+          filename.toLowerCase().endsWith(ext) &&
+          !slides.find(
+            (slide) => slide.filename.toLowerCase() === filename.toLowerCase()
+          )
       )
     )
     .map((filename) => ({
@@ -79,6 +81,7 @@ export function getPostSlideshow({
         )
       )
     )
+
     output = output.map((data) => ({
       ...data,
       url: join(
@@ -89,7 +92,6 @@ export function getPostSlideshow({
       ),
       width: manifest[data.filename].width,
       height: manifest[data.filename].height,
-      srcset: manifest[data.filename].srcset,
       sizesString: manifest[data.filename].sizesString,
     }))
   }

@@ -6,7 +6,7 @@ const sharp = require('sharp')
 const path = require('path')
 const cliProgress = require('cli-progress')
 
-const IMAGE_FILE_TYPES = ['JPG', 'JPEG', 'WEBP', 'PNG', 'AVIF']
+const IMAGE_FILE_TYPES = ['jpg', 'jpeg', 'webp', 'png', 'avif']
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')
@@ -133,7 +133,7 @@ async function processor(opts = {}) {
       fileData.directories[currentDirectory] = fs
         .readdirSync(path.join(slideshowFolderPath, currentDirectory))
         .filter((filename) =>
-          IMAGE_FILE_TYPES.includes(filename.split('.').pop().toUpperCase())
+          IMAGE_FILE_TYPES.includes(filename.split('.').pop().toLowerCase())
         )
       fileData.imageCount += fileData.directories[currentDirectory].length
       return fileData
@@ -233,7 +233,8 @@ async function processor(opts = {}) {
         fs.mkdirSync(currentProcessedDirectory)
       }
       let imagePath = path.join(slideshowFolderPath, fileDirectory, file)
-      let extension = file.split('.').pop().toUpperCase()
+      let extension = file.split('.').pop().toLowerCase()
+      const filename = path.parse(file).name
 
       // Begin sharp transformation logic
       const mainTransformer = await sharp(imagePath)
@@ -300,9 +301,8 @@ async function processor(opts = {}) {
       for (let indexWidth = 0; indexWidth < widths.length; indexWidth++) {
         const width = widths[indexWidth]
 
-        const filename = path.parse(file).name
         if (storePicturesInWEBP) {
-          extension = 'WEBP'
+          extension = 'webp'
         }
 
         const resizedAndProcessedFileNameAndPath = path.join(
@@ -312,7 +312,7 @@ async function processor(opts = {}) {
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
         await mainTransformer.clone().resize(width)
-        if (extension === 'AVIF') {
+        if (extension === 'avif') {
           if (mainTransformer.avif) {
             const avifQuality = quality - 15
             mainTransformer.avif({
@@ -322,12 +322,12 @@ async function processor(opts = {}) {
           } else {
             mainTransformer.webp({ quality })
           }
-        } else if (extension === 'WEBP' || storePicturesInWEBP) {
-          mainTransformer.webp({ quality })
-        } else if (extension === 'PNG') {
-          mainTransformer.png({ quality })
-        } else if (extension === 'JPEG' || extension === 'JPG') {
-          mainTransformer.jpeg({ quality })
+        } else if (extension === 'webp' || storePicturesInWEBP) {
+          transformer.webp({ quality })
+        } else if (extension === 'png') {
+          transformer.png({ quality })
+        } else if (extension === 'jpeg' || extension === 'jpg') {
+          transformer.jpeg({ quality })
         }
 
         // Write the optimized image to the file system
