@@ -5,106 +5,59 @@ const fs = require('fs')
 const sharp = require('sharp')
 const path = require('path')
 const cliProgress = require('cli-progress')
-const jimp = require('jimp')
-// import fs from 'fs'
-// import sharp from 'sharp'
-// import path from 'path'
-// import cliProgress from 'cli-progress'
-// import jimp from 'jimp'
-// import {
-//   SLIDESHOW_FOLDER_PATH,
-//   SLIDESHOW_URL_BASE,
-//   PROCESSED_DIRECTORY,
-//   WATERMARK_FILE,
-//   IMAGE_QUALITY,
-//   STORE_PICTURES_IN_WEBP,
-//   GENERATE_AND_USE_BLUR_IMAGES,
-// } from '../lib/constants.js/index.js'
-// export const SLIDESHOW_FOLDER_PATH = 'public/assets/slideshows'
-// export const SLIDESHOW_URL_BASE = '/assets/slideshows/'
-// export const PROCESSED_DIRECTORY = 'processed'
-// export const WATERMARK_FILE = 'public/assets/watermark.png'
-// export const IMAGE_QUALITY = 75
-// export const STORE_PICTURES_IN_WEBP = false
-// export const GENERATE_AND_USE_BLUR_IMAGES = true
+
 const IMAGE_FILE_TYPES = ['JPG', 'JPEG', 'WEBP', 'PNG', 'AVIF']
-/**
- * modified from:
- * https://github.com/sushantpaudel/jimp-watermark/blob/master/index.js
- */
-const watermarkDefaultOptions = {
-  ratio: 0.6,
-  opacity: 0.6,
-  dstPath: './watermark.jpg',
-  text: 'jimp-watermark',
-  textSize: 1,
-}
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')
 
-const getDimensions = (H, W, h, w, ratio) => {
+const getDimensions = (H, W, h, w, outputRatio) => {
   let hh, ww
-  if (H / W < h / w) {
-    //GREATER HEIGHT
-    hh = ratio * H
+
+  if (H > W && w >= h) {
+    // tall main image, wide watermark
+    ww = outputRatio * H
+    hh = (ww / w) * h
+  } else if (H < W && w <= h) {
+    // wide main image, tall watermark
+    hh = outputRatio * W
     ww = (hh / h) * w
+  } else if (H > W && w <= h) {
+    // tall main image, tall watermark
+    hh = outputRatio * H
+    ww = (hh / h) * h
   } else {
-    //GREATER WIDTH
-    ww = ratio * W
+    // wide main image, wide watermark or both square
+    ww = outputRatio * W
     hh = (ww / w) * h
   }
-  return [hh, ww]
+  return [Math.floor(hh), Math.floor(ww)]
 }
+// original algorithm
+// if (H / W < h / w) {
+//   hh = outputRatio * H
+//   ww = (hh / h) * w
+// } else {
+//   ww = outputRatio * W
+//   hh = (ww / w) * h
+// }
+// return [Math.floor(hh), Math.floor(ww)]
 
-const watermarkCheckOptions = (options) => {
-  options = { ...watermarkDefaultOptions, ...options }
-  if (options.ratio > 1) {
+// area based algorithm
+// const factorIncrease = (H * W * desiredRatio) / (w * h)
+// const nh = Math.sqrt(factorIncrease) * h
+// const nw = Math.sqrt(factorIncrease) * w
+// return [Math.floor(nh), Math.floor(nw)]
+
+const watermarkCheckOptions = (options = {}) => {
+  const { ratio, opacity } = options
+  if (ratio > 1) {
     throw ErrorScaleRatio
   }
-  if (options.opacity > 1) {
+  if (opacity > 1) {
     throw ErrorOpacity
   }
   return options
-}
-
-/*
- * @param {String} mainImage - Path of the image to be watermarked
- * @param {String} watermarkImage - Path of the watermark image to be applied
- * @param {Object} options
- * @param {Float} options.ratio     - Ratio in which the watermark is overlaid
- * @param {Float} options.opacity   - Value of opacity of the watermark image during overlay
- * @param {String} options.dstPath  - Destination path where image is to be exported
- */
-async function addWatermark(mainImage, watermarkImage, options) {
-  try {
-    options = watermarkCheckOptions(options)
-    const main = await jimp.read(mainImage)
-    const watermark = await jimp.read(watermarkImage)
-    const [newHeight, newWidth] = getDimensions(
-      main.getHeight(),
-      main.getWidth(),
-      watermark.getHeight(),
-      watermark.getWidth(),
-      options.ratio
-    )
-    watermark.resize(newWidth, newHeight)
-    watermark.opacity(options.opacity)
-    main.composite(
-      watermark,
-      main.getWidth() - newWidth - 40,
-      main.getHeight() - newHeight - 40,
-      jimp.HORIZONTAL_ALIGN_CENTER | jimp.VERTICAL_ALIGN_MIDDLE
-    )
-    await main.quality(100).writeAsync(options.dstPath)
-    return {
-      destinationPath: options.dstPath,
-      imageHeight: main.getHeight(),
-      imageWidth: main.getWidth(),
-    }
-  } catch (err) {
-    throw err
-  }
 }
 
 const getDirectories = (source) =>
@@ -122,7 +75,7 @@ function ensureDirectoryExists(filePath) {
   fs.mkdirSync(dirName)
 }
 
-const processer = async function (opts = {}) {
+async function processor(opts = {}) {
   console.log('----  Begin processing... ---- ')
 
   // Give the user a warning, if the public directory of Next.js is not found as the user
@@ -146,6 +99,9 @@ const processer = async function (opts = {}) {
     processedDirectory: processorConfig._processorPROCESSED_DIRECTORY,
     slideshowUrlBase: processorConfig._processorSLIDESHOW_URL_BASE,
     watermarkFile: processorConfig._processorWATERMARK_FILE,
+    watermarkRatio: processorConfig._processorWATERMARK_RATIO,
+    watermarkOpacity: processorConfig._processorWATERMARK_OPACITY,
+    saturation: processorConfig._processorSATURATION,
     slideshowFolderPath: processorConfig._processorSLIDESHOW_FOLDER_PATH,
     imageSizes: [...imageConfig.imageSizes, ...imageConfig.deviceSizes],
     quality: processorConfig._processorIMAGE_QUALITY,
@@ -157,12 +113,19 @@ const processer = async function (opts = {}) {
     processedDirectory,
     slideshowUrlBase,
     watermarkFile,
+    watermarkRatio,
+    watermarkOpacity,
+    saturation,
     imageSizes,
     slideshowFolderPath,
     quality,
     storePicturesInWEBP,
     blurSize,
   } = { ...defaults, ...opts }
+  watermarkCheckOptions({
+    watermarkRatio,
+    watermarkOpacity,
+  })
 
   const directories = getDirectories(slideshowFolderPath)
   const fileData = directories.reduce(
@@ -260,38 +223,77 @@ const processer = async function (opts = {}) {
     )
     for (const file of files) {
       // // Check if directory has already been processed
-      // const currentProcessedFile = path.join(
-      //   slideshowFolderPath,
-      //   fileDirectory,
-      //   processedDirectory,
-      //   file
-      // )
-      // if (fs.existsSync(currentProcessedFile)) {
-      //   console.log(currentProcessedFile)
-      //   incrementProgressbar(currentProcessedFile)
-      //   continue
-      // }
+      const currentProcessedDirectory = path.join(
+        slideshowFolderPath,
+        fileDirectory,
+        processedDirectory
+      )
+
+      if (!fs.existsSync(currentProcessedDirectory)) {
+        fs.mkdirSync(currentProcessedDirectory)
+      }
       let imagePath = path.join(slideshowFolderPath, fileDirectory, file)
       let extension = file.split('.').pop().toUpperCase()
 
-      if (watermarkFile !== null) {
-        const watermarkedPath = path.join(
-          slideshowFolderPath,
-          fileDirectory,
-          processedDirectory,
-          file
-        )
-        await addWatermark(imagePath, watermarkFile, {
-          dstPath: watermarkedPath,
-          ratio: 0.1,
-        })
-        imagePath = watermarkedPath
-      }
-      const imageBuffer = fs.readFileSync(imagePath)
       // Begin sharp transformation logic
-      const transformer = sharp(imageBuffer)
-      // console.log(transformer)
-      const metadata = await transformer.metadata()
+      const mainTransformer = await sharp(imagePath)
+      const mainMetadata = await mainTransformer.metadata()
+      mainTransformer.rotate()
+
+      if (watermarkFile !== null) {
+        const watermarkTransformer = await sharp(watermarkFile)
+        const watermarkMetadata = await watermarkTransformer.metadata()
+        const [newHeight, newWidth] = getDimensions(
+          mainMetadata.height,
+          mainMetadata.width,
+          watermarkMetadata.height,
+          watermarkMetadata.width,
+          watermarkRatio
+        )
+
+        const opaqueWatermark = await watermarkTransformer
+          .resize(newWidth, newHeight)
+          .composite([
+            {
+              input: Buffer.from([
+                255,
+                255,
+                255,
+                Math.floor(255 * watermarkOpacity),
+              ]),
+              raw: {
+                width: 1,
+                height: 1,
+                channels: 4,
+              },
+              tile: true,
+              blend: 'dest-in',
+            },
+          ])
+          .toBuffer()
+
+        await mainTransformer
+          .composite([
+            {
+              input: opaqueWatermark,
+              top: mainMetadata.height - 2 * newHeight,
+              left: mainMetadata.width - newWidth - newHeight,
+            },
+          ])
+          .toBuffer()
+      }
+
+      const initialProcessedPath = path.join(
+        slideshowFolderPath,
+        fileDirectory,
+        processedDirectory,
+        file
+      )
+      await mainTransformer
+        .modulate({
+          saturation,
+        })
+        .toFile(initialProcessedPath)
 
       const widthsToUrls = {}
       // Loop through all widths
@@ -303,40 +305,35 @@ const processer = async function (opts = {}) {
           extension = 'WEBP'
         }
 
-        const processsedFileNameAndPath = path.join(
+        const resizedAndProcessedFileNameAndPath = path.join(
           slideshowFolderPath,
           fileDirectory,
           processedDirectory,
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
-
-        await transformer.rotate()
-
-        //  if (metaWidth && metaWidth > width) {
-        transformer.resize(width)
-        //  }
+        await mainTransformer.clone().resize(width)
         if (extension === 'AVIF') {
-          if (transformer.avif) {
+          if (mainTransformer.avif) {
             const avifQuality = quality - 15
-            transformer.avif({
+            mainTransformer.avif({
               quality: Math.max(avifQuality, 0),
               chromaSubsampling: '4:2:0', // same as webp
             })
           } else {
-            transformer.webp({ quality })
+            mainTransformer.webp({ quality })
           }
         } else if (extension === 'WEBP' || storePicturesInWEBP) {
-          transformer.webp({ quality })
+          mainTransformer.webp({ quality })
         } else if (extension === 'PNG') {
-          transformer.png({ quality })
+          mainTransformer.png({ quality })
         } else if (extension === 'JPEG' || extension === 'JPG') {
-          transformer.jpeg({ quality })
+          mainTransformer.jpeg({ quality })
         }
 
         // Write the optimized image to the file system
-        ensureDirectoryExists(processsedFileNameAndPath)
-        await transformer.toFile(processsedFileNameAndPath)
-        incrementProgressbar(processsedFileNameAndPath)
+        ensureDirectoryExists(resizedAndProcessedFileNameAndPath)
+        await mainTransformer.toFile(resizedAndProcessedFileNameAndPath)
+        incrementProgressbar(resizedAndProcessedFileNameAndPath)
         widthsToUrls[width] = path.join(
           slideshowUrlBase,
           fileDirectory,
@@ -344,18 +341,17 @@ const processer = async function (opts = {}) {
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
       }
-      // const imageAspectRatio = metadata.width / metadata.height
-      const isPortraitMode = metadata.height > metadata.width
+      const isPortraitMode = mainMetadata.height > mainMetadata.width
       directoryData[file] = {
-        width: metadata.width,
-        height: metadata.height,
-        srcset: Object.entries(widthsToUrls).reduce(
-          (srcset, [currentSize, filenameAndPath], index) =>
-            index > 0
-              ? `${srcset}, ${filenameAndPath} ${currentSize}w`
-              : `${filenameAndPath} ${currentSize}w`,
-          ''
-        ),
+        width: mainMetadata.width,
+        height: mainMetadata.height,
+        // srcset: Object.entries(widthsToUrls).reduce(
+        //   (srcset, [currentSize, filenameAndPath], index) =>
+        //     index > 0
+        //       ? `${srcset}, ${filenameAndPath} ${currentSize}w`
+        //       : `${filenameAndPath} ${currentSize}w`,
+        //   ''
+        // ),
         widthsToUrls,
         sizesString: isPortraitMode ? `32vw` : `80vw`,
       }
@@ -367,9 +363,4 @@ const processer = async function (opts = {}) {
   console.log('----  End processing... ---- ')
 }
 
-processer()
-
-// if (require.main === module) {
-//   processer()
-// }
-// module.exports = processer
+processor()
