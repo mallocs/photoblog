@@ -244,11 +244,24 @@ async function processor(opts = {}) {
       if (watermarkFile !== null) {
         const watermarkTransformer = await sharp(watermarkFile)
         const watermarkMetadata = await watermarkTransformer.metadata()
+        // account for exif orientation
+        const [mainImageActualHeight, mainImageActualWidth] =
+          mainMetadata.orientation <= 4 ||
+          mainMetadata.orientation === undefined
+            ? [mainMetadata.height, mainMetadata.width]
+            : [mainMetadata.width, mainMetadata.height]
+
+        const [watermarkActualHeight, watermarkActualWidth] =
+          watermarkMetadata.orientation <= 4 ||
+          watermarkMetadata.orientation === undefined
+            ? [watermarkMetadata.height, watermarkMetadata.width]
+            : [watermarkMetadata.width, watermarkMetadata.height]
+
         const [newHeight, newWidth] = getDimensions(
-          mainMetadata.height,
-          mainMetadata.width,
-          watermarkMetadata.height,
-          watermarkMetadata.width,
+          mainImageActualHeight,
+          mainImageActualWidth,
+          watermarkActualHeight,
+          watermarkActualWidth,
           watermarkRatio
         )
 
@@ -277,8 +290,9 @@ async function processor(opts = {}) {
           .composite([
             {
               input: opaqueWatermark,
-              top: mainMetadata.height - 1.5 * newHeight,
-              left: mainMetadata.width - newWidth - 0.5 * newHeight,
+              top: mainImageActualHeight - Math.floor(1.5 * newHeight),
+              left:
+                mainImageActualWidth - Math.floor(newWidth + 0.5 * newHeight),
             },
           ])
           .toBuffer()
