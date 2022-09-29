@@ -22,17 +22,21 @@ function Slideshow({ slides, slug }: Props) {
   return (
     <>
       <figure>
-        <div className={'flex justify-between relative min-w-min -mx-5'}>
+        <div
+          className={
+            'flex justify-between relative min-w-min -mx-5 bg-extra-light-gray'
+          }
+        >
           <button
             className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20"
             onClick={() => setSlideIndex(getSlideIndex(slideIndex - 1))}
           >
-            <div className="absolute -top-1  w-16 h-20 bg-white opacity-60"></div>
+            <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
             <div className=" -mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
 
           <Image
-            className={'object-contain max-h-screen w-full cursor-pointer'}
+            className={'object-contain max-h-screen w-full'}
             loader={loader}
             alt="slideshow"
             src={slides[slideIndex].url}
@@ -48,15 +52,11 @@ function Slideshow({ slides, slug }: Props) {
               setSlideIndex(getSlideIndex(slideIndex + 1))
             }}
           >
-            <div className="absolute -top-1  w-16 h-20 bg-white opacity-60"></div>
+            <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
             <div className=" -ml-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
           </button>
         </div>
-        <figcaption
-          className={`bg-gray-300 py-1 px-4 ${
-            slides[slideIndex].caption !== undefined ? '' : 'invisible'
-          } -mx-5`}
-        >
+        <figcaption className={`bg-gray-300 py-1 px-4  -mx-5`}>
           {slides[slideIndex].caption || '\u00A0'}
         </figcaption>
       </figure>
@@ -67,6 +67,9 @@ function Slideshow({ slides, slug }: Props) {
 export default Slideshow
 
 /*
+${
+            slides[slideIndex].caption !== undefined ? '' : 'invisible'
+          }
 type Size = [number, string]
 
 //                 srcSet={generateSrcSet(slides[slideIndex].sizes)}
