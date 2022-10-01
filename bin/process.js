@@ -103,10 +103,17 @@ async function processor(opts = {}) {
     watermarkOpacity: processorConfig._processorWATERMARK_OPACITY,
     saturation: processorConfig._processorSATURATION,
     slideshowFolderPath: processorConfig._processorSLIDESHOW_FOLDER_PATH,
-    imageSizes: [...imageConfig.imageSizes, ...imageConfig.deviceSizes],
+    imageSizes: [
+      ...(imageConfig.imageSizes || [16, 32, 48, 64, 96, 128, 256, 384]),
+      ...(imageConfig.deviceSizes || [
+        640, 750, 828, 1080, 1200, 1920, 2048, 3840,
+      ]),
+    ],
     quality: processorConfig._processorIMAGE_QUALITY,
     storePicturesInWEBP: processorConfig._processorSTORE_PICTURES_IN_WEBP,
-    blurSize: [10],
+    blurSize: processorConfig._processorGENERATE_AND_USE_BLUR_IMAGES
+      ? [10]
+      : [],
   }
 
   const {
@@ -192,12 +199,16 @@ async function processor(opts = {}) {
       `Start processing ${fileData.imageCount} images with ${
         widths.length
       } sizes resulting in ${
-        fileData.imageCount * widths.length
+        fileData.imageCount * widths.length + fileData.imageCount
       } optimized images...`
     )
-    progressBar.start(fileData.imageCount * widths.length, 0, {
-      sizeOfGeneratedImages: 0,
-    })
+    progressBar.start(
+      fileData.imageCount * widths.length + fileData.imageCount,
+      0,
+      {
+        sizeOfGeneratedImages: 0,
+      }
+    )
   }
   let sizeOfGeneratedImages = 0
   const allGeneratedImages = []
@@ -214,24 +225,24 @@ async function processor(opts = {}) {
 
   // Loop through all directories/images
   for (const [fileDirectory, files] of Object.entries(fileData.directories)) {
+    // // Check if directory has already been processed
+    const currentProcessedDirectory = path.join(
+      processedDirectory,
+      fileDirectory
+    )
+    if (!fs.existsSync(processedDirectory)) {
+      fs.mkdirSync(processedDirectory)
+    }
+    if (!fs.existsSync(currentProcessedDirectory)) {
+      fs.mkdirSync(currentProcessedDirectory)
+    }
+
     const directoryData = {}
     const directoryDataFilePath = path.join(
-      slideshowFolderPath,
-      fileDirectory,
-      processedDirectory,
+      currentProcessedDirectory,
       'manifest.json'
     )
     for (const file of files) {
-      // // Check if directory has already been processed
-      const currentProcessedDirectory = path.join(
-        slideshowFolderPath,
-        fileDirectory,
-        processedDirectory
-      )
-
-      if (!fs.existsSync(currentProcessedDirectory)) {
-        fs.mkdirSync(currentProcessedDirectory)
-      }
       let imagePath = path.join(slideshowFolderPath, fileDirectory, file)
       let extension = file.split('.').pop().toLowerCase()
       const filename = path.parse(file).name
@@ -298,17 +309,13 @@ async function processor(opts = {}) {
           .toBuffer()
       }
 
-      const initialProcessedPath = path.join(
-        slideshowFolderPath,
-        fileDirectory,
-        processedDirectory,
-        file
-      )
+      const initialProcessedPath = path.join(currentProcessedDirectory, file)
       await mainTransformer
         .modulate({
           saturation,
         })
         .toFile(initialProcessedPath)
+      incrementProgressbar(initialProcessedPath)
 
       const widthsToUrls = {}
       // Loop through all widths
@@ -320,9 +327,7 @@ async function processor(opts = {}) {
         }
 
         const resizedAndProcessedFileNameAndPath = path.join(
-          slideshowFolderPath,
-          fileDirectory,
-          processedDirectory,
+          currentProcessedDirectory,
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
         await mainTransformer.clone().resize(width)
@@ -351,7 +356,6 @@ async function processor(opts = {}) {
         widthsToUrls[width] = path.join(
           slideshowUrlBase,
           fileDirectory,
-          processedDirectory,
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
       }
