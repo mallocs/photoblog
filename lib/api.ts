@@ -6,11 +6,7 @@ import { SlideExternal, SlideInternal } from '../interfaces/slide'
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
 export const postsDirectory = join(process.cwd(), '_posts')
 
-import {
-  PROCESSED_DIRECTORY,
-  SLIDESHOW_URL_BASE,
-  SLIDESHOW_FOLDER_PATH,
-} from './constants'
+import { PROCESSED_DIRECTORY, SLIDESHOW_URL_BASE } from './constants'
 
 export function getPostSlugs() {
   return fs
@@ -31,7 +27,7 @@ export function getPostSlideshow({
   // console.log(slides)
 
   const filenames = fs
-    .readdirSync(join(SLIDESHOW_FOLDER_PATH, currentSlideshowDirectory))
+    .readdirSync(join(PROCESSED_DIRECTORY, currentSlideshowDirectory))
     .filter((filename) =>
       IMG_EXTENSIONS.some(
         (ext) =>
@@ -60,36 +56,18 @@ export function getPostSlideshow({
 
   // check if processed image directory exists and
   // check internal directory exists but map to external urls, ie slideshowRootDirectory => slideshowPath
-  if (
-    fs.existsSync(
-      join(
-        SLIDESHOW_FOLDER_PATH,
-        currentSlideshowDirectory,
-        PROCESSED_DIRECTORY
-      )
-    )
-  ) {
+  if (fs.existsSync(join(PROCESSED_DIRECTORY, currentSlideshowDirectory))) {
     const manifest = JSON.parse(
       String(
         fs.readFileSync(
-          join(
-            SLIDESHOW_FOLDER_PATH,
-            currentSlideshowDirectory,
-            PROCESSED_DIRECTORY,
-            'manifest.json'
-          )
+          join(PROCESSED_DIRECTORY, currentSlideshowDirectory, 'manifest.json')
         )
       )
     )
 
     output = output.map((data) => ({
       ...data,
-      url: join(
-        SLIDESHOW_URL_BASE,
-        currentSlideshowDirectory,
-        PROCESSED_DIRECTORY,
-        data.filename
-      ),
+      url: join(SLIDESHOW_URL_BASE, currentSlideshowDirectory, data.filename),
       width: manifest[data.filename].width,
       height: manifest[data.filename].height,
       sizesString: manifest[data.filename].sizesString,

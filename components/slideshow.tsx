@@ -8,10 +8,10 @@ type Props = {
   slug: string
 }
 
-const loader = ({ src, width, quality }) => {
-  const lastDotIndex = src.lastIndexOf('.')
-  return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
-}
+// const loader = ({ src, width, quality }) => {
+//   const lastDotIndex = src.lastIndexOf('.')
+//   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
+// }
 
 function Slideshow({ slides, slug }: Props) {
   function getSlideIndex(rawIndex) {
@@ -37,7 +37,7 @@ function Slideshow({ slides, slug }: Props) {
 
           <Image
             className={'object-contain max-h-screen w-full'}
-            loader={loader}
+            // loader={loader}
             alt="slideshow"
             src={slides[slideIndex].url}
             width={slides[slideIndex]?.width}
