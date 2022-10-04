@@ -96,7 +96,9 @@ async function processor(opts = {}) {
   const processorConfig = nextJsConfig.default?.env
   const imageConfig = nextJsConfig.default?.images
   const defaults = {
+    exportImages: processorConfig._processor_EXPORT_IMAGES, // TODO: Make this a separate script
     processedDirectory: processorConfig._processorPROCESSED_DIRECTORY,
+    resizedDirectoryName: processorConfig._processorRESIZED_DIRECTORY_NAME,
     slideshowUrlBase: processorConfig._processorSLIDESHOW_URL_BASE,
     watermarkFile: processorConfig._processorWATERMARK_FILE,
     watermarkRatio: processorConfig._processorWATERMARK_RATIO,
@@ -117,7 +119,9 @@ async function processor(opts = {}) {
   }
 
   const {
+    exportImages,
     processedDirectory,
+    resizedDirectoryName,
     slideshowUrlBase,
     watermarkFile,
     watermarkRatio,
@@ -152,7 +156,7 @@ async function processor(opts = {}) {
     `Found ${fileData.imageCount} supported images in ${slideshowFolderPath} and subdirectories.`
   )
 
-  const widths = [...blurSize, ...imageSizes]
+  const widths = exportImages ? [...blurSize, ...imageSizes] : []
 
   const progressBar = new cliProgress.SingleBar(
     {
@@ -318,8 +322,23 @@ async function processor(opts = {}) {
       incrementProgressbar(initialProcessedPath)
 
       const widthsToUrls = {}
+
+      const currentResizedDirectory = path.join(
+        currentProcessedDirectory,
+        resizedDirectoryName
+      )
+
+      if (exportImages) {
+        if (!fs.existsSync(currentResizedDirectory)) {
+          fs.mkdirSync(currentResizedDirectory)
+        }
+      }
       // Loop through all widths
-      for (let indexWidth = 0; indexWidth < widths.length; indexWidth++) {
+      for (
+        let indexWidth = 0;
+        exportImages && indexWidth < widths.length;
+        indexWidth++
+      ) {
         const width = widths[indexWidth]
 
         if (storePicturesInWEBP) {
@@ -327,7 +346,7 @@ async function processor(opts = {}) {
         }
 
         const resizedAndProcessedFileNameAndPath = path.join(
-          currentProcessedDirectory,
+          currentResizedDirectory,
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
         await mainTransformer.clone().resize(width)

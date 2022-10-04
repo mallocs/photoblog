@@ -24,8 +24,6 @@ export function getPostSlideshow({
   slides: SlideInternal[]
   path: string
 }): SlideExternal[] {
-  // console.log(slides)
-
   const filenames = fs
     .readdirSync(join(PROCESSED_DIRECTORY, currentSlideshowDirectory))
     .filter((filename) =>
@@ -108,7 +106,6 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
     }
   })
 
-  // console.log(items)
   return items
 }
 

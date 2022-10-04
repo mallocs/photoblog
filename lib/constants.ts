@@ -10,6 +10,7 @@ export const HOME_OG_IMAGE_URL =
 export const SLIDESHOW_FOLDER_PATH = config.env._processorSLIDESHOW_FOLDER_PATH
 export const SLIDESHOW_URL_BASE = config.env._processorSLIDESHOW_URL_BASE
 export const PROCESSED_DIRECTORY = config.env._processorPROCESSED_DIRECTORY
+export const RESIZED_DIRECTORY = config.env._processorRESIZED_DIRECTORY
 export const WATERMARK_FILE = config.env._processorWATERMARK_FILE
 export const IMAGE_QUALITY = config.env._processorIMAGE_QUALITY
 export const STORE_PICTURES_IN_WEBP =
