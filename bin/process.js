@@ -75,6 +75,20 @@ function ensureDirectoryExists(filePath) {
   fs.mkdirSync(dirName)
 }
 
+async function makeBlurDataURL({ path, size, saturation = 1, brightness = 1 }) {
+  const { data: blurData, info: blurInfo } = await sharp(path)
+    .clone()
+    .resize(size, size, {
+      fit: 'inside',
+    })
+    .normalise()
+    .modulate({ saturation, brightness })
+    .removeAlpha()
+    .toBuffer({ resolveWithObject: true })
+
+  return `data:image/${blurInfo.format};base64,${blurData.toString('base64')}`
+}
+
 async function processor(opts = {}) {
   console.log('----  Begin processing... ---- ')
 
@@ -113,9 +127,7 @@ async function processor(opts = {}) {
     ],
     quality: processorConfig._processorIMAGE_QUALITY,
     storePicturesInWEBP: processorConfig._processorSTORE_PICTURES_IN_WEBP,
-    blurSize: processorConfig._processorGENERATE_AND_USE_BLUR_IMAGES
-      ? [10]
-      : [],
+    blurSize: processorConfig._processorBLUR_SIZE,
   }
 
   const {
@@ -247,6 +259,7 @@ async function processor(opts = {}) {
       'manifest.json'
     )
     for (const file of files) {
+      directoryData[file] = {}
       let imagePath = path.join(slideshowFolderPath, fileDirectory, file)
       let extension = file.split('.').pop().toLowerCase()
       const filename = path.parse(file).name
@@ -321,6 +334,13 @@ async function processor(opts = {}) {
         .toFile(initialProcessedPath)
       incrementProgressbar(initialProcessedPath)
 
+      directoryData[file].blurDataURL = blurSize
+        ? await makeBlurDataURL({
+            path: initialProcessedPath,
+            size: blurSize,
+          })
+        : null
+
       const widthsToUrls = {}
 
       const currentResizedDirectory = path.join(
@@ -380,6 +400,7 @@ async function processor(opts = {}) {
       }
       const isPortraitMode = mainMetadata.height > mainMetadata.width
       directoryData[file] = {
+        ...directoryData[file],
         width: mainMetadata.width,
         height: mainMetadata.height,
         // srcset: Object.entries(widthsToUrls).reduce(

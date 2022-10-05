@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import Image from 'next/future/image'
 import { SlideExternal } from '../interfaces/slide'
+import { BLUR_SIZE } from '../lib/constants'
 
 type Props = {
   slides: SlideExternal[]
@@ -36,15 +37,18 @@ function Slideshow({ slides, slug }: Props) {
           </button>
 
           <Image
-            className={'object-contain max-h-screen w-full'}
+            className={'object-contain max-h-screen w-full !bg-auto'}
+            // TODO: !bg-auto seems to be necessary atm because next sets the blur image background-size to
+            // cover for some reason.
             // loader={loader}
             alt="slideshow"
             src={slides[slideIndex].url}
             width={slides[slideIndex]?.width}
             height={slides[slideIndex]?.height}
+            placeholder={BLUR_SIZE ? 'blur' : 'empty'}
+            blurDataURL={slides[slideIndex]?.blurDataURL}
             sizes="100vw"
           />
-
           <button
             className="absolute top-[calc(50%_-_2rem)] right-0 w-16 h-20"
             onClick={(e) => {

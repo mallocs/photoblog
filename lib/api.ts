@@ -68,6 +68,7 @@ export function getPostSlideshow({
       url: join(SLIDESHOW_URL_BASE, currentSlideshowDirectory, data.filename),
       width: manifest[data.filename].width,
       height: manifest[data.filename].height,
+      blurDataURL: manifest[data.filename].blurDataURL,
       sizesString: manifest[data.filename].sizesString,
     }))
   }

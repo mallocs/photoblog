@@ -15,5 +15,4 @@ export const WATERMARK_FILE = config.env._processorWATERMARK_FILE
 export const IMAGE_QUALITY = config.env._processorIMAGE_QUALITY
 export const STORE_PICTURES_IN_WEBP =
   config.env._processorSTORE_PICTURES_IN_WEBP
-export const GENERATE_AND_USE_BLUR_IMAGES =
-  config.env._processorGENERATE_AND_USE_BLUR_IMAGES
+export const BLUR_SIZE = config.env._processorBLUR_SIZE
