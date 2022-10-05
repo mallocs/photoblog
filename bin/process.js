@@ -401,6 +401,7 @@ async function processor(opts = {}) {
       const isPortraitMode = mainMetadata.height > mainMetadata.width
       directoryData[file] = {
         ...directoryData[file],
+        url: path.join(slideshowUrlBase, fileDirectory, file),
         width: mainMetadata.width,
         height: mainMetadata.height,
         // srcset: Object.entries(widthsToUrls).reduce(
