@@ -1,6 +1,6 @@
 // import Link from 'next/link'
-import React, { useState } from 'react'
-import Image from 'next/future/image'
+import React, { useEffect, useState } from 'react'
+import { default as NextImage } from 'next/future/image'
 import { SlideExternal } from '../interfaces/slide'
 import { BLUR_SIZE } from '../lib/constants'
 
@@ -14,11 +14,45 @@ type Props = {
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
 
+async function loadImage(url, obj) {
+  return new Promise((resolve, reject) => {
+    obj.onload = () => resolve(obj)
+    obj.onerror = reject
+    obj.src = url
+  })
+}
+
 function Slideshow({ slides, slug }: Props) {
   function getSlideIndex(rawIndex) {
     return (rawIndex + slides.length) % slides.length
   }
+
   const [slideIndex, setSlideIndex] = useState(0)
+  const [hasLoaded, setHasLoaded] = useState(Array(slides.length).fill(false))
+  async function preloadImage(index: number) {
+    if (!hasLoaded[index]) {
+      console.log('loading: ' + index)
+      const nextHasLoaded = hasLoaded
+      const imagePromise = await loadImage(slides[index]?.url, new Image())
+      // const image = new Image()
+      // image.src = slides[index]?.url
+      nextHasLoaded[index] = imagePromise
+      setHasLoaded(nextHasLoaded)
+    }
+  }
+
+  const previousSlideIndex = getSlideIndex(slideIndex - 1)
+  const nextSlideIndex = getSlideIndex(slideIndex + 1)
+  useEffect(() => {
+    ;(async () => {
+      await preloadImage(slideIndex)
+      await preloadImage(nextSlideIndex)
+      await preloadImage(previousSlideIndex)
+    })()
+    return () => {
+      // cleanup
+    }
+  }, [slideIndex])
 
   return (
     <>
@@ -35,8 +69,7 @@ function Slideshow({ slides, slug }: Props) {
             <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
             <div className=" -mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
-
-          <Image
+          <NextImage
             className={'object-contain max-h-screen w-full !bg-auto'}
             // TODO: !bg-auto seems to be necessary atm because next sets the blur image background-size to
             // cover for some reason.
