@@ -1,6 +1,7 @@
 // import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { default as NextImage } from 'next/future/image'
+import Head from 'next/head'
 import { SlideExternal } from '../interfaces/slide'
 import { BLUR_SIZE } from '../lib/constants'
 
@@ -31,7 +32,6 @@ function Slideshow({ slides, slug }: Props) {
   const [hasLoaded, setHasLoaded] = useState(Array(slides.length).fill(false))
   async function preloadImage(index: number) {
     if (!hasLoaded[index]) {
-      console.log('loading: ' + index)
       const nextHasLoaded = hasLoaded
       const imagePromise = await loadImage(slides[index]?.url, new Image())
       // const image = new Image()
@@ -43,16 +43,16 @@ function Slideshow({ slides, slug }: Props) {
 
   const previousSlideIndex = getSlideIndex(slideIndex - 1)
   const nextSlideIndex = getSlideIndex(slideIndex + 1)
-  useEffect(() => {
-    ;(async () => {
-      await preloadImage(slideIndex)
-      await preloadImage(nextSlideIndex)
-      await preloadImage(previousSlideIndex)
-    })()
-    return () => {
-      // cleanup
-    }
-  }, [slideIndex])
+  // useEffect(() => {
+  //   ;(async () => {
+  //     await preloadImage(slideIndex)
+  //     await preloadImage(nextSlideIndex)
+  //     await preloadImage(previousSlideIndex)
+  //   })()
+  //   return () => {
+  //     // cleanup
+  //   }
+  // }, [slideIndex])
 
   return (
     <>
@@ -69,19 +69,24 @@ function Slideshow({ slides, slug }: Props) {
             <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
             <div className=" -mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
-          <NextImage
-            className={'object-contain max-h-screen w-full !bg-auto'}
-            // TODO: !bg-auto seems to be necessary atm because next sets the blur image background-size to
-            // cover for some reason.
-            // loader={loader}
-            alt="slideshow"
-            src={slides[slideIndex].url}
-            width={slides[slideIndex]?.width}
-            height={slides[slideIndex]?.height}
-            placeholder={BLUR_SIZE ? 'blur' : 'empty'}
-            blurDataURL={slides[slideIndex]?.blurDataURL}
-            sizes="100vw"
-          />
+          {slides.map((slide, index) => (
+            <NextImage
+              className={`object-contain max-h-screen w-full ${
+                index === slideIndex ? '' : 'hidden'
+              }`}
+              alt="slideshow"
+              priority={[
+                slideIndex,
+                nextSlideIndex,
+                previousSlideIndex,
+              ].includes(index)}
+              key={slide.url}
+              src={slide.url}
+              width={slide?.width}
+              height={slide?.height}
+              sizes="100vw"
+            />
+          ))}
           <button
             className="absolute top-[calc(50%_-_2rem)] right-0 w-16 h-20"
             onClick={(e) => {
