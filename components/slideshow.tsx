@@ -1,9 +1,11 @@
 // import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { default as NextImage } from 'next/future/image'
-import Head from 'next/head'
 import { SlideExternal } from '../interfaces/slide'
 import { BLUR_SIZE } from '../lib/constants'
+
+// TODO: For some reason this isn't working unless it's hard-coded in the css string
+const FADE_SPEED = 900
 
 type Props = {
   slides: SlideExternal[]
@@ -15,44 +17,55 @@ type Props = {
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
 
-async function loadImage(url, obj) {
-  return new Promise((resolve, reject) => {
-    obj.onload = () => resolve(obj)
-    obj.onerror = reject
-    obj.src = url
-  })
-}
-
 function Slideshow({ slides, slug }: Props) {
+  const [slideIndex, setSlideIndex] = useState(0)
+  // 1 is fading in, -1 is fading out
+  const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
+  const [fadeTimeoutId, setFadeTimeoutId] = useState<
+    ReturnType<typeof setTimeout> | number
+  >(0)
+
   function getSlideIndex(rawIndex) {
     return (rawIndex + slides.length) % slides.length
   }
 
-  const [slideIndex, setSlideIndex] = useState(0)
-  const [hasLoaded, setHasLoaded] = useState(Array(slides.length).fill(false))
-  async function preloadImage(index: number) {
-    if (!hasLoaded[index]) {
-      const nextHasLoaded = hasLoaded
-      const imagePromise = await loadImage(slides[index]?.url, new Image())
-      // const image = new Image()
-      // image.src = slides[index]?.url
-      nextHasLoaded[index] = imagePromise
-      setHasLoaded(nextHasLoaded)
-    }
-  }
-
   const previousSlideIndex = getSlideIndex(slideIndex - 1)
   const nextSlideIndex = getSlideIndex(slideIndex + 1)
-  // useEffect(() => {
-  //   ;(async () => {
-  //     await preloadImage(slideIndex)
-  //     await preloadImage(nextSlideIndex)
-  //     await preloadImage(previousSlideIndex)
-  //   })()
-  //   return () => {
-  //     // cleanup
-  //   }
-  // }, [slideIndex])
+  function getFadeCSS({ index }): string {
+    let css = `!bg-auto transition-opacity duration-[900ms] ease-out`
+    if (isFading[index] === -1) {
+      // fading out
+      css += index === slideIndex ? ' static opacity-100' : '  static opacity-0'
+    } else if (isFading[index] === 1) {
+      // fading in
+      css +=
+        index === slideIndex ? '  absolute opacity-100' : '  absolute opacity-0'
+    } else if (index === slideIndex) {
+      // current slide, done fading
+      css += ' static opacity-100'
+    } else {
+      // everything else
+      css += ' static hidden'
+    }
+    return css
+  }
+
+  function handleFadeTransition({ event, currentSlideIndex, nextSlideIndex }) {
+    event.preventDefault()
+    if (fadeTimeoutId) {
+      clearTimeout(fadeTimeoutId)
+    }
+    const fading = Array(slides.length).fill(0)
+    fading[currentSlideIndex] = -1
+    fading[nextSlideIndex] = 1
+    setIsFading(fading)
+    requestAnimationFrame(() => setSlideIndex(getSlideIndex(nextSlideIndex)))
+    setFadeTimeoutId(
+      setTimeout(() => {
+        requestAnimationFrame(() => setIsFading(Array(slides.length).fill(0)))
+      }, FADE_SPEED)
+    )
+  }
 
   return (
     <>
@@ -63,17 +76,25 @@ function Slideshow({ slides, slug }: Props) {
           }
         >
           <button
-            className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20"
-            onClick={() => setSlideIndex(getSlideIndex(slideIndex - 1))}
+            className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20 z-30"
+            onClick={(event) =>
+              handleFadeTransition({
+                event,
+                currentSlideIndex: slideIndex,
+                nextSlideIndex: getSlideIndex(slideIndex - 1),
+              })
+            }
           >
             <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
             <div className=" -mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
           {slides.map((slide, index) => (
             <NextImage
-              className={`object-contain max-h-screen w-full ${
-                index === slideIndex ? '' : 'hidden'
-              }`}
+              className={`object-contain max-h-screen w-full ${getFadeCSS({
+                index,
+              })}`}
+              // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
+              // cover for some reason.
               alt="slideshow"
               priority={[
                 slideIndex,
@@ -84,15 +105,20 @@ function Slideshow({ slides, slug }: Props) {
               src={slide.url}
               width={slide?.width}
               height={slide?.height}
+              placeholder={BLUR_SIZE ? 'blur' : 'empty'}
+              blurDataURL={slide?.blurDataURL}
               sizes="100vw"
             />
           ))}
           <button
-            className="absolute top-[calc(50%_-_2rem)] right-0 w-16 h-20"
-            onClick={(e) => {
-              e.preventDefault()
-              setSlideIndex(getSlideIndex(slideIndex + 1))
-            }}
+            className="absolute top-[calc(50%_-_2rem)] right-0 w-16 h-20 z-30"
+            onClick={(event) =>
+              handleFadeTransition({
+                event,
+                currentSlideIndex: slideIndex,
+                nextSlideIndex: getSlideIndex(slideIndex + 1),
+              })
+            }
           >
             <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
             <div className=" -ml-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
