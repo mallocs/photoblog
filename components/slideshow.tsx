@@ -1,6 +1,7 @@
 // import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { default as NextImage } from 'next/future/image'
+import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
 import { BLUR_SIZE } from '../lib/constants'
 
@@ -25,13 +26,13 @@ function Slideshow({ slides, slug }: Props) {
     ReturnType<typeof setTimeout> | number
   >(0)
 
-  function getSlideIndex(rawIndex) {
+  function getSlideIndex(rawIndex: number) {
     return (rawIndex + slides.length) % slides.length
   }
 
   const previousSlideIndex = getSlideIndex(slideIndex - 1)
   const nextSlideIndex = getSlideIndex(slideIndex + 1)
-  function getFadeCSS({ index }): string {
+  function getFadeCSS({ index }: { index: number }): string {
     let css = `!bg-auto transition-opacity duration-[900ms] ease-out`
     if (isFading[index] === -1) {
       // fading out
@@ -50,8 +51,16 @@ function Slideshow({ slides, slug }: Props) {
     return css
   }
 
-  function handleFadeTransition({ event, currentSlideIndex, nextSlideIndex }) {
-    event.preventDefault()
+  function handleFadeTransition({
+    event,
+    currentSlideIndex,
+    nextSlideIndex,
+  }: {
+    event?: React.MouseEvent<HTMLButtonElement>
+    currentSlideIndex: number
+    nextSlideIndex: number
+  }) {
+    event && event.preventDefault()
     if (fadeTimeoutId) {
       clearTimeout(fadeTimeoutId)
     }
@@ -66,11 +75,28 @@ function Slideshow({ slides, slug }: Props) {
       }, FADE_SPEED)
     )
   }
+  const handlers = useSwipeable({
+    onSwipedLeft: () =>
+      handleFadeTransition({
+        currentSlideIndex: slideIndex,
+        nextSlideIndex: getSlideIndex(slideIndex + 1),
+      }),
+    onSwipedRight: () =>
+      handleFadeTransition({
+        currentSlideIndex: slideIndex,
+        nextSlideIndex: getSlideIndex(slideIndex - 1),
+      }),
+    delta: 8,
+    swipeDuration: 500,
+    preventScrollOnSwipe: true,
+    trackMouse: true,
+  })
 
   return (
     <>
       <figure>
         <div
+          {...handlers}
           className={
             'flex justify-between relative min-w-min -mx-5 bg-extra-light-gray'
           }
