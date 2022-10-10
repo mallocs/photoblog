@@ -1,12 +1,9 @@
 // import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { default as NextImage } from 'next/future/image'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
-import { BLUR_SIZE } from '../lib/constants'
-
-// TODO: For some reason this isn't working unless it's hard-coded in the css string
-const FADE_SPEED = 900
+import { BLUR_SIZE, FADE_SPEED } from '../lib/constants'
 
 type Props = {
   slides: SlideExternal[]
@@ -19,6 +16,13 @@ type Props = {
 // }
 
 function Slideshow({ slides, slug }: Props) {
+  const [height, setHeight] = useState(undefined)
+  const heightRef = useRef(null)
+
+  useEffect(() => {
+    setHeight(heightRef.current.clientHeight)
+  }, [])
+
   const [slideIndex, setSlideIndex] = useState(0)
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -33,7 +37,7 @@ function Slideshow({ slides, slug }: Props) {
   const previousSlideIndex = getSlideIndex(slideIndex - 1)
   const nextSlideIndex = getSlideIndex(slideIndex + 1)
   function getFadeCSS({ index }: { index: number }): string {
-    let css = `!bg-auto transition-opacity duration-[900ms] ease-out`
+    let css = ` transition-opacity ease-out`
     if (isFading[index] === -1) {
       // fading out
       css += index === slideIndex ? ' static opacity-100' : '  static opacity-0'
@@ -75,7 +79,7 @@ function Slideshow({ slides, slug }: Props) {
       }, FADE_SPEED)
     )
   }
-  const handlers = useSwipeable({
+  const swipeHandlers = useSwipeable({
     onSwipedLeft: () =>
       handleFadeTransition({
         currentSlideIndex: slideIndex,
@@ -94,9 +98,9 @@ function Slideshow({ slides, slug }: Props) {
 
   return (
     <>
-      <figure>
+      <figure {...swipeHandlers}>
         <div
-          {...handlers}
+          ref={heightRef}
           className={
             'flex justify-between relative min-w-min -mx-5 bg-extra-light-gray'
           }
@@ -112,11 +116,16 @@ function Slideshow({ slides, slug }: Props) {
             }
           >
             <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
-            <div className=" -mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
+            <div className="-mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
+
           {slides.map((slide, index) => (
             <NextImage
-              className={`object-contain max-h-screen w-full ${getFadeCSS({
+              style={{
+                maxHeight: height === undefined ? '100vh' : `${height}px`,
+                transitionDuration: `${FADE_SPEED}ms`,
+              }}
+              className={`!bg-auto object-contain w-full ${getFadeCSS({
                 index,
               })}`}
               // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
@@ -146,11 +155,11 @@ function Slideshow({ slides, slug }: Props) {
               })
             }
           >
-            <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
-            <div className=" -ml-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
+            <div className="absolute -top-1 w-16 h-20 bg-extra-light-gray opacity-60"></div>
+            <div className="-ml-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
           </button>
         </div>
-        <figcaption className={`bg-gray-300 py-1 px-4  -mx-5`}>
+        <figcaption className={'bg-gray-300 py-1 px-4 -mx-5'}>
           {slides[slideIndex].caption || '\u00A0'}
         </figcaption>
       </figure>
