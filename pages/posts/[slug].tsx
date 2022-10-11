@@ -20,9 +20,11 @@ type Props = {
 
 export default function Post({ post, morePosts, preview }: Props) {
   const router = useRouter()
+
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
+
   return (
     <Layout preview={preview}>
       <Container>
@@ -38,13 +40,16 @@ export default function Post({ post, morePosts, preview }: Props) {
               </Head>
               <PostHeader
                 title={post.title}
-                coverImage={post.coverImage}
+                coverSlide={post.slideshow.slides[0]}
                 date={post.date}
                 author={post.author}
               />
+
               <PostBody content={post.content} />
 
-              <PostSlideList slides={post.slideshow.slides} />
+              {post.slideshow.slides.length > 1 && (
+                <PostSlideList slides={post.slideshow.slides.slice(1)} />
+              )}
             </article>
           </>
         )}

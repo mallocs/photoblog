@@ -1,6 +1,6 @@
 import Avatar from './avatar'
 import DateFormatter from './date-formatter'
-import CoverImage from './cover-image'
+import CoverSlide from './cover-slide'
 import Link from 'next/link'
 import type Post from '../interfaces/post'
 import Slideshow from './slideshow'
@@ -23,16 +23,23 @@ const PostList = ({ posts }: Props) => {
                   <DateFormatter dateString={date} />
                 </div>
                 <h3 className=" text-4xl lg:text-5xl leading-tight">
-                  <Link as={`/posts/${slug}`} href="/posts/[slug]">
+                  <Link
+                    as={`/posts/${slug}#article-start`}
+                    href="/posts/[slug]"
+                  >
                     <a className="hover:underline">{title}</a>
                   </Link>
                 </h3>
               </div>
               <div className="mb-8">
-                {slideshow.slides ? (
+                {slideshow.slides.length > 1 ? (
                   <Slideshow slides={slideshow.slides} slug={slug} />
                 ) : (
-                  <CoverImage slug={slug} title={title} src={coverImage} />
+                  <CoverSlide
+                    slug={slug}
+                    title={title}
+                    slide={slideshow.slides[0]}
+                  />
                 )}
               </div>
               <div className="ml-12">
