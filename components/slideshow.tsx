@@ -102,7 +102,7 @@ function Slideshow({ slides, slug }: Props) {
         <div
           ref={heightRef}
           className={
-            'flex justify-between relative min-w-min -mx-5 bg-extra-light-gray'
+            'flex justify-between relative min-w-min bg-extra-light-gray'
           }
         >
           <button
@@ -116,7 +116,7 @@ function Slideshow({ slides, slug }: Props) {
             }
           >
             <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
-            <div className="-mr-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
+            <div className="ml-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
 
           {slides.map((slide, index) => (
@@ -156,10 +156,10 @@ function Slideshow({ slides, slug }: Props) {
             }
           >
             <div className="absolute -top-1 w-16 h-20 bg-extra-light-gray opacity-60"></div>
-            <div className="-ml-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
+            <div className="mr-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
           </button>
         </div>
-        <figcaption className={'bg-gray-300 py-1 px-4 -mx-5'}>
+        <figcaption className={'bg-gray-300 py-1 px-4'}>
           {slides[slideIndex].caption || '\u00A0'}
         </figcaption>
       </figure>
