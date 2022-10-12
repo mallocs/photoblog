@@ -17,7 +17,7 @@ const PostList = ({ posts }: Props) => {
       <div className="mb-8 md:mb-16">
         {posts.map(
           ({ slideshow, slug, title, date, excerpt, author, coverImage }) => (
-            <Fragment key={slug}>
+            <article key={slug}>
               <div className="ml-12 mb-8">
                 <div className="mb-4 md:mb-0 text-lg">
                   <DateFormatter dateString={date} />
@@ -42,14 +42,14 @@ const PostList = ({ posts }: Props) => {
                   />
                 )}
               </div>
-              <div className="ml-12">
-                <div className="float-left mr-8">
+              <div className="max-w-2xl mx-auto">
+                <div className="float-left block mb-6 mr-8">
                   <Avatar name={author.name} picture={author.picture} />
                 </div>
                 <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
               </div>
               <SectionSeparator />
-            </Fragment>
+            </article>
           )
         )}
       </div>

@@ -160,7 +160,7 @@ function Slideshow({ slides, slug }: Props) {
           </button>
         </div>
         <figcaption className={'bg-gray-300 py-1 px-4'}>
-          {slides[slideIndex].caption || '\u00A0'}
+          {slides[slideIndex].caption ?? '\u00A0'}
         </figcaption>
       </figure>
     </>
