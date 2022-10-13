@@ -125,7 +125,7 @@ function Slideshow({ slides, slug }: Props) {
                 maxHeight: height === undefined ? '100vh' : `${height}px`,
                 transitionDuration: `${FADE_SPEED}ms`,
               }}
-              className={`!bg-auto object-contain w-full ${getFadeCSS({
+              className={`!bg-auto object-contain ${getFadeCSS({
                 index,
               })}`}
               // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
@@ -159,9 +159,19 @@ function Slideshow({ slides, slug }: Props) {
             <div className="mr-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
           </button>
         </div>
-        <figcaption className={'bg-gray-300 py-1 px-4'}>
-          {slides[slideIndex].caption ?? '\u00A0'}
-        </figcaption>
+        <div className=" bg-extra-light-gray max-w-full">
+          <figcaption
+            className="bg-gray-300 py-1 px-4 mx-auto"
+            style={{
+              width: `${
+                height * (Number(slides[0].width) / Number(slides[0].height))
+              }px`,
+            }}
+          >
+            {/* Using || so empty strings don't collapse */}
+            {slides[slideIndex].caption || '\u00A0'}
+          </figcaption>
+        </div>
       </figure>
     </>
   )

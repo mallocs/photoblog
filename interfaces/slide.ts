@@ -1,10 +1,11 @@
-export type SlideInternal = {
-  filename: string //
+export type SlideMarkdown = {
+  filename: string
   caption?: string
 }
 
 export type SlideExternal = {
   url: string // external URL
+  filename: string
   caption?: string
   srcset?: string
   sizes?: string
