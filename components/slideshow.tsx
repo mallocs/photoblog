@@ -57,22 +57,20 @@ function Slideshow({ slides, slug }: Props) {
 
   function handleFadeTransition({
     event,
-    currentSlideIndex,
-    nextSlideIndex,
+    goToSlideIndex,
   }: {
     event?: React.MouseEvent<HTMLButtonElement>
-    currentSlideIndex: number
-    nextSlideIndex: number
+    goToSlideIndex: number
   }) {
     event && event.preventDefault()
     if (fadeTimeoutId) {
       clearTimeout(fadeTimeoutId)
     }
     const fading = Array(slides.length).fill(0)
-    fading[currentSlideIndex] = -1
-    fading[nextSlideIndex] = 1
+    fading[slideIndex] = -1
+    fading[goToSlideIndex] = 1
     setIsFading(fading)
-    requestAnimationFrame(() => setSlideIndex(getSlideIndex(nextSlideIndex)))
+    requestAnimationFrame(() => setSlideIndex(goToSlideIndex))
     setFadeTimeoutId(
       setTimeout(() => {
         requestAnimationFrame(() => setIsFading(Array(slides.length).fill(0)))
@@ -82,13 +80,11 @@ function Slideshow({ slides, slug }: Props) {
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () =>
       handleFadeTransition({
-        currentSlideIndex: slideIndex,
-        nextSlideIndex: getSlideIndex(slideIndex + 1),
+        goToSlideIndex: nextSlideIndex,
       }),
     onSwipedRight: () =>
       handleFadeTransition({
-        currentSlideIndex: slideIndex,
-        nextSlideIndex: getSlideIndex(slideIndex - 1),
+        goToSlideIndex: previousSlideIndex,
       }),
     delta: 8,
     swipeDuration: 500,
@@ -101,67 +97,71 @@ function Slideshow({ slides, slug }: Props) {
       <figure {...swipeHandlers}>
         <div
           ref={heightRef}
-          className={
-            'flex justify-between relative min-w-min bg-extra-light-gray'
-          }
+          className={'flex justify-between relative min-w-min bg-zinc-100'}
         >
           <button
             className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20 z-30"
+            title={`Go to slide ${previousSlideIndex + 1}`}
             onClick={(event) =>
               handleFadeTransition({
                 event,
-                currentSlideIndex: slideIndex,
-                nextSlideIndex: getSlideIndex(slideIndex - 1),
+                goToSlideIndex: previousSlideIndex,
               })
             }
           >
-            <div className="absolute -top-1  w-16 h-20 bg-extra-light-gray opacity-60"></div>
+            <div className="absolute -top-1  w-16 h-20 bg-zinc-100 opacity-60"></div>
             <div className="ml-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
 
-          {slides.map((slide, index) => (
-            <NextImage
-              style={{
-                maxHeight: height === undefined ? '100vh' : `${height}px`,
-                transitionDuration: `${FADE_SPEED}ms`,
-              }}
-              className={`!bg-auto object-contain ${getFadeCSS({
-                index,
-              })}`}
-              // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
-              // cover for some reason.
-              alt="slideshow"
-              priority={[
-                slideIndex,
-                nextSlideIndex,
-                previousSlideIndex,
-              ].includes(index)}
-              key={slide.url}
-              src={slide.url}
-              width={slide?.width}
-              height={slide?.height}
-              placeholder={BLUR_SIZE ? 'blur' : 'empty'}
-              blurDataURL={slide?.blurDataURL}
-              sizes="100vw"
-            />
-          ))}
+          {slides.map(
+            (slide, index) =>
+              ([slideIndex, nextSlideIndex, previousSlideIndex].some(
+                (i) => index === i
+              ) ||
+                isFading[index] !== 0) && (
+                <NextImage
+                  style={{
+                    maxHeight: height === undefined ? '100vh' : `${height}px`,
+                    transitionDuration: `${FADE_SPEED}ms`,
+                  }}
+                  className={`!bg-auto object-contain ${getFadeCSS({
+                    index,
+                  })}`}
+                  // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
+                  // cover for some reason.
+                  alt="slideshow"
+                  priority={[
+                    slideIndex,
+                    nextSlideIndex,
+                    previousSlideIndex,
+                  ].includes(index)}
+                  key={slide.url}
+                  src={slide.url}
+                  width={slide?.width}
+                  height={slide?.height}
+                  placeholder={BLUR_SIZE ? 'blur' : 'empty'}
+                  blurDataURL={slide?.blurDataURL}
+                  sizes="100vw"
+                />
+              )
+          )}
           <button
             className="absolute top-[calc(50%_-_2rem)] right-0 w-16 h-20 z-30"
+            title={`Go to slide ${nextSlideIndex + 1}`}
             onClick={(event) =>
               handleFadeTransition({
                 event,
-                currentSlideIndex: slideIndex,
-                nextSlideIndex: getSlideIndex(slideIndex + 1),
+                goToSlideIndex: nextSlideIndex,
               })
             }
           >
-            <div className="absolute -top-1 w-16 h-20 bg-extra-light-gray opacity-60"></div>
+            <div className="absolute -top-1 w-16 h-20 bg-zinc-100 opacity-60"></div>
             <div className="mr-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
           </button>
         </div>
-        <div className=" bg-extra-light-gray max-w-full">
+        <div className="bg-zinc-100 max-w-full">
           <figcaption
-            className="bg-gray-300 py-1 px-4 mx-auto"
+            className="bg-zinc-300 py-1 px-4 mx-auto"
             style={{
               width: `${
                 height * (Number(slides[0].width) / Number(slides[0].height))
@@ -171,6 +171,29 @@ function Slideshow({ slides, slug }: Props) {
             {/* Using || so empty strings don't collapse */}
             {slides[slideIndex].caption || '\u00A0'}
           </figcaption>
+          <div className="xl:max-w-[80vw] mx-auto p-4">
+            {slides.map((slide, index) => (
+              <button
+                key={slide.url}
+                title={
+                  slide.caption
+                    ? `${index + 1}: ${slide?.caption}`
+                    : `${index + 1}`
+                }
+                className={`w-5 h-5 rounded-full m-1 border-zinc-700 border-4 hover:bg-zinc-100 ${
+                  index === slideIndex ? 'bg-zinc-100' : 'bg-zinc-700'
+                }`}
+                onClick={(event) =>
+                  handleFadeTransition({
+                    event,
+                    goToSlideIndex: index,
+                  })
+                }
+              >
+                {'\u00A0'}
+              </button>
+            ))}
+          </div>
         </div>
       </figure>
     </>

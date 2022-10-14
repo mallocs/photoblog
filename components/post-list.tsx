@@ -4,7 +4,6 @@ import CoverSlide from './cover-slide'
 import Link from 'next/link'
 import type Post from '../interfaces/post'
 import Slideshow from './slideshow'
-import { Fragment } from 'react'
 import SectionSeparator from './section-separator'
 
 type Props = {
@@ -42,8 +41,8 @@ const PostList = ({ posts }: Props) => {
                   />
                 )}
               </div>
-              <div className="max-w-2xl mx-auto">
-                <div className="float-left block mb-6 mr-8">
+              <div className="max-w-2xl mx-auto mx-6">
+                <div className="md:float-left block mb-6 mr-8">
                   <Avatar name={author.name} picture={author.picture} />
                 </div>
                 <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
