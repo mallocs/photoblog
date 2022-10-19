@@ -2,6 +2,8 @@ import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
 import { SlideExternal, SlideMarkdown } from '../interfaces/slide'
+import { slideshowIndexButtonOptions } from '../interfaces/slideshow'
+import PostType from '../interfaces/post'
 
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
 export const postsDirectory = join(process.cwd(), '_posts')
@@ -92,39 +94,33 @@ export function getPostSlideshow({
   return output
 }
 
-export function getPostBySlug(slug: string, fields: string[] = []) {
+export function getPostBySlug(
+  slug: string,
+  fields: string[] = []
+): Partial<PostType> {
   const realSlug = slug.replace(/\.md$/, '')
   const fullPath = join(postsDirectory, `${realSlug}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
 
-  type Items = {
-    [key: string]: string
+  const post = {
+    ...data,
+    slug: realSlug,
+    content,
+    slideshow: {
+      ...(data.slideshow.indexButtonType &&
+        slideshowIndexButtonOptions.includes(
+          data.slideshow.indexButtonType
+        ) && {
+          indexButtonType: data.slideshow.indexButtonType,
+        }),
+      slides: getPostSlideshow(data.slideshow),
+    },
   }
 
-  const items: Items = {}
-
-  // Ensure only the minimal needed data is exposed
-  fields.forEach((field) => {
-    if (field === 'slug') {
-      items[field] = realSlug
-    }
-    if (field === 'content') {
-      items[field] = content
-    }
-
-    if (typeof data[field] !== 'undefined') {
-      items[field] = data[field]
-    }
-    if (field === 'slideshow') {
-      items[field] = {
-        ...data[field],
-        slides: getPostSlideshow(data[field]),
-      }
-    }
-  })
-
-  return items
+  return Object.fromEntries(
+    Object.entries(post).filter(([key]) => fields.includes(key))
+  )
 }
 
 export function getAllPosts(fields: string[] = []) {

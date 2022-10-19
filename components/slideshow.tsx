@@ -3,10 +3,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import { default as NextImage } from 'next/future/image'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
+import { SlideshowIndexButton } from '../interfaces/slideshow'
+
 import { BLUR_SIZE, FADE_SPEED } from '../lib/constants'
 
 type Props = {
   slides: SlideExternal[]
+  indexButtonType?: SlideshowIndexButton
   slug: string
 }
 
@@ -15,7 +18,42 @@ type Props = {
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
 
-function Slideshow({ slides, slug }: Props) {
+function makeSlideshowButtonCSS({ isPressed = false, type }): string {
+  if (type === 'circles') {
+    return makeCircleSlideshowButtonCSS({ isPressed })
+  }
+  if (type === 'images') {
+    return makeImgSlideshowButtonCSS({ isPressed })
+  }
+  return ''
+}
+
+function makeCircleSlideshowButtonCSS({
+  isPressed = false,
+}: {
+  isPressed: boolean
+}): string {
+  return `w-5 h-5 rounded-full m-1 border-zinc-700 border-4 hover:bg-zinc-100 ${
+    isPressed ? 'bg-zinc-100' : 'bg-zinc-700'
+  }`
+}
+
+function makeImgSlideshowButtonCSS({
+  isPressed = false,
+}: {
+  isPressed: boolean
+}): string {
+  return (
+    `m-2 bg-no-repeat bg-cover bg-center shadow-[3px_3px_5px_1px] shadow-zinc-700 ` +
+    `${
+      isPressed
+        ? 'border-2 shadow-[1px_1px_5px_-1px]'
+        : 'hover:border-2 hover:shadow-[1px_1px_5px_-1px]'
+    }`
+  )
+}
+
+function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
   const [height, setHeight] = useState(undefined)
   const heightRef = useRef(null)
 
@@ -168,7 +206,7 @@ function Slideshow({ slides, slug }: Props) {
               }px`,
             }}
           >
-            {/* Using || so empty strings don't collapse */}
+            {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
             {slides[slideIndex].caption || '\u00A0'}
           </figcaption>
           <div className="xl:max-w-[80vw] mx-auto p-4">
@@ -180,9 +218,19 @@ function Slideshow({ slides, slug }: Props) {
                     ? `${index + 1}: ${slide?.caption}`
                     : `${index + 1}`
                 }
-                className={`w-5 h-5 rounded-full m-1 border-zinc-700 border-4 hover:bg-zinc-100 ${
-                  index === slideIndex ? 'bg-zinc-100' : 'bg-zinc-700'
-                }`}
+                className={makeSlideshowButtonCSS({
+                  isPressed: index === slideIndex,
+                  type: indexButtonType,
+                })}
+                style={
+                  indexButtonType === 'images'
+                    ? {
+                        width: `${BLUR_SIZE}px`,
+                        height: `${BLUR_SIZE}px`,
+                        backgroundImage: `url(${slide?.blurDataURL})`,
+                      }
+                    : {}
+                }
                 onClick={(event) =>
                   handleFadeTransition({
                     event,

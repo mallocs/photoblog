@@ -30,7 +30,7 @@ const nextConfig = {
     _processorWATERMARK_RATIO: 0.15,
     _processorIMAGE_QUALITY: 75,
     _processorSTORE_PICTURES_IN_WEBP: false,
-    _processorBLUR_SIZE: 15,
+    _processorBLUR_SIZE: 40,
   },
 }
 

@@ -12,7 +12,6 @@ type Props = {
 }
 
 export default function Index({ allPosts }: Props) {
-  //console.log(allPosts)
   return (
     <>
       <Layout>

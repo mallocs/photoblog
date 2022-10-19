@@ -1,21 +1,26 @@
 import type Author from './author'
-import type { SlideExternal } from './slide'
+import type { SlideshowExternal } from './slideshow'
 
 type PostType = {
   slug: string
   title: string
   date: string
-  coverImage: string
   author: Author
   excerpt: string
-  slideshow?: {
-    path: string
-    slides: SlideExternal[]
-  }
-  ogImage: {
+  slideshow?: SlideshowExternal
+  ogImage?: {
     url: string
   }
   content: string
 }
+
+// export const postRequiredFields = [
+//   'slug',
+//   'title',
+//   'date',
+//   'author',
+//   'excerpt',
+//   'content',
+// ]
 
 export default PostType

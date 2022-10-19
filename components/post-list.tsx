@@ -20,7 +20,7 @@ const PostList = ({ posts }: Props) => {
               <div className="mb-4 md:mb-0 text-lg">
                 <DateFormatter dateString={date} />
               </div>
-              <h3 className=" text-4xl lg:text-5xl leading-tight">
+              <h3 className="text-4xl lg:text-5xl leading-tight">
                 <Link as={`/posts/${slug}#article-start`} href="/posts/[slug]">
                   <a className="hover:underline">{title}</a>
                 </Link>
@@ -28,7 +28,11 @@ const PostList = ({ posts }: Props) => {
             </div>
             <div className="mb-8">
               {slideshow.slides.length > 1 ? (
-                <Slideshow slides={slideshow.slides} slug={slug} />
+                <Slideshow
+                  slides={slideshow.slides}
+                  indexButtonType={slideshow.indexButtonType}
+                  slug={slug}
+                />
               ) : (
                 <CoverSlide
                   slug={slug}
