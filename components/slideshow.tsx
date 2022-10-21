@@ -147,7 +147,7 @@ function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
               })
             }
           >
-            <div className="absolute -top-1  w-16 h-20 bg-zinc-100 opacity-60"></div>
+            <div className="absolute -top-1 w-16 h-20 bg-zinc-100 opacity-60"></div>
             <div className="ml-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
           </button>
 

@@ -16,8 +16,8 @@ const PostList = ({ posts }: Props) => {
       <div className="mb-8 md:mb-16">
         {posts.map(({ slideshow, slug, title, date, excerpt, author }) => (
           <article key={slug}>
-            <div className="ml-12 mb-8">
-              <div className="mb-4 md:mb-0 text-lg">
+            <div className="mb-2 ml-4">
+              <div className="mb-1 md:mb-0 text-lg">
                 <DateFormatter dateString={date} />
               </div>
               <h3 className="text-4xl lg:text-5xl leading-tight">

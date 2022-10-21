@@ -3,7 +3,7 @@ import { NAME } from '../lib/constants'
 
 const Header = () => {
   return (
-    <h2 className="text-5xl md:text-8xl font-bold tracking-tighter leading-tight md:pr-8">
+    <h2 className="text-5xl md:text-8xl font-bold tracking-tighter leading-tight md:pr-8 px-4">
       <Link href="/">
         <a className="hover:underline">{NAME}</a>
       </Link>
