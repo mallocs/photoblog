@@ -3,7 +3,7 @@ import ErrorPage from 'next/error'
 import { TITLE } from '../../lib/constants'
 import Container from '../../components/container'
 import PostBody from '../../components/post-body'
-import Header from '../../components/header'
+import SiteName from '../../components/site-name'
 import PostHeader from '../../components/post-header'
 import Layout from '../../components/layout'
 import { getPostBySlug, getAllPosts } from '../../lib/api'
@@ -29,7 +29,7 @@ export default function Post({ post, morePosts, preview }: Props) {
   return (
     <Layout preview={preview}>
       <Container>
-        <Header />
+        <SiteName />
         {router.isFallback ? (
           <PostTitle>Loading…</PostTitle>
         ) : (

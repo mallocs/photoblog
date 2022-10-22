@@ -1,10 +1,10 @@
 import Container from '../components/container'
 import PostList from '../components/post-list'
-import Intro from '../components/intro'
+import SiteName from '../components/site-name'
 import Layout from '../components/layout'
 import { getAllPosts } from '../lib/api'
 import Head from 'next/head'
-import Title from '../components/title'
+import { TITLE } from '../lib/constants'
 import Post from '../interfaces/post'
 
 type Props = {
@@ -16,10 +16,10 @@ export default function Index({ allPosts }: Props) {
     <>
       <Layout>
         <Head>
-          <Title />
+          <title>{TITLE}</title>
         </Head>
         <Container>
-          <Intro />
+          <SiteName />
           <PostList posts={allPosts} />
         </Container>
       </Layout>
