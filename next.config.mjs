@@ -1,6 +1,3 @@
-/**
- * @type {import('next').NextConfig}
- */
 const ASSETS_BASE_FOLDER_PATH = 'public/assets/'
 const PROCESSED_DIRECTORY_NAME = 'processed'
 const nextConfig = {

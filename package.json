@@ -11,6 +11,7 @@
     "export": "next build && next export"
   },
   "dependencies": {
+    "@vercel/og": "^0.0.20",
     "cli-progress": "^3.11.2",
     "date-fns": "^2.28.0",
     "gray-matter": "^4.0.3",
