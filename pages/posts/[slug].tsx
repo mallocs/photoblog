@@ -1,6 +1,11 @@
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
-import { TITLE } from '../../lib/constants'
+import {
+  TITLE,
+  OG_EXTERNAL_IMAGES_BASE_URL,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+} from '../../lib/constants'
 import Container from '../../components/container'
 import PostBody from '../../components/post-body'
 import SiteName from '../../components/site-name'
@@ -25,7 +30,6 @@ export default function Post({ post, morePosts, preview }: Props) {
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
-
   return (
     <Layout preview={preview}>
       <Container>
@@ -38,9 +42,23 @@ export default function Post({ post, morePosts, preview }: Props) {
               <Head>
                 <title>{`${TITLE} | ${post.title}`}</title>
                 <meta name="description" content={`${TITLE} | ${post.title}`} />
+
+                <meta
+                  property="og:title"
+                  content={`${TITLE} | ${post.title}`}
+                />
+                <meta
+                  property="og:description"
+                  content={`${post?.excerpt ?? ''}`}
+                />
+                <meta property="og:image:width" content={`${OG_IMAGE_WIDTH}`} />
+                <meta
+                  property="og:image:height"
+                  content={`${OG_IMAGE_HEIGHT}`}
+                />
                 <meta
                   property="og:image"
-                  content={`/api/og?imgUrl=${encodeURIComponent(
+                  content={`${OG_EXTERNAL_IMAGES_BASE_URL}/api/og?imgUrl=${encodeURIComponent(
                     post.slideshow.slides[0].url
                   )}&title=${encodeURIComponent(post.title)}`}
                 />
@@ -74,13 +92,12 @@ type Params = {
 export async function getStaticProps({ params }: Params) {
   const post = getPostBySlug(params.slug, [
     'title',
+    'excerpt',
     'date',
     'slideshow',
     'slug',
     'author',
     'content',
-    'ogImage',
-    'coverImage',
   ])
   const content = await markdownToHtml(post.content || '')
 

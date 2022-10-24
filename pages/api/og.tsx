@@ -1,6 +1,10 @@
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
-import { OG_EXTERNAL_IMAGES_BASE_URL } from '../../lib/constants'
+import {
+  OG_EXTERNAL_IMAGES_BASE_URL,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+} from '../../lib/constants'
 
 export const config = {
   runtime: 'experimental-edge',
@@ -27,8 +31,8 @@ export default async function handler(req: NextRequest) {
         }}
       >
         <img
-          width="1200"
-          height="630"
+          width={`${OG_IMAGE_WIDTH}`}
+          height={`${OG_IMAGE_HEIGHT}`}
           src={`${OG_EXTERNAL_IMAGES_BASE_URL}${imgUrl}`}
           alt={title}
           style={{
@@ -69,8 +73,8 @@ export default async function handler(req: NextRequest) {
       </div>
     ),
     {
-      width: 1200,
-      height: 630,
+      width: OG_IMAGE_WIDTH,
+      height: OG_IMAGE_HEIGHT,
     }
   )
 }
