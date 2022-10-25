@@ -1,5 +1,5 @@
 // import Link from 'next/link'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import { default as NextImage } from 'next/future/image'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
@@ -54,13 +54,6 @@ function makeImgSlideshowButtonCSS({
 }
 
 function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
-  const [height, setHeight] = useState(undefined)
-  const heightRef = useRef(null)
-
-  useEffect(() => {
-    setHeight(heightRef.current.clientHeight)
-  }, [])
-
   const [slideIndex, setSlideIndex] = useState(0)
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -133,10 +126,7 @@ function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
   return (
     <>
       <figure {...swipeHandlers}>
-        <div
-          ref={heightRef}
-          className={'flex justify-between relative min-w-min bg-zinc-100'}
-        >
+        <div className={'flex justify-center relative min-w-min bg-zinc-100'}>
           <button
             className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20 z-30"
             title={`Go to slide ${previousSlideIndex + 1}`}
@@ -159,12 +149,13 @@ function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
                 isFading[index] !== 0) && (
                 <NextImage
                   style={{
-                    maxHeight: height === undefined ? '100vh' : `${height}px`,
                     transitionDuration: `${FADE_SPEED}ms`,
                   }}
-                  className={`!bg-auto object-contain ${getFadeCSS({
-                    index,
-                  })}`}
+                  className={`!bg-auto max-h-screen object-contain ${getFadeCSS(
+                    {
+                      index,
+                    }
+                  )}`}
                   // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
                   // cover for some reason.
                   alt="slideshow"
@@ -200,16 +191,21 @@ function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
         <div className="bg-zinc-100 max-w-full">
           <figcaption
             className="bg-zinc-300 py-1 px-4 mx-auto"
+            // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
-              width: `${
-                height * (Number(slides[0].width) / Number(slides[0].height))
-              }px`,
+              minWidth: `calc(100vh * ${
+                Number(slides[slideIndex].width) /
+                Number(slides[slideIndex].height)
+              })`,
+              width: `calc(100vh * ${
+                Number(slides[0].width) / Number(slides[0].height)
+              })`,
             }}
           >
             {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
             {slides[slideIndex].caption || '\u00A0'}
           </figcaption>
-          <div className="xl:max-w-[80vw] mx-auto p-4">
+          <div className="xl:max-w-[80vw] mx-auto w-fit p-4">
             {slides.map((slide, index) => (
               <button
                 key={slide.url}
