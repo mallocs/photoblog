@@ -20,7 +20,9 @@ module.exports = {
         tight: 1.2,
       },
       fontFamily: {
-        'site-name': ['Kalam'],
+        /* ending a fontFamily tag name with block-google or optional-google will trigger the link
+        tag to be automatically included but only for the first entry in the value array */
+        'site-name-block-google': ['Kalam'],
         'site-suffix': ['Helvetica'],
       },
       fontSize: {

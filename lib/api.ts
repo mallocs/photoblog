@@ -88,7 +88,7 @@ export function getPostSlideshow({
       width: manifest[data.filename].width,
       height: manifest[data.filename].height,
       blurDataURL: manifest[data.filename].blurDataURL,
-      sizesString: manifest[data.filename].sizesString,
+      //  sizesString: manifest[data.filename].sizesString,
     }))
   }
   return output

@@ -398,7 +398,6 @@ async function processor(opts = {}) {
           `${filename}-w${width}.${extension.toLowerCase()}`
         )
       }
-      const isPortraitMode = mainMetadata.height > mainMetadata.width
       directoryData[file] = {
         ...directoryData[file],
         url: path.join(slideshowUrlBase, fileDirectory, file),
@@ -412,7 +411,6 @@ async function processor(opts = {}) {
         //   ''
         // ),
         widthsToUrls,
-        sizesString: isPortraitMode ? `32vw` : `80vw`,
       }
     }
     let manifest = JSON.stringify(directoryData, null, 4)

@@ -1,10 +1,9 @@
 ---
 title: 'More Goats'
 excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus.'
-coverImage: '/assets/blog/preview/cover.jpg'
 date: '2021-03-16T05:35:07.322Z'
 slideshow:
-  path: '20120820-goat_life'
+  path: '20220820-goats'
   slides:
     - 
       filename: '37074396272_9287cff838_o.jpg'
@@ -14,9 +13,7 @@ slideshow:
       caption: 'Egestas tellus rutrum tellus pellentesque.'
 author:
   name: Joe
-  picture: '/assets/blog/authors/joe.jpeg'
-ogImage:
-  url: '/assets/blog/preview/cover.jpg'
+  picture: '/assets/authors/joe.jpeg'
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus. Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.

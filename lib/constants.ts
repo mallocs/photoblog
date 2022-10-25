@@ -1,8 +1,8 @@
 import config from '../next.config.mjs'
 
 export const SOURCE_URL = 'https://www.gitlab.com/mallocs'
-export const NAME = 'mallocs'
-export const NAME_SUFFIX = '.net'
+export const NAME = 'Photo'
+export const NAME_SUFFIX = 'blog'
 export const TITLE = `${NAME}${NAME_SUFFIX} photoblog`
 export const SUMMARY = ''
 export const FOOTER_MESSAGE = '<a href="http://mallocs.net">mallocs</a> © 2022'

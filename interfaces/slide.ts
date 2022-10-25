@@ -11,6 +11,5 @@ export type SlideExternal = {
   sizes?: string
   width?: string
   height?: string
-  sizesString?: string
   blurDataURL?: string
 }
