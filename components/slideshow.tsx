@@ -11,6 +11,7 @@ type Props = {
   slides: SlideExternal[]
   indexButtonType?: SlideshowIndexButton
   slug: string
+  priority: boolean
 }
 
 // const loader = ({ src, width, quality }) => {
@@ -53,7 +54,12 @@ function makeImgSlideshowButtonCSS({
   )
 }
 
-function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
+function Slideshow({
+  slides,
+  indexButtonType = 'circles',
+  slug,
+  priority,
+}: Props) {
   const [slideIndex, setSlideIndex] = useState(0)
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -159,11 +165,7 @@ function Slideshow({ slides, indexButtonType = 'circles', slug }: Props) {
                   // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
                   // cover for some reason.
                   alt="slideshow"
-                  priority={[
-                    slideIndex,
-                    nextSlideIndex,
-                    previousSlideIndex,
-                  ].includes(index)}
+                  priority={priority && slideIndex === 0}
                   key={slide.url}
                   src={slide.url}
                   width={slide?.width}
