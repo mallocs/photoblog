@@ -132,7 +132,7 @@ function Slideshow({
   return (
     <>
       <figure {...swipeHandlers}>
-        <div className={'flex justify-center relative min-w-min bg-zinc-100'}>
+        <div className={'flex items-end justify-center relative bg-zinc-100'}>
           <button
             className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20 z-30"
             title={`Go to slide ${previousSlideIndex + 1}`}
@@ -155,13 +155,15 @@ function Slideshow({
                 isFading[index] !== 0) && (
                 <NextImage
                   style={{
+                    // try to lock the height based on the first slide
+                    maxHeight: `min(100vh, calc(100vw * ${
+                      Number(slides[0].height) / Number(slides[0].width)
+                    }))`,
                     transitionDuration: `${FADE_SPEED}ms`,
                   }}
-                  className={`!bg-auto max-h-screen object-contain ${getFadeCSS(
-                    {
-                      index,
-                    }
-                  )}`}
+                  className={`!bg-auto object-contain ${getFadeCSS({
+                    index,
+                  })}`}
                   // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
                   // cover for some reason.
                   alt="slideshow"
@@ -195,11 +197,11 @@ function Slideshow({
             className="bg-zinc-300 py-1 px-4 mx-auto"
             // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
-              minWidth: `calc(100vh * ${
+              maxWidth: `100vw`,
+              width: `max(calc(100vh * ${
                 Number(slides[slideIndex].width) /
                 Number(slides[slideIndex].height)
-              })`,
-              width: `calc(100vh * ${
+              }), calc(100vh * ${
                 Number(slides[0].width) / Number(slides[0].height)
               })`,
             }}
