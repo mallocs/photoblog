@@ -19,6 +19,18 @@ type Props = {
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
 
+const LeftArrow = () => (
+  <svg viewBox="-2 -1 30 50" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 44 0 24 20 4l2.8 2.85L5.65 24 22.8 41.15Z" />
+  </svg>
+)
+
+const RightArrow = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="6 -2 30 50">
+    <path d="m15.2 43.9-2.8-2.85L29.55 23.9 12.4 6.75l2.8-2.85 20 20Z" />
+  </svg>
+)
+
 function makeSlideshowButtonCSS({ isPressed = false, type }): string {
   if (type === 'circles') {
     return makeCircleSlideshowButtonCSS({ isPressed })
@@ -134,17 +146,20 @@ function Slideshow({
       <figure {...swipeHandlers}>
         <div className={'flex items-end justify-center relative bg-zinc-100'}>
           <button
-            className="absolute top-[calc(50%_-_2rem)] left-0 w-16 h-20 z-30"
+            className={
+              'absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] left-0 z-30 w-12 h-18 md:w-20 md:h-36' +
+              ' bg-opacity-40 bg-zinc-100 hover:bg-zinc-300 hover:bg-opacity-80 p-2'
+            }
             title={`Go to slide ${previousSlideIndex + 1}`}
-            onClick={(event) =>
+            onClick={(event) => {
+              event.currentTarget.blur()
               handleFadeTransition({
                 event,
                 goToSlideIndex: previousSlideIndex,
               })
-            }
+            }}
           >
-            <div className="absolute -top-1 w-16 h-20 bg-zinc-100 opacity-60"></div>
-            <div className="ml-4 rotate-45 border-black border-b-4 border-l-4 p-4 inline-block"></div>
+            <LeftArrow />
           </button>
 
           {slides.map(
@@ -161,11 +176,11 @@ function Slideshow({
                     }))`,
                     transitionDuration: `${FADE_SPEED}ms`,
                   }}
+                  // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
+                  // cover for some reason.
                   className={`!bg-auto object-contain ${getFadeCSS({
                     index,
                   })}`}
-                  // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
-                  // cover for some reason.
                   alt="slideshow"
                   priority={priority && slideIndex === 0}
                   key={slide.url}
@@ -179,17 +194,19 @@ function Slideshow({
               )
           )}
           <button
-            className="absolute top-[calc(50%_-_2rem)] right-0 w-16 h-20 z-30"
+            className={
+              'absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 z-30 w-12 h-18 md:w-20 md:h-36' +
+              ' bg-opacity-40 bg-zinc-100 hover:bg-zinc-300 hover:bg-opacity-80 p-2'
+            }
             title={`Go to slide ${nextSlideIndex + 1}`}
-            onClick={(event) =>
+            onClick={(event) => {
               handleFadeTransition({
                 event,
                 goToSlideIndex: nextSlideIndex,
               })
-            }
+            }}
           >
-            <div className="absolute -top-1 w-16 h-20 bg-zinc-100 opacity-60"></div>
-            <div className="mr-4 rotate-45 border-black border-t-4 border-r-4 p-4 inline-block"></div>
+            <RightArrow />
           </button>
         </div>
         <div className="bg-zinc-100 max-w-full">

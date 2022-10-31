@@ -2,6 +2,7 @@ import Container from '../components/container'
 import PostList from '../components/post-list'
 import SiteName from '../components/site-name'
 import Layout from '../components/layout'
+import Navbar from '../components/navbar'
 import { getAllPosts } from '../lib/api'
 import Head from 'next/head'
 import { TITLE } from '../lib/constants'
@@ -20,6 +21,7 @@ export default function Index({ allPosts }: Props) {
         </Head>
         <Container>
           <SiteName />
+          <Navbar />
           <PostList posts={allPosts} />
         </Container>
       </Layout>

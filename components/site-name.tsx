@@ -5,12 +5,12 @@ import { SUMMARY, NAME, NAME_SUFFIX } from '../lib/constants'
 const SiteName = () => {
   return (
     <>
-      <section className="flex-col md:flex-row flex items-center md:justify-between mx-5 mt-4 mb-16 md:mb-12">
-        <h1 className="font-site-name-block-google text-5xl md:text-8xl font-bold tracking-tight leading-tight md:pr-8">
+      <section className="flex justify-center mt-6 md:mx-7 lg:justify-start">
+        <h1 className="font-site-name-block-google text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-none md:pr-8 -mb-2 md:-mb-4">
           <NextLink href="/">
-            <a className="hover:underline">
+            <a>
               {NAME}
-              <span className="font-site-suffix font-thin text-4xl tracking-normal uppercase">
+              <span className="font-site-suffix font-thin text-3xl md:text-5xl lg:text-6xl tracking-normal">
                 {NAME_SUFFIX}
               </span>
             </a>

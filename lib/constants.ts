@@ -1,3 +1,4 @@
+// import { IoLogoGitlab } from 'react-icons/io5'
 import config from '../next.config.mjs'
 
 export const SOURCE_URL = 'https://www.gitlab.com/mallocs'
@@ -6,6 +7,17 @@ export const NAME_SUFFIX = 'blog'
 export const TITLE = `${NAME}${NAME_SUFFIX} photoblog`
 export const SUMMARY = ''
 export const FOOTER_MESSAGE = '<a href="http://mallocs.net">mallocs</a> © 2022'
+export const NAVBAR_LINKS = [
+  {
+    name: 'Gitlab',
+    url: new URL('https://gitlab.com/mallocs'),
+    //    Component: IoLogoGitlab,
+  },
+  {
+    name: 'Github',
+    url: new URL('https://github.com/mallocs'),
+  },
+]
 const { protocol, hostname } = config?.images?.remotePatterns[0]
 export const OG_EXTERNAL_IMAGES_BASE_URL =
   protocol && hostname ? `${protocol}://${hostname}` : ''
