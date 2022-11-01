@@ -47,7 +47,7 @@ function makeCircleSlideshowButtonCSS({
   isPressed: boolean
 }): string {
   return `w-5 h-5 rounded-full m-1 border-zinc-700 border-4 hover:bg-zinc-100 ${
-    isPressed ? 'bg-zinc-100' : 'bg-zinc-700'
+    isPressed ? ' bg-zinc-100' : 'bg-zinc-700'
   }`
 }
 
@@ -57,14 +57,19 @@ function makeImgSlideshowButtonCSS({
   isPressed: boolean
 }): string {
   return (
-    `m-2 bg-no-repeat bg-cover bg-center shadow-[3px_3px_5px_1px] shadow-zinc-700 ` +
+    `m-2 bg-no-repeat bg-cover bg-center shadow-[3px_3px_5px_1px] shadow-zinc-700 dark:shadow-slate-400` +
     `${
       isPressed
-        ? 'border-2 shadow-[1px_1px_5px_-1px]'
-        : 'hover:border-2 hover:shadow-[1px_1px_5px_-1px]'
+        ? ' border-2 shadow-[1px_1px_5px_-1px]'
+        : ' hover:border-2 hover:shadow-[1px_1px_5px_-1px]'
     }`
   )
 }
+
+const sliderButtonCommonClassNames =
+  'absolute z-30 w-12 h-18 md:w-20 md:h-36 p-2' +
+  ' bg-opacity-40 bg-zinc-200 hover:bg-zinc-300 hover:bg-opacity-80' +
+  ' dark:bg-opacity-40 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:hover:bg-opacity-80 dark:fill-zinc-400'
 
 function Slideshow({
   slides,
@@ -89,11 +94,11 @@ function Slideshow({
     let css = ` transition-opacity ease-out`
     if (isFading[index] === -1) {
       // fading out
-      css += index === slideIndex ? ' static opacity-100' : '  static opacity-0'
+      css += index === slideIndex ? ' static opacity-100' : ' static opacity-0'
     } else if (isFading[index] === 1) {
       // fading in
       css +=
-        index === slideIndex ? '  absolute opacity-100' : '  absolute opacity-0'
+        index === slideIndex ? ' absolute opacity-100' : ' absolute opacity-0'
     } else if (index === slideIndex) {
       // current slide, done fading
       css += ' static opacity-100'
@@ -144,12 +149,13 @@ function Slideshow({
   return (
     <>
       <figure {...swipeHandlers}>
-        <div className={'flex items-end justify-center relative bg-zinc-100'}>
+        <div
+          className={
+            'flex items-end justify-center relative bg-zinc-200 dark:bg-zinc-900'
+          }
+        >
           <button
-            className={
-              'absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] left-0 z-30 w-12 h-18 md:w-20 md:h-36' +
-              ' bg-opacity-40 bg-zinc-100 hover:bg-zinc-300 hover:bg-opacity-80 p-2'
-            }
+            className={`top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] left-0 ${sliderButtonCommonClassNames}`}
             title={`Go to slide ${previousSlideIndex + 1}`}
             onClick={(event) => {
               event.currentTarget.blur()
@@ -183,6 +189,7 @@ function Slideshow({
                   })}`}
                   alt="slideshow"
                   priority={priority && slideIndex === 0}
+                  loading="eager"
                   key={slide.url}
                   src={slide.url}
                   width={slide?.width}
@@ -194,10 +201,7 @@ function Slideshow({
               )
           )}
           <button
-            className={
-              'absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 z-30 w-12 h-18 md:w-20 md:h-36' +
-              ' bg-opacity-40 bg-zinc-100 hover:bg-zinc-300 hover:bg-opacity-80 p-2'
-            }
+            className={`absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 ${sliderButtonCommonClassNames}`}
             title={`Go to slide ${nextSlideIndex + 1}`}
             onClick={(event) => {
               handleFadeTransition({
@@ -209,9 +213,9 @@ function Slideshow({
             <RightArrow />
           </button>
         </div>
-        <div className="bg-zinc-100 max-w-full">
+        <div className="bg-zinc-200 dark:bg-zinc-900 max-w-full">
           <figcaption
-            className="bg-zinc-300 py-1 px-4 mx-auto"
+            className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto"
             // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
               maxWidth: `100vw`,

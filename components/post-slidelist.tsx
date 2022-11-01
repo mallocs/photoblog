@@ -23,7 +23,7 @@ const PostSlideList = ({ slides }: Props) => {
                 blurDataURL={slide?.blurDataURL}
                 sizes="100vw"
               />
-              <figcaption className={'bg-gray-300 py-1 px-4'}>
+              <figcaption className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto">
                 {slide?.caption || '\u00A0'}
               </figcaption>
             </figure>

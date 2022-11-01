@@ -21,7 +21,7 @@ const PostHeader = ({ title, coverSlide, date, author }: Props) => {
       <span className="relative">
         <a id="article-start" className="absolute -top-[50vh]  " />
       </span>
-      <div className="max-w-3xl mx-auto px-4">
+      <div className="max-w-3xl mx-auto px-4 dark:text-zinc-100">
         <PostTitle>{title}</PostTitle>
 
         <div className="block mb-6">

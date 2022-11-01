@@ -18,10 +18,10 @@ const PostList = ({ posts }: Props) => {
           ({ slideshow, slug, title, date, excerpt, author }, index) => (
             <article key={slug}>
               <div className="mb-2 ml-4">
-                <div className="mb-1 md:mb-0 text-lg">
+                <div className="dark:text-zinc-100 mb-1 md:mb-0 text-lg">
                   <DateFormatter dateString={date} />
                 </div>
-                <h3 className="text-4xl lg:text-5xl leading-tight">
+                <h3 className="dark:text-zinc-100 text-4xl lg:text-5xl leading-tight">
                   <Link
                     as={`/posts/${slug}#article-start`}
                     href="/posts/[slug]"
@@ -46,7 +46,7 @@ const PostList = ({ posts }: Props) => {
                   />
                 )}
               </div>
-              <div className="mx-6">
+              <div className="mx-6 dark:text-zinc-100">
                 <div className="max-w-2xl mx-auto">
                   <div className="mb-3 mr-8 sm:float-left">
                     <Avatar name={author.name} picture={author.picture} />

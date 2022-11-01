@@ -11,6 +11,7 @@ import PostBody from '../../components/post-body'
 import SiteName from '../../components/site-name'
 import PostHeader from '../../components/post-header'
 import Layout from '../../components/layout'
+import Navbar from '../../components/navbar'
 import { getPostBySlug, getAllPosts } from '../../lib/api'
 import PostTitle from '../../components/post-title'
 import Head from 'next/head'
@@ -34,6 +35,7 @@ export default function Post({ post, morePosts, preview }: Props) {
     <Layout preview={preview}>
       <Container>
         <SiteName />
+        <Navbar />
         {router.isFallback ? (
           <PostTitle>Loading…</PostTitle>
         ) : (
