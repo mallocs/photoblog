@@ -1,6 +1,6 @@
 // import Link from 'next/link'
 import React, { useState } from 'react'
-import { default as NextImage } from 'next/future/image'
+import { default as NextImage } from 'next/image'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
 import { SlideshowIndexButton } from '../interfaces/slideshow'
@@ -192,8 +192,8 @@ function Slideshow({
                   loading="eager"
                   key={slide.url}
                   src={slide.url}
-                  width={slide?.width}
-                  height={slide?.height}
+                  width={Number(slide?.width)}
+                  height={Number(slide?.height)}
                   placeholder={BLUR_SIZE ? 'blur' : 'empty'}
                   blurDataURL={slide?.blurDataURL}
                   sizes="100vw"

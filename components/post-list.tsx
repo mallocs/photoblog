@@ -23,10 +23,11 @@ const PostList = ({ posts }: Props) => {
                 </div>
                 <h3 className="dark:text-zinc-100 text-4xl lg:text-5xl leading-tight">
                   <Link
+                    className="hover:underline"
                     as={`/posts/${slug}#article-start`}
                     href="/posts/[slug]"
                   >
-                    <a className="hover:underline">{title}</a>
+                    {title}
                   </Link>
                 </h3>
               </div>

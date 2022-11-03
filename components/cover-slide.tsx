@@ -1,4 +1,4 @@
-import { default as NextImage } from 'next/future/image'
+import { default as NextImage } from 'next/image'
 import Link from 'next/link'
 import { SlideExternal } from '../interfaces/slide'
 
@@ -15,8 +15,8 @@ const CoverSlide = ({ title, slide, slug }: Props) => {
       alt={`Cover image for ${title}`}
       key={slide.url}
       src={slide.url}
-      width={slide?.width}
-      height={slide?.height}
+      width={Number(slide?.width)}
+      height={Number(slide?.height)}
       placeholder="blur"
       blurDataURL={slide?.blurDataURL}
       sizes="100vw"
@@ -26,7 +26,7 @@ const CoverSlide = ({ title, slide, slug }: Props) => {
     <div className="sm:mx-0">
       {slug ? (
         <Link as={`/posts/${slug}`} href="/posts/[slug]">
-          <a aria-label={title}>{image}</a>
+          {image}
         </Link>
       ) : (
         image

@@ -1,4 +1,4 @@
-import { default as NextImage } from 'next/future/image'
+import { default as NextImage } from 'next/image'
 import { SlideExternal } from '../interfaces/slide'
 
 type Props = {
@@ -17,8 +17,8 @@ const PostSlideList = ({ slides }: Props) => {
                 alt="slideshow"
                 key={slide.url}
                 src={slide.url}
-                width={slide?.width}
-                height={slide?.height}
+                width={Number(slide?.width)}
+                height={Number(slide?.height)}
                 placeholder="blur"
                 blurDataURL={slide?.blurDataURL}
                 sizes="100vw"
