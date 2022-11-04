@@ -60,8 +60,8 @@ function makeCircleSlideshowButtonCSS({
 }: {
   isPressed: boolean
 }): string {
-  return `w-5 h-5 rounded-full m-1 border-zinc-700 border-4 hover:bg-zinc-100 ${
-    isPressed ? ' bg-zinc-100' : 'bg-zinc-700'
+  return `w-5 h-5 rounded-full m-1 border-zinc-600 border-4 hover:bg-zinc-200 ${
+    isPressed ? ' bg-zinc-200' : 'bg-zinc-600'
   }`
 }
 
@@ -83,7 +83,7 @@ function makeImgSlideshowButtonCSS({
 const sliderButtonCommonClassNames =
   'absolute z-30 w-12 h-18 md:w-20 md:h-36 p-2' +
   ' bg-opacity-40 bg-zinc-200 hover:bg-zinc-300 hover:bg-opacity-80' +
-  ' dark:bg-opacity-40 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:hover:bg-opacity-80 dark:fill-zinc-400'
+  ' dark:bg-opacity-40 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:hover:bg-opacity-80 dark:fill-zinc-400'
 
 function Slideshow({
   slides,
@@ -165,7 +165,7 @@ function Slideshow({
       <figure {...swipeHandlers}>
         <div
           className={
-            'flex items-end justify-center relative bg-zinc-200 dark:bg-zinc-900'
+            'flex items-end justify-center relative bg-zinc-200 dark:bg-zinc-800'
           }
         >
           <button
@@ -227,7 +227,7 @@ function Slideshow({
             <RightArrow />
           </button>
         </div>
-        <div className="bg-zinc-200 dark:bg-zinc-900 max-w-full">
+        <div className="bg-zinc-200 dark:bg-zinc-800 max-w-full">
           <figcaption
             className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto text-lg"
             // The caption box should have a stable width, but don't let it be less than the current image width.
