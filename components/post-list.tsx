@@ -18,10 +18,10 @@ const PostList = ({ posts }: Props) => {
           ({ slideshow, slug, title, date, excerpt, author }, index) => (
             <article key={slug}>
               <div className="mb-2 ml-4">
-                <div className="dark:text-zinc-100 mb-1 md:mb-0 text-lg">
+                <div className="dark:text-zinc-100 mb-1 md:mb-0 text-lg uppercase">
                   <DateFormatter dateString={date} />
                 </div>
-                <h3 className="dark:text-zinc-100 text-4xl lg:text-5xl leading-tight">
+                <h2 className="dark:text-zinc-100 text-4xl lg:text-5xl leading-tight">
                   <Link
                     className="hover:underline"
                     as={`/posts/${slug}#article-start`}
@@ -29,7 +29,7 @@ const PostList = ({ posts }: Props) => {
                   >
                     {title}
                   </Link>
-                </h3>
+                </h2>
               </div>
               <div className="mb-8">
                 {slideshow.slides.length > 1 ? (

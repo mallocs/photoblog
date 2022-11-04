@@ -81,7 +81,7 @@ export default function Navbar() {
           <li key={name}>
             <a
               href={String(url)}
-              className="mr-4 sm:mr-10 px-4 py-2 uppercase font-sans text-lg font-medium hover:text-zinc-100 hover:bg-zinc-600 rounded"
+              className="mr-4 sm:mr-10 px-4 py-2 uppercase font-sans text-xl font-medium hover:text-zinc-100 hover:bg-zinc-600 rounded"
             >
               {name}
             </a>

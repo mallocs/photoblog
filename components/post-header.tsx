@@ -27,7 +27,7 @@ const PostHeader = ({ title, coverSlide, date, author }: Props) => {
         <div className="block mb-6">
           <Avatar name={author.name} picture={author.picture} />
         </div>
-        <div className="mb-6 text-lg">
+        <div className="mb-6 text-lg uppercase">
           <DateFormatter dateString={date} />
         </div>
       </div>

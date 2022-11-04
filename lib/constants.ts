@@ -23,9 +23,6 @@ export const OG_EXTERNAL_IMAGES_BASE_URL =
   protocol && hostname ? `${protocol}://${hostname}` : ''
 export const OG_IMAGE_HEIGHT = 630
 export const OG_IMAGE_WIDTH = 1200
-export const HOME_OG_IMAGE_URL =
-  'https://og-image.vercel.app/Next.js%20https://og-image.vercel.app/Next.js%20Photoblog%20Starter%20Example.png?theme=light&md=1&fontSize=100px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svgBlog%20Starter%20Example.png?theme=light&md=1&fontSize=100px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg'
-
 export const FADE_SPEED = 900
 export const SLIDESHOW_FOLDER_PATH = config.env._processorSLIDESHOW_FOLDER_PATH
 export const SLIDESHOW_URL_BASE = config.env._processorSLIDESHOW_URL_BASE
