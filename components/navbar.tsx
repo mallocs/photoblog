@@ -42,9 +42,7 @@ const SunIcon = () => (
 )
 
 function ColorModeButton() {
-  const [theme, setTheme] = useState(
-    (typeof window !== 'undefined' && localStorage.getItem('theme')) || 'light'
-  )
+  const [theme, setTheme] = useState(undefined)
   const toggleTheme = () => {
     if (theme === 'light') {
       setTheme('dark')
@@ -54,7 +52,11 @@ function ColorModeButton() {
   }
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('theme', theme)
+      if (theme === undefined) {
+        setTheme(localStorage.getItem('theme') || 'light')
+      } else {
+        window.localStorage.setItem('theme', theme)
+      }
     }
     if (theme === 'dark') {
       document.documentElement.classList.add('dark')
@@ -62,7 +64,7 @@ function ColorModeButton() {
       document.documentElement.classList.remove('dark')
     }
   }, [theme])
-  return (
+  return typeof theme === 'undefined' ? null : (
     <button
       className="px-1 py-1 rounded w-9 h-9 align-middle text-zinc-100 hover:bg-zinc-600"
       title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
