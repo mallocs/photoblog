@@ -11,13 +11,15 @@ type Props = {
 const CoverSlide = ({ title, slide, slug }: Props) => {
   const image = (
     <NextImage
-      className={'object-contain w-full max-h-[180vmin]'}
+      // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
+      // cover for some reason.
+      className={'!bg-auto object-contain w-full max-h-[100vh]'}
       alt={`Cover image for ${title}`}
       key={slide.url}
       src={slide.url}
       width={Number(slide?.width)}
       height={Number(slide?.height)}
-      placeholder="blur"
+      placeholder={slide?.blurDataURL ? 'blur' : 'empty'}
       blurDataURL={slide?.blurDataURL}
       sizes="100vw"
     />
