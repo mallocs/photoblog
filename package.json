@@ -7,7 +7,7 @@
     "typecheck": "tsc",
     "lint": "next lint",
     "process": "node ./bin/process.js",
-    "t": "node ./bin/test.js",
+    "exportImages": "npm run process && node ./bin/export.js",
     "export": "next build && next export"
   },
   "dependencies": {

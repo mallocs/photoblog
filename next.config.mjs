@@ -20,7 +20,6 @@ const nextConfig = {
     _processorPROCESSED_DIRECTORY:
       ASSETS_BASE_FOLDER_PATH + PROCESSED_DIRECTORY_NAME,
     _processorRESIZED_DIRECTORY_NAME: 'resized',
-    _processor_EXPORT_IMAGES: false,
     _processorWATERMARK_FILE: ASSETS_BASE_FOLDER_PATH + 'watermark.png',
     _processorWATERMARK_OPACITY: 0.6,
     _processorSATURATION: 1.1,
