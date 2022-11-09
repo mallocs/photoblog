@@ -240,9 +240,11 @@ function Slideshow({
                 Number(slides[0].width) / Number(slides[0].height)
               })`,
             }}
+            dangerouslySetInnerHTML={{
+              __html: slides[slideIndex].caption || '\u00A0',
+            }}
           >
             {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
-            {slides[slideIndex].caption || '\u00A0'}
           </figcaption>
           <div className="xl:max-w-[80vw] mx-auto w-fit p-4">
             {slides.map((slide, index) => (
@@ -250,7 +252,10 @@ function Slideshow({
                 key={slide.url}
                 title={
                   slide.caption
-                    ? `${index + 1}: ${slide?.caption}`
+                    ? `${index + 1}: ${slide?.caption.replace(
+                        /<a .*>(.*)<\/a>/gi,
+                        '$1'
+                      )}`
                     : `${index + 1}`
                 }
                 className={makeSlideshowButtonCSS({

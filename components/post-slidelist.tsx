@@ -23,9 +23,12 @@ const PostSlideList = ({ slides }: Props) => {
                 blurDataURL={slide?.blurDataURL}
                 sizes="100vw"
               />
-              <figcaption className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto">
-                {slide?.caption || '\u00A0'}
-              </figcaption>
+              <figcaption
+                className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto"
+                dangerouslySetInnerHTML={{
+                  __html: slide?.caption || '\u00A0',
+                }}
+              ></figcaption>
             </figure>
           </div>
         ))}
