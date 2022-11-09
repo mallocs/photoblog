@@ -193,16 +193,15 @@ async function processor(opts = {}) {
       const mainTransformer = await sharp(imagePath)
       const mainMetadata = await mainTransformer.metadata()
       mainTransformer.rotate()
+      // account for exif orientation
+      const [mainImageActualHeight, mainImageActualWidth] =
+        mainMetadata.orientation <= 4 || mainMetadata.orientation === undefined
+          ? [mainMetadata.height, mainMetadata.width]
+          : [mainMetadata.width, mainMetadata.height]
 
       if (watermarkFile !== null) {
         const watermarkTransformer = await sharp(watermarkFile)
         const watermarkMetadata = await watermarkTransformer.metadata()
-        // account for exif orientation
-        const [mainImageActualHeight, mainImageActualWidth] =
-          mainMetadata.orientation <= 4 ||
-          mainMetadata.orientation === undefined
-            ? [mainMetadata.height, mainMetadata.width]
-            : [mainMetadata.width, mainMetadata.height]
 
         const [watermarkActualHeight, watermarkActualWidth] =
           watermarkMetadata.orientation <= 4 ||
@@ -268,8 +267,8 @@ async function processor(opts = {}) {
       directoryData[file] = {
         ...directoryData[file],
         url: path.join(slideshowUrlBase, fileDirectory, file),
-        width: mainMetadata.width,
-        height: mainMetadata.height,
+        width: mainImageActualWidth,
+        height: mainImageActualHeight,
       }
     }
     let manifest = JSON.stringify(directoryData, null, 4)
