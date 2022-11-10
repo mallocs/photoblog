@@ -15,7 +15,6 @@ const CoverSlide = ({ title, slide, slug }: Props) => {
       // cover for some reason.
       className={'!bg-auto object-contain w-full max-h-[100vh]'}
       alt={`Cover image for ${title}`}
-      key={slide.url}
       src={slide.url}
       width={Number(slide?.width)}
       height={Number(slide?.height)}

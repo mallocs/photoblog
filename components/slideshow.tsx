@@ -4,7 +4,6 @@ import { default as NextImage } from 'next/image'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
 import { SlideshowIndexButton } from '../interfaces/slideshow'
-
 import { BLUR_SIZE, FADE_SPEED } from '../lib/constants'
 
 type Props = {

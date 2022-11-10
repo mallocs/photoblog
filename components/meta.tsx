@@ -1,6 +1,11 @@
 import Head from 'next/head'
+import { META_DESCRIPTION } from '../lib/constants'
 
-const Meta = () => {
+type Props = {
+  ogImage?: string
+}
+
+const Meta = ({ ogImage }: Props) => {
   return (
     <Head>
       <link
@@ -30,6 +35,8 @@ const Meta = () => {
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
       <meta name="theme-color" content="#000" />
+      <meta name="description" content={META_DESCRIPTION} />
+      <meta property="og:image" content={ogImage} />
     </Head>
   )
 }

@@ -3,7 +3,7 @@ import { NAVBAR_LINKS } from '../lib/constants'
 
 type Link = {
   name: string
-  url: URL
+  url: string
   // Component?: IconType
 }
 
@@ -80,7 +80,7 @@ export default function Navbar() {
         {NAVBAR_LINKS.map(({ name, url }: Link) => (
           <li key={name}>
             <a
-              href={String(url)}
+              href={url}
               className="mr-4 sm:mr-10 px-4 py-2 uppercase font-sans text-xl font-medium hover:text-zinc-100 hover:bg-zinc-600 rounded"
             >
               {name}
