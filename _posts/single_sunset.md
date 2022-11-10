@@ -1,7 +1,7 @@
 ---
 title: 'Single Sunset'
 excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus.'
-date: '2021-10-25T05:35:07.322Z'
+date: '2021-11-20'
 slideshow:
   path: '20211020-single_sunset'
 author:
