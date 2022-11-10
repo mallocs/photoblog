@@ -4,6 +4,7 @@ import { default as NextImage } from 'next/image'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '../interfaces/slide'
 import { SlideshowIndexButton } from '../interfaces/slideshow'
+
 import { BLUR_SIZE, FADE_SPEED } from '../lib/constants'
 
 type Props = {
@@ -205,7 +206,7 @@ function Slideshow({
                   src={slide.url}
                   width={Number(slide?.width)}
                   height={Number(slide?.height)}
-                  placeholder={BLUR_SIZE ? 'blur' : 'empty'}
+                  placeholder={slide?.blurDataURL ? 'blur' : 'empty'}
                   blurDataURL={slide?.blurDataURL}
                   sizes="100vw"
                 />
