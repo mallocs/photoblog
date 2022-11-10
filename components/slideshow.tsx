@@ -22,12 +22,11 @@ type Props = {
 const LeftArrow = () => (
   <svg
     role="img"
-    aria-labelledby="left-arrow-title"
     pointerEvents="none"
     viewBox="-2 -1 30 50"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <title id="left-arrow-title">Left Arrow</title>
+    <title>Left Arrow</title>
     <path d="M20 44 0 24 20 4l2.8 2.85L5.65 24 22.8 41.15Z" />
   </svg>
 )
@@ -35,12 +34,11 @@ const LeftArrow = () => (
 const RightArrow = () => (
   <svg
     role="img"
-    aria-labelledby="right-arrow-title"
     pointerEvents="none"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="6 -2 30 50"
   >
-    <title id="right-arrow-title">Right Arrow</title>
+    <title>Right Arrow</title>
     <path d="m15.2 43.9-2.8-2.85L29.55 23.9 12.4 6.75l2.8-2.85 20 20Z" />
   </svg>
 )
