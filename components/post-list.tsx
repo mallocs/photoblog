@@ -55,7 +55,10 @@ const PostList = ({ posts }: Props) => {
               <div className="mb-3 mr-8 sm:float-left">
                 <Avatar name={author.name} picture={author.picture} />
               </div>
-              <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
+              <div
+                className="text-lg leading-relaxed mb-4"
+                dangerouslySetInnerHTML={{ __html: excerpt }}
+              />
             </div>
           </div>
         </article>
