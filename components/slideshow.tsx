@@ -227,7 +227,7 @@ function Slideshow({
         </div>
         <div className="bg-zinc-200 dark:bg-zinc-800 max-w-full">
           <figcaption
-            className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto text-lg"
+            className="figcaption bg-zinc-300 dark:bg-zinc-600 dark:text-zinc-200 py-1 px-4 mx-auto text-lg"
             // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
               maxWidth: `100vw`,

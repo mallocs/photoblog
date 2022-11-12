@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  a:hover {
+    @apply text-primary dark:text-primaryDark
+  }
+}
+
+@layer components {
+  .figcaption a  {
+    @apply text-primary dark:text-primaryDark
+  }
+  .figcaption a:hover  {
+    @apply underline
+  }
+}

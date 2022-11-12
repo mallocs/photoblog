@@ -6,7 +6,14 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
-      colors: {},
+      colors: {
+        primary: '#E36C05',
+        secondary: '#8e490c',
+        tertiary: '#fff7d6',
+        primaryDark: '#e69043',
+        secondaryDark: '#E36C05',
+        tertiaryDark: '#995F2C',
+      },
       spacing: {
         28: '7rem',
       },

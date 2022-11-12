@@ -64,7 +64,7 @@ function ColorModeButton() {
   }, [theme])
   return typeof theme === 'undefined' ? null : (
     <button
-      className="px-1 py-1 rounded w-9 h-9 align-middle text-zinc-100 hover:bg-zinc-600"
+      className="px-1 py-1 rounded w-9 h-9 align-middle text-zinc-100 hover:bg-zinc-600 hover:text-primary dark:hover:text-zinc-100"
       title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
       onClick={toggleTheme}
     >
@@ -75,13 +75,13 @@ function ColorModeButton() {
 
 export default function Navbar() {
   return (
-    <nav className="flex justify-between bg-zinc-400 h-11 px-2 sm:px-8 mb-8 md:mb-12">
-      <ul className="flex items-center justify-start">
+    <nav className="flex justify-between bg-zinc-600 h-11 px-2 sm:px-8 mb-8 md:mb-12">
+      <ul className="flex items-center justify-start text-zinc-50 ">
         {NAVBAR_LINKS.map(({ name, url }: Link) => (
           <li key={name}>
             <a
               href={url}
-              className="mr-4 sm:mr-10 px-4 py-2 uppercase font-sans text-xl font-medium hover:text-zinc-100 hover:bg-zinc-600 rounded"
+              className="mr-4 sm:mr-10 px-4 py-2 uppercase font-sans text-xl font-medium text-zinc-50 hover:bg-zinc-600 rounded"
             >
               {name}
             </a>
