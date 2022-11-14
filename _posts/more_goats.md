@@ -4,6 +4,7 @@ excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmo
 date: '2021-03-16'
 slideshow:
   path: '20220820-goats'
+  indexButtonType: 'dots'
   slides:
     - 
       filename: '37074396272_9287cff838_o.jpg'

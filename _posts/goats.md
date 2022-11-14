@@ -4,8 +4,7 @@ excerpt: 'Tristique senectus et netus et malesuada fames ac turpis. Ridiculous m
 date: '2022-08-20'
 slideshow:
   path: '20220820-goats'
-  indexButtonType: 'images'
-
+  indexButtonType: 'circles'
   slides:
     - 
       filename: '27906395555_4880721d41_o.jpg'

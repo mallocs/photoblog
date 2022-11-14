@@ -44,13 +44,29 @@ const RightArrow = () => (
 )
 
 function makeSlideshowButtonCSS({ isPressed = false, type }): string {
-  if (type === 'circles') {
+  if (type === 'dots') {
+    return makeDotSlideshowButtonCSS({ isPressed })
+  } else if (type === 'images') {
+    return makeImgSlideshowButtonCSS({ isPressed })
+  } else if (type === 'circles') {
     return makeCircleSlideshowButtonCSS({ isPressed })
   }
-  if (type === 'images') {
-    return makeImgSlideshowButtonCSS({ isPressed })
-  }
   return ''
+}
+
+function makeDotSlideshowButtonCSS({
+  isPressed = false,
+}: {
+  isPressed: boolean
+}): string {
+  return (
+    `w-6 h-6 sm:w-5 sm:h-5 rounded-full m-1 border-2 dark:border-zinc-800 ` +
+    ` hover:bg-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-100 dark:hover:bg-zinc-100 ${
+      isPressed
+        ? ' border-zinc-900 bg-zinc-900 dark:border-zinc-100 dark:bg-zinc-100'
+        : ' bg-zinc-400 dark:bg-zinc-500'
+    }`
+  )
 }
 
 function makeCircleSlideshowButtonCSS({
