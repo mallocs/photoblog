@@ -2,8 +2,10 @@
 import config from '../next.config.mjs'
 
 export const SOURCE_URL = 'https://gitlab.com/mallocs/photoblog-mallocs'
+export const SHOW_SITE_ICON = true
 export const NAME = 'Photo'
 export const NAME_SUFFIX = 'blog'
+export const NAME_SUFFIX_MATCH_SIZE = true
 export const TITLE = `Demo ${NAME}${NAME_SUFFIX}`
 export const SUMMARY = ''
 export const META_DESCRIPTION = 'A statically generated photoblog'

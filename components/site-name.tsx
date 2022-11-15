@@ -1,5 +1,11 @@
 import NextLink from 'next/link'
-import { SUMMARY, NAME, NAME_SUFFIX } from '../lib/constants'
+import {
+  SUMMARY,
+  SHOW_SITE_ICON,
+  NAME,
+  NAME_SUFFIX,
+  NAME_SUFFIX_MATCH_SIZE,
+} from '../lib/constants'
 import SiteIcon from './site-icon'
 
 const SiteName = () => {
@@ -11,11 +17,19 @@ const SiteName = () => {
             href="/"
             className="hover:text-black flex align-center items-baseline"
           >
-            <div className="pt-1 pr-2 w-24 h-24 fill-primary dark:fill-primaryDark">
-              <SiteIcon />
-            </div>
+            {SHOW_SITE_ICON && (
+              <div className="pt-1 pr-2 w-24 h-24 fill-primary dark:fill-primaryDark">
+                <SiteIcon />
+              </div>
+            )}
             {NAME}
-            <span className="font-site-suffix uppercase font-thin text-3xl md:text-5xl lg:text-6xl tracking-normal">
+            <span
+              className={`font-site-suffix uppercase font-thin tracking-normal ${
+                NAME_SUFFIX_MATCH_SIZE
+                  ? 'text-[3.1rem] md:text-7xl lg:text-[5.6rem]'
+                  : 'text-3xl md:text-5xl lg:text-6xl'
+              }`}
+            >
               {NAME_SUFFIX}
             </span>
           </NextLink>
