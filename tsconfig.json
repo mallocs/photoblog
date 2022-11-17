@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "components/*": ["overrides/*", "components/*"]
+    },
     "target": "es5",
     "module": "esnext",
     "jsx": "preserve",

@@ -1,3 +1,5 @@
+import path from 'path'
+
 const ASSETS_BASE_FOLDER_PATH = 'public/assets/'
 const PROCESSED_DIRECTORY_NAME = 'processed'
 const nextConfig = {
@@ -27,6 +29,16 @@ const nextConfig = {
     _processorIMAGE_QUALITY: 75,
     _processorSTORE_PICTURES_IN_WEBP: false,
     _processorBLUR_SIZE: 40,
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      components: [
+        path.resolve(process.cwd(), 'overrides'),
+        path.resolve(process.cwd(), 'components'),
+      ],
+    }
+    return config
   },
 }
 

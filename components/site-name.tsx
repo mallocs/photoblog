@@ -6,7 +6,8 @@ import {
   NAME_SUFFIX,
   NAME_SUFFIX_MATCH_SIZE,
 } from '../lib/constants'
-import SiteIcon from './site-icon'
+// import SiteIcon from './site-icon'
+import SiteIcon from 'components/site-icon'
 
 const SiteName = () => {
   return (
@@ -17,11 +18,7 @@ const SiteName = () => {
             href="/"
             className="hover:text-black flex align-center items-baseline"
           >
-            {SHOW_SITE_ICON && (
-              <div className="pt-1 pr-2 w-24 h-24 fill-primary dark:fill-primaryDark">
-                <SiteIcon />
-              </div>
-            )}
+            {SHOW_SITE_ICON && <SiteIcon />}
             {NAME}
             <span
               className={`font-site-suffix uppercase font-thin tracking-normal ${
