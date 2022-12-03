@@ -2,7 +2,7 @@ import Avatar from './avatar'
 import DateFormatter from './date-formatter'
 import CoverSlide from './cover-slide'
 import Link from 'next/link'
-import type Post from '../interfaces/post'
+import type Post from '#/interfaces/post'
 import Slideshow from './slideshow'
 
 type Props = {

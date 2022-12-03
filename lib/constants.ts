@@ -1,5 +1,5 @@
 // import { IoLogoGitlab } from 'react-icons/io5'
-import config from '../next.config.mjs'
+import config from '#/next.config.mjs'
 
 export const SOURCE_URL = 'https://gitlab.com/mallocs/photoblog-mallocs'
 export const SHOW_SITE_ICON = true

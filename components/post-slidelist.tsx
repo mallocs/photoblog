@@ -1,5 +1,5 @@
 import { default as NextImage } from 'next/image'
-import { SlideExternal } from '../interfaces/slide'
+import { SlideExternal } from '#/interfaces/slide'
 
 type Props = {
   slides: SlideExternal[]

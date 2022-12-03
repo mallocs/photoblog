@@ -1,4 +1,4 @@
-import { SOURCE_URL, FOOTER_MESSAGE } from '../lib/constants'
+import { SOURCE_URL, FOOTER_MESSAGE } from '#/lib/constants'
 
 const Footer = () => {
   return (

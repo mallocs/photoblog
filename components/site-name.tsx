@@ -5,7 +5,7 @@ import {
   NAME,
   NAME_SUFFIX,
   NAME_SUFFIX_MATCH_SIZE,
-} from '../lib/constants'
+} from '#/lib/constants'
 // import SiteIcon from './site-icon'
 import SiteIcon from 'components/site-icon'
 

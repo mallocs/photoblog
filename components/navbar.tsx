@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NAVBAR_LINKS } from '../lib/constants'
+import { NAVBAR_LINKS } from '#/lib/constants'
 
 type Link = {
   name: string

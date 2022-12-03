@@ -1,9 +1,9 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
-import { SlideExternal, SlideMarkdown } from '../interfaces/slide'
-import { slideshowIndexButtonOptions } from '../interfaces/slideshow'
-import PostType from '../interfaces/post'
+import { SlideExternal, SlideMarkdown } from '#/interfaces/slide'
+import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
+import PostType from '#/interfaces/post'
 
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
 export const postsDirectory = join(process.cwd(), '_posts')

@@ -4,7 +4,7 @@ import {
   OG_EXTERNAL_IMAGES_BASE_URL,
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
-} from '../../lib/constants'
+} from '#/lib/constants'
 
 export const config = {
   runtime: 'experimental-edge',

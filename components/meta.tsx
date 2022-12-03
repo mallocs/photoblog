@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { META_DESCRIPTION } from '../lib/constants'
+import { META_DESCRIPTION } from '#/lib/constants'
 
 type Props = {
   ogImage?: string

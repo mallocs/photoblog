@@ -2,8 +2,8 @@ import Avatar from './avatar'
 import DateFormatter from './date-formatter'
 import CoverSlide from './cover-slide'
 import PostTitle from './post-title'
-import type Author from '../interfaces/author'
-import { SlideExternal } from '../interfaces/slide'
+import type Author from '#/interfaces/author'
+import { SlideExternal } from '#/interfaces/slide'
 
 type Props = {
   title: string

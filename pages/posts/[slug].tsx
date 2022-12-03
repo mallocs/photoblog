@@ -5,19 +5,19 @@ import {
   OG_EXTERNAL_IMAGES_BASE_URL,
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
-} from '../../lib/constants'
-import Container from '../../components/container'
-import PostBody from '../../components/post-body'
-import SiteName from '../../components/site-name'
-import PostHeader from '../../components/post-header'
-import Layout from '../../components/layout'
-import Navbar from '../../components/navbar'
-import { getPostBySlug, getAllPosts } from '../../lib/api'
-import PostTitle from '../../components/post-title'
+} from '#/lib/constants'
+import Container from '#/components/container'
+import PostBody from '#/components/post-body'
+import SiteName from '#/components/site-name'
+import PostHeader from '#/components/post-header'
+import Layout from '#/components/layout'
+import Navbar from '#/components/navbar'
+import { getPostBySlug, getAllPosts } from '#/lib/api'
+import PostTitle from '#/components/post-title'
 import Head from 'next/head'
-import markdownToHtml from '../../lib/markdownToHtml'
-import type PostType from '../../interfaces/post'
-import PostSlideList from '../../components/post-slidelist'
+import markdownToHtml from '#/lib/markdownToHtml'
+import type PostType from '#/interfaces/post'
+import PostSlideList from '#/components/post-slidelist'
 
 type Props = {
   post: PostType

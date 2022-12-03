@@ -1,6 +1,6 @@
 import { default as NextImage } from 'next/image'
 import Link from 'next/link'
-import { SlideExternal } from '../interfaces/slide'
+import { SlideExternal } from '#/interfaces/slide'
 
 type Props = {
   title: string
