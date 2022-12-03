@@ -40,6 +40,9 @@ const nextConfig = {
     }
     return config
   },
+  experimental: {
+    scrollRestoration: true,
+  },
 }
 
 export default nextConfig
