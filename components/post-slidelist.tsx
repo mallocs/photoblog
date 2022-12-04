@@ -10,7 +10,7 @@ const PostSlideList = ({ slides }: Props) => {
     <section>
       <div className="mb-8 md:mb-16">
         {slides.map((slide, index) => (
-          <div id={`slide-${index}`} key={slide?.url} className="mb-16">
+          <div id={`slide-${index + 1}`} key={slide?.url} className="mb-16">
             <figure>
               <NextImage
                 className={'object-contain w-full max-h-[180vmin]'}

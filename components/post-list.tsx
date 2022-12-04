@@ -31,6 +31,7 @@ const PostList = ({ posts }: Props) => {
           <div className="mb-8">
             {slideshow.slides.length > 1 ? (
               <Slideshow
+                id={`main-${String(index)}`}
                 slides={slideshow.slides}
                 indexButtonType={slideshow.indexButtonType}
                 priority={index === 0}

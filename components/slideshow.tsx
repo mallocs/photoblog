@@ -1,17 +1,12 @@
-// import Link from 'next/link'
 import React, { useState } from 'react'
 import { default as NextImage } from 'next/image'
+import { default as NextLink } from 'next/link'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '#/interfaces/slide'
 import { SlideshowIndexButton } from '#/interfaces/slideshow'
 import { BLUR_SIZE, FADE_SPEED } from '#/lib/constants'
 
-type Props = {
-  slides: SlideExternal[]
-  indexButtonType?: SlideshowIndexButton
-  slug: string
-  priority: boolean
-}
+const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
 // const loader = ({ src, width, quality }) => {
 //   const lastDotIndex = src.lastIndexOf('.')
@@ -98,13 +93,26 @@ const sliderButtonCommonClassNames =
   ' bg-opacity-40 bg-zinc-200 hover:bg-zinc-300 hover:bg-opacity-80' +
   ' dark:bg-opacity-40 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:hover:bg-opacity-80 dark:fill-zinc-400'
 
+type Props = {
+  id: string
+  slides: SlideExternal[]
+  indexButtonType?: SlideshowIndexButton
+  slug: string
+  priority: boolean
+}
+
 function Slideshow({
+  id,
   slides,
   indexButtonType = 'circles',
   slug,
   priority,
 }: Props) {
-  const [slideIndex, setSlideIndex] = useState(0)
+  const [slideIndex, setSlideIndex] = useState(
+    typeof window !== 'undefined'
+      ? Number(window.sessionStorage.getItem(SESSION_STORAGE_KEY + id))
+      : 0
+  )
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
   const [fadeTimeoutId, setFadeTimeoutId] = useState<
@@ -151,6 +159,7 @@ function Slideshow({
     fading[slideIndex] = -1
     fading[goToSlideIndex] = 1
     setIsFading(fading)
+    sessionStorage.setItem(SESSION_STORAGE_KEY + id, String(goToSlideIndex))
     requestAnimationFrame(() => setSlideIndex(goToSlideIndex))
     setFadeTimeoutId(
       setTimeout(() => {
@@ -201,30 +210,34 @@ function Slideshow({
                 (i) => index === i
               ) ||
                 isFading[index] !== 0) && (
-                <NextImage
-                  style={{
-                    // try to lock the height based on the first slide
-                    maxHeight: `min(100vh, calc(100vw * ${
-                      Number(slides[0].height) / Number(slides[0].width)
-                    }))`,
-                    transitionDuration: `${FADE_SPEED}ms`,
-                  }}
-                  // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
-                  // cover for some reason.
-                  className={`!bg-auto object-contain ${getFadeCSS({
-                    index,
-                  })}`}
-                  alt="slideshow"
-                  priority={priority && slideIndex === 0}
-                  loading="eager"
+                <NextLink
+                  className={`${getFadeCSS({ index })}`}
                   key={slide.url}
-                  src={slide.url}
-                  width={Number(slide?.width)}
-                  height={Number(slide?.height)}
-                  placeholder={slide?.blurDataURL ? 'blur' : 'empty'}
-                  blurDataURL={slide?.blurDataURL}
-                  sizes="100vw"
-                />
+                  as={`/posts/${slug}#slide-${slideIndex}`}
+                  href="/posts/[slug]"
+                >
+                  <NextImage
+                    style={{
+                      // try to lock the height based on the first slide
+                      maxHeight: `min(100vh, calc(100vw * ${
+                        Number(slides[0].height) / Number(slides[0].width)
+                      }))`,
+                      transitionDuration: `${FADE_SPEED}ms`,
+                    }}
+                    // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
+                    // cover for some reason.
+                    className={`!bg-auto object-contain`}
+                    alt="slideshow"
+                    priority={priority && slideIndex === 0}
+                    loading="eager"
+                    src={slide.url}
+                    width={Number(slide?.width)}
+                    height={Number(slide?.height)}
+                    placeholder={slide?.blurDataURL ? 'blur' : 'empty'}
+                    blurDataURL={slide?.blurDataURL}
+                    sizes="100vw"
+                  />
+                </NextLink>
               )
           )}
           <button
