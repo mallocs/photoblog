@@ -13,7 +13,7 @@ const PostSlideList = ({ slides }: Props) => {
           <div id={`slide-${index + 1}`} key={slide?.url} className="mb-16">
             <figure>
               <NextImage
-                className={'object-contain w-full max-h-[180vmin]'}
+                className={'!bg-auto object-contain w-full max-h-[180vmin]'}
                 alt="slideshow"
                 key={slide.url}
                 src={slide.url}
