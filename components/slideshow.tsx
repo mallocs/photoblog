@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { default as NextImage } from 'next/image'
 import { default as NextLink } from 'next/link'
 import { useSwipeable } from 'react-swipeable'
@@ -108,16 +108,19 @@ function Slideshow({
   slug,
   priority,
 }: Props) {
-  const [slideIndex, setSlideIndex] = useState(
-    typeof window !== 'undefined'
-      ? Number(window.sessionStorage.getItem(SESSION_STORAGE_KEY + id))
-      : 0
-  )
+  const [slideIndex, setSlideIndex] = useState(0)
+
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
   const [fadeTimeoutId, setFadeTimeoutId] = useState<
     ReturnType<typeof setTimeout> | number
   >(0)
+
+  useEffect(() => {
+    setSlideIndex(
+      Number(window.sessionStorage.getItem(SESSION_STORAGE_KEY + id)) || 0
+    )
+  }, [])
 
   function getSlideIndex(rawIndex: number) {
     return (rawIndex + slides.length) % slides.length
@@ -127,21 +130,13 @@ function Slideshow({
   const nextSlideIndex = getSlideIndex(slideIndex + 1)
   function getFadeCSS({ index }: { index: number }): string {
     let css = ` transition-opacity ease-out`
-    if (isFading[index] === -1) {
-      // fading out
-      css += index === slideIndex ? ' static opacity-100' : ' static opacity-0'
-    } else if (isFading[index] === 1) {
-      // fading in
-      css +=
-        index === slideIndex ? ' absolute opacity-100' : ' absolute opacity-0'
+    if (isFading[index] !== 0 && index !== slideIndex) {
+      return css + ' opacity-0'
     } else if (index === slideIndex) {
-      // current slide, done fading
-      css += ' static opacity-100'
+      return css + ' opacity-100'
     } else {
-      // everything else
-      css += ' static hidden'
+      return css + ' hidden'
     }
-    return css
   }
 
   function handleFadeTransition({
@@ -211,7 +206,7 @@ function Slideshow({
               ) ||
                 isFading[index] !== 0) && (
                 <NextLink
-                  className={`${getFadeCSS({ index })}`}
+                  className={isFading[index] === 1 ? 'absolute' : 'static'}
                   key={slide.url}
                   as={`/posts/${slug}#slide-${slideIndex}`}
                   href="/posts/[slug]"
@@ -226,7 +221,9 @@ function Slideshow({
                     }}
                     // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
                     // cover for some reason.
-                    className={`!bg-auto object-contain`}
+                    className={`!bg-auto object-contain ${getFadeCSS({
+                      index,
+                    })}`}
                     alt="slideshow"
                     priority={priority && slideIndex === 0}
                     loading="eager"
@@ -315,22 +312,3 @@ function Slideshow({
 }
 
 export default Slideshow
-
-/*
-${
-            slides[slideIndex].caption !== undefined ? '' : 'invisible'
-          }
-type Size = [number, string]
-
-//                 srcSet={generateSrcSet(slides[slideIndex].sizes)}
-// ${css.arrow} ${css.left}
-// Needed? <a aria-label={title}>{image}</a>
-
-  console.log(slides[slideIndex])
-  //-rotate-45 relative
-  //absolute opacity-30 bg-gray-600 w-16 h-20 -top-10 -left-11
-          <Link
-            as={`/posts/${slug}#slide-${slideIndex}`}
-            href="/posts/[slug]"
-          ></Link>
-          */
