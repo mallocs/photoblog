@@ -120,6 +120,10 @@ function Slideshow({
     setSlideIndex(
       Number(window.sessionStorage.getItem(SESSION_STORAGE_KEY + id)) || 0
     )
+    window.addEventListener('beforeunload', () =>
+      window.sessionStorage.removeItem(SESSION_STORAGE_KEY + id)
+    )
+    return () => (window.onbeforeunload = null)
   }, [])
 
   function getSlideIndex(rawIndex: number) {
