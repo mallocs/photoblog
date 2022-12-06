@@ -108,6 +108,7 @@ function Slideshow({
   slug,
   priority,
 }: Props) {
+  const sessionStorageKey = SESSION_STORAGE_KEY + id
   const [slideIndex, setSlideIndex] = useState(0)
 
   // 1 is fading in, -1 is fading out
@@ -117,14 +118,12 @@ function Slideshow({
   >(0)
 
   useEffect(() => {
-    setSlideIndex(
-      Number(window.sessionStorage.getItem(SESSION_STORAGE_KEY + id)) || 0
-    )
+    setSlideIndex(Number(window.sessionStorage.getItem(sessionStorageKey)) || 0)
     window.addEventListener('beforeunload', () =>
-      window.sessionStorage.removeItem(SESSION_STORAGE_KEY + id)
+      window.sessionStorage.removeItem(sessionStorageKey)
     )
     return () => (window.onbeforeunload = null)
-  }, [])
+  }, [sessionStorageKey])
 
   function getSlideIndex(rawIndex: number) {
     return (rawIndex + slides.length) % slides.length
@@ -158,7 +157,7 @@ function Slideshow({
     fading[slideIndex] = -1
     fading[goToSlideIndex] = 1
     setIsFading(fading)
-    sessionStorage.setItem(SESSION_STORAGE_KEY + id, String(goToSlideIndex))
+    sessionStorage.setItem(sessionStorageKey, String(goToSlideIndex))
     requestAnimationFrame(() => setSlideIndex(goToSlideIndex))
     setFadeTimeoutId(
       setTimeout(() => {
