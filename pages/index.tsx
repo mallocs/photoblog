@@ -1,3 +1,6 @@
+import path from 'path'
+import fs from 'fs'
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import markdownToHtml from '#/lib/markdownToHtml'
 import Container from '#/components/container'
@@ -6,16 +9,28 @@ import PostList from '#/components/post-list'
 import SiteName from '#/components/site-name'
 import Layout from '#/components/layout'
 import Navbar from '#/components/navbar'
-import { getAllPosts } from '#/lib/api'
-import { TITLE, OG_EXTERNAL_IMAGES_BASE_URL } from '#/lib/constants'
+import { getPropsForPosts } from '#/lib/api'
+import { TITLE } from '#/lib/constants'
 import Post from '#/interfaces/post'
 
 type Props = {
   ogImage?: string
-  allPosts: Post[]
+  posts: Post[]
 }
 
-export default function Index({ allPosts, ogImage }: Props) {
+export default function Index({ posts: firstPost, ogImage }: Props) {
+  const [morePosts, setMorePosts] = useState([])
+
+  useEffect(() => {
+    ;(async () => {
+      const {
+        props: { posts },
+      } = await (await fetch('/posts.json')).json()
+      setMorePosts(posts.slice(1))
+    })()
+  }, [])
+
+  const allPosts = [...firstPost, ...morePosts]
   return (
     <>
       <Layout>
@@ -34,31 +49,22 @@ export default function Index({ allPosts, ogImage }: Props) {
 }
 
 export const getStaticProps = async () => {
-  const allPosts = getAllPosts([
-    'title',
-    'date',
-    'slug',
-    'slideshow',
-    'author',
-    'excerpt',
-    'content',
-  ])
+  await writePostsJson()
+  return await getPropsForPosts({ startIndex: 0, stopIndex: 1 })
+}
 
-  for (const post of allPosts) {
-    // extract first paragraph as the excerpt if there's no excerpt
-    post.excerpt =
-      post.excerpt ||
-      (await markdownToHtml(
-        post?.content?.split('\n').slice(0, 2).join('') || ''
-      ))
+async function writePostsJson() {
+  const filePath = path.join(process.cwd(), 'public', 'posts.json')
+
+  const posts = JSON.stringify(await getPropsForPosts())
+
+  if (fs.existsSync(filePath)) {
+    await fs.promises.unlink(filePath)
   }
 
-  return {
-    props: {
-      ogImage: `${OG_EXTERNAL_IMAGES_BASE_URL}/api/og?imgUrl=${encodeURIComponent(
-        (allPosts[0]?.slideshow?.slides ?? [])[0]?.url
-      )}&title=${encodeURIComponent(TITLE)}`,
-      allPosts,
-    },
-  }
+  fs.writeFile(filePath, posts, (err) => {
+    if (err) {
+      console.log('Error writing posts JSON file: ', err)
+    }
+  })
 }

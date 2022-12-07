@@ -37,3 +37,4 @@ next-env.d.ts
 
 # slideshow processing
 /public/assets/slideshows/
+/public/posts.json
