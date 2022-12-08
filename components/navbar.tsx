@@ -49,17 +49,15 @@ function ColorModeButton() {
     }
   }
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (theme === undefined) {
-        setTheme(localStorage.getItem('theme') || 'light')
-      } else {
-        window.localStorage.setItem('theme', theme)
-      }
-    }
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
+    if (theme === undefined) {
+      setTheme(localStorage.getItem('theme') || 'light')
     } else {
-      document.documentElement.classList.remove('dark')
+      window.localStorage.setItem('theme', theme)
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
     }
   }, [theme])
   return typeof theme === 'undefined' ? null : (

@@ -21,30 +21,17 @@ const makeGoogleFontLink = () => {
   return <link rel="stylesheet" href={`${baseUrl}${fontsString}`} />
 }
 
-const setColorMode = () => (
-  <script
-    dangerouslySetInnerHTML={{
-      __html: `
-    if (
-      localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }`,
-    }}
-  />
-)
-
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
         <Head>
           <>{makeGoogleFontLink()}</>
-          <>{setColorMode()}</>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: blockingSetInitialColorMode,
+            }}
+          ></script>
         </Head>
         <body className="bg-zinc-100 dark:bg-zinc-900">
           <Main />
@@ -52,5 +39,22 @@ export default class MyDocument extends Document {
         </body>
       </Html>
     )
+  }
+}
+
+const blockingSetInitialColorMode = `!function() {
+	${setInitialColorMode.toString()}
+	setInitialColorMode();
+}()`
+
+function setInitialColorMode() {
+  if (
+    localStorage.theme === 'dark' ||
+    (!('theme' in localStorage) &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
+  ) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
   }
 }
