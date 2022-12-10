@@ -1,6 +1,5 @@
 import NextLink from 'next/link'
 import {
-  SUMMARY,
   SHOW_SITE_ICON,
   NAME,
   NAME_SUFFIX,
@@ -31,11 +30,6 @@ const SiteName = () => {
             </span>
           </NextLink>
         </h1>
-        {SUMMARY && (
-          <h4 className="hidden sm:block font-sans text-center md:text-left text-2xl mt-5 md:pl-8 ml-12">
-            {SUMMARY}
-          </h4>
-        )}
       </section>
     </>
   )

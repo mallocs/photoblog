@@ -12,7 +12,7 @@ type Props = {
 const PostList = ({ posts }: Props) => {
   return (
     <section>
-      {posts.map(({ slideshow, slug, title, date, excerpt, author }, index) => (
+      {posts.map(({ slideshow, slug, title, date, summary, author }, index) => (
         <article key={slug}>
           <div className="mb-2 ml-8">
             <div className="dark:text-zinc-100 mb-1 md:mb-0 text-lg uppercase">
@@ -58,7 +58,7 @@ const PostList = ({ posts }: Props) => {
               </div>
               <div
                 className="text-lg leading-relaxed mb-4"
-                dangerouslySetInnerHTML={{ __html: excerpt }}
+                dangerouslySetInnerHTML={{ __html: summary }}
               />
             </div>
           </div>

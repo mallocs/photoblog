@@ -1,10 +1,6 @@
 import { ImageResponse } from '@vercel/og'
 import { NextRequest } from 'next/server'
-import {
-  OG_EXTERNAL_IMAGES_BASE_URL,
-  OG_IMAGE_HEIGHT,
-  OG_IMAGE_WIDTH,
-} from '#/lib/constants'
+import siteConfig from '#/site.config'
 
 export const config = {
   runtime: 'experimental-edge',
@@ -30,10 +26,11 @@ export default async function handler(req: NextRequest) {
           alignItems: 'center',
         }}
       >
+        {/*eslint-disable-next-line @next/next/no-img-element */}
         <img
-          width={`${OG_IMAGE_WIDTH}`}
-          height={`${OG_IMAGE_HEIGHT}`}
-          src={`${OG_EXTERNAL_IMAGES_BASE_URL}${imgUrl}`}
+          width={`${siteConfig.openGraph.imageWidth}`}
+          height={`${siteConfig.openGraph.imageHeight}`}
+          src={`${siteConfig.siteUrl}${imgUrl}`}
           alt={title}
           style={{
             objectFit: 'cover',
@@ -73,8 +70,8 @@ export default async function handler(req: NextRequest) {
       </div>
     ),
     {
-      width: OG_IMAGE_WIDTH,
-      height: OG_IMAGE_HEIGHT,
+      width: siteConfig.openGraph.imageWidth,
+      height: siteConfig.openGraph.imageHeight,
     }
   )
 }

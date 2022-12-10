@@ -1,11 +1,11 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
-import markdownToHtml from '../lib/markdownToHtml'
-import { TITLE, OG_EXTERNAL_IMAGES_BASE_URL } from '../lib/constants'
+import { TITLE } from '../lib/constants'
 import { SlideExternal, SlideMarkdown } from '../interfaces/slide'
 import { slideshowIndexButtonOptions } from '../interfaces/slideshow'
 import PostType from '../interfaces/post'
+import siteConfig from '#/site.config'
 
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
 export const postsDirectory = join(process.cwd(), '_posts')
@@ -144,22 +144,13 @@ export const getPropsForPosts = async ({
     'slug',
     'slideshow',
     'author',
-    'excerpt',
+    'summary',
     'content',
   ]).slice(startIndex, stopIndex)
 
-  for (const post of posts) {
-    // extract first paragraph as the excerpt if there's no excerpt
-    post.excerpt =
-      post.excerpt ||
-      (await markdownToHtml(
-        post?.content?.split('\n').slice(0, 2).join('') || ''
-      ))
-  }
-
   return {
     props: {
-      ogImage: `${OG_EXTERNAL_IMAGES_BASE_URL}/api/og?imgUrl=${encodeURIComponent(
+      ogImage: `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
         (posts[0]?.slideshow?.slides ?? [])[0]?.url
       )}&title=${encodeURIComponent(TITLE)}`,
       posts,

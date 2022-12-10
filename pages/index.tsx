@@ -1,16 +1,13 @@
 import path from 'path'
 import fs from 'fs'
 import { useEffect, useState } from 'react'
-import Head from 'next/head'
-import markdownToHtml from '#/lib/markdownToHtml'
 import Container from '#/components/container'
-import Meta from '#/components/meta'
+import { IndexSEO } from '#/components/SEO'
 import PostList from '#/components/post-list'
 import SiteName from '#/components/site-name'
 import Layout from '#/components/layout'
 import Navbar from '#/components/navbar'
 import { getPropsForPosts } from '#/lib/api'
-import { TITLE } from '#/lib/constants'
 import Post from '#/interfaces/post'
 
 type Props = {
@@ -34,10 +31,7 @@ export default function Index({ posts: firstPost, ogImage }: Props) {
   return (
     <>
       <Layout>
-        <Head>
-          <title>{TITLE}</title>
-        </Head>
-        <Meta ogImage={ogImage} />
+        <IndexSEO ogImage={ogImage} />
         <Container>
           <SiteName />
           <Navbar />

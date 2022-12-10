@@ -5,22 +5,14 @@ type PostType = {
   slug: string
   title: string
   date: string
+  lastModified?: string
   author: Author
-  excerpt: string
+  summary: string
   slideshow?: SlideshowExternal
   ogImage?: {
     url: string
   }
   content: string
 }
-
-// export const postRequiredFields = [
-//   'slug',
-//   'title',
-//   'date',
-//   'author',
-//   'excerpt',
-//   'content',
-// ]
 
 export default PostType
