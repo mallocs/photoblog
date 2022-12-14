@@ -4,9 +4,6 @@ import { useEffect, useState } from 'react'
 import Container from '#/components/container'
 import { IndexSEO } from '#/components/SEO'
 import PostList from '#/components/post-list'
-import SiteName from '#/components/site-name'
-import Layout from '#/components/layout'
-import Navbar from '#/components/navbar'
 import { getPropsForPosts } from '#/lib/api'
 import Post from '#/interfaces/post'
 
@@ -30,14 +27,10 @@ export default function Index({ posts: firstPost, ogImage }: Props) {
   const allPosts = [...firstPost, ...morePosts]
   return (
     <>
-      <Layout>
-        <IndexSEO ogImage={ogImage} />
-        <Container>
-          <SiteName />
-          <Navbar />
-          <PostList posts={allPosts} />
-        </Container>
-      </Layout>
+      <IndexSEO ogImage={ogImage} />
+      <Container>
+        <PostList posts={allPosts} />
+      </Container>
     </>
   )
 }

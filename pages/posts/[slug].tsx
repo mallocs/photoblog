@@ -2,10 +2,7 @@ import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import Container from '#/components/container'
 import PostBody from '#/components/post-body'
-import SiteName from '#/components/site-name'
 import PostHeader from '#/components/post-header'
-import Layout from '#/components/layout'
-import Navbar from '#/components/navbar'
 import { getPostBySlug, getAllPosts } from '#/lib/api'
 import PostTitle from '#/components/post-title'
 import markdownToHtml from '#/lib/markdownToHtml'
@@ -26,34 +23,27 @@ export default function Post({ post, morePosts, preview }: Props) {
     return <ErrorPage statusCode={404} />
   }
   return (
-    <Layout preview={preview}>
-      <Container>
-        <SiteName />
-        <Navbar />
-        {router.isFallback ? (
-          <PostTitle>Loading…</PostTitle>
-        ) : (
-          <>
-            <article className="mb-32">
-              <SlugSEO {...post} />
-
-              <PostHeader
-                title={post.title}
-                coverSlide={post.slideshow.slides[0]}
-                date={post.date}
-                author={post.author}
-              />
-
-              <PostBody content={post.content} />
-
-              {post.slideshow.slides.length > 1 && (
-                <PostSlideList slides={post.slideshow.slides.slice(1)} />
-              )}
-            </article>
-          </>
-        )}
-      </Container>
-    </Layout>
+    <Container>
+      {router.isFallback ? (
+        <PostTitle>Loading…</PostTitle>
+      ) : (
+        <>
+          <article className="mb-32">
+            <SlugSEO {...post} />
+            <PostHeader
+              title={post.title}
+              coverSlide={post.slideshow.slides[0]}
+              date={post.date}
+              author={post.author}
+            />
+            <PostBody content={post.content} />
+            {post.slideshow.slides.length > 1 && (
+              <PostSlideList slides={post.slideshow.slides.slice(1)} />
+            )}
+          </article>
+        </>
+      )}
+    </Container>
   )
 }
 

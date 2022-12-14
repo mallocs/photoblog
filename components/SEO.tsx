@@ -6,6 +6,7 @@ import type PostType from '#/interfaces/post'
 
 type Props = {
   ogImage?: string
+  title?: string
 }
 
 //      <meta name="robots" content="follow, index" />
@@ -91,6 +92,17 @@ export const IndexSEO = ({ ogImage }: Props) => {
   return (
     <CommonSEO
       title={TITLE}
+      description={siteConfig.description}
+      ogType="website"
+      ogImage={ogImage}
+    />
+  )
+}
+
+export const PageSEO = ({ ogImage, title = TITLE }: Props) => {
+  return (
+    <CommonSEO
+      title={title}
       description={siteConfig.description}
       ogType="website"
       ogImage={ogImage}

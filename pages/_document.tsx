@@ -63,7 +63,7 @@ export default class MyDocument extends Document {
             content="#000"
           />
         </Head>
-        <body className="bg-zinc-100 dark:bg-zinc-900">
+        <body className="bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-100">
           <Main />
           <NextScript />
         </body>

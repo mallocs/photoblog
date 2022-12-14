@@ -15,10 +15,10 @@ const PostList = ({ posts }: Props) => {
       {posts.map(({ slideshow, slug, title, date, summary, author }, index) => (
         <article key={slug}>
           <div className="mb-2 ml-8">
-            <div className="dark:text-zinc-100 mb-1 md:mb-0 text-lg uppercase">
+            <div className="mb-1 md:mb-0 text-lg uppercase">
               <DateFormatter dateString={date} />
             </div>
-            <h2 className="dark:text-zinc-100 text-4xl lg:text-5xl leading-tight">
+            <h2 className="text-4xl lg:text-5xl leading-tight">
               <Link
                 className="hover:underline"
                 as={`/posts/${slug}#article-start`}
@@ -46,7 +46,7 @@ const PostList = ({ posts }: Props) => {
             )}
           </div>
           <div
-            className={`mx-6 dark:text-zinc-100 pb-28 ${
+            className={`mx-6 pb-28 ${
               index !== posts.length - 1
                 ? 'mb-24 border-b border-solid border-zinc-400'
                 : ''
