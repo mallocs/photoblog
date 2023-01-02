@@ -1,6 +1,6 @@
 ---
 title: 'Great Goats'
-excerpt: 'Tristique senectus et netus et malesuada fames ac turpis. Ridiculous mus mauris vitae ultricies leo integer malesuada nunc vel. In mollis nunc sed id semper. Egestas tellus rutrum tellus pellentesque.'
+summary: 'Tristique senectus et netus et malesuada fames ac turpis. Ridiculous mus mauris vitae ultricies leo integer malesuada nunc vel. In mollis nunc sed id semper. Egestas tellus rutrum tellus pellentesque.'
 date: '2022-08-20'
 slideshow:
   path: '20220820-goats'

@@ -13,12 +13,12 @@ const CoverSlide = ({ title, slide, slug }: Props) => {
     <NextImage
       // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
       // cover for some reason.
-      className={'!bg-auto !bg-auto object-contain w-full max-h-[100vh]'}
+      className={'!bg-auto object-contain w-full max-h-[100vh]'}
       alt={`Cover image for ${title}`}
       src={slide.url}
       width={Number(slide?.width)}
       height={Number(slide?.height)}
-      placeholder={slide?.blurDataURL ? 'blur' : 'empty'}
+      placeholder="blur"
       blurDataURL={slide?.blurDataURL}
       sizes="100vw"
     />
