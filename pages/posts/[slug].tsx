@@ -9,6 +9,11 @@ import markdownToHtml from '#/lib/markdownToHtml'
 import type PostType from '#/interfaces/post'
 import PostSlideList from '#/components/post-slidelist'
 import { SlugSEO } from '#/components/SEO'
+import {
+  ScrollDownButton,
+  ScrollToTopButton,
+  ScrollUpButton,
+} from '#/components/ScrollButtons'
 
 type Props = {
   post: PostType
@@ -28,6 +33,9 @@ export default function Post({ post, morePosts, preview }: Props) {
         <PostTitle>Loading…</PostTitle>
       ) : (
         <>
+          <ScrollToTopButton />
+          <ScrollUpButton />
+          <ScrollDownButton />
           <article className="mb-32">
             <SlugSEO {...post} />
             <PostHeader
