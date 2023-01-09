@@ -89,37 +89,22 @@ async function processor(opts = {}) {
     )
   }
 
-  // Read in the configuration parameters
-  // Path to Next.js config in the current directory
-  const nextConfigPath = path.join(process.cwd(), 'next.config.mjs')
-  const nextJsConfig = await import(nextConfigPath)
-
-  const processorConfig = nextJsConfig.default?.env
-  const defaults = {
-    processedDirectory: processorConfig._processorPROCESSED_DIRECTORY,
-    slideshowUrlBase: processorConfig._processorSLIDESHOW_URL_BASE,
-    watermarkFile: processorConfig._processorWATERMARK_FILE,
-    watermarkRatio: processorConfig._processorWATERMARK_RATIO,
-    watermarkOpacity: processorConfig._processorWATERMARK_OPACITY,
-    saturation: processorConfig._processorSATURATION,
-    slideshowFolderPath: processorConfig._processorSLIDESHOW_FOLDER_PATH,
-    quality: processorConfig._processorIMAGE_QUALITY,
-    storePicturesInWEBP: processorConfig._processorSTORE_PICTURES_IN_WEBP,
-    blurSize: processorConfig._processorBLUR_SIZE,
-  }
+  const siteConfigPath = path.join(process.cwd(), 'site.config.js')
+  const siteJsConfig = await import(siteConfigPath)
 
   const {
     processedDirectory,
     slideshowUrlBase,
     watermarkFile,
-    watermarkRatio,
+    watermarkSizeRatio,
     watermarkOpacity,
     saturation,
     slideshowFolderPath,
     blurSize,
-  } = { ...defaults, ...opts }
+  } = { ...siteJsConfig?.default, ...opts }
+
   watermarkCheckOptions({
-    watermarkRatio,
+    watermarkSizeRatio,
     watermarkOpacity,
   })
 
@@ -214,7 +199,7 @@ async function processor(opts = {}) {
           mainImageActualWidth,
           watermarkActualHeight,
           watermarkActualWidth,
-          watermarkRatio
+          watermarkSizeRatio
         )
 
         const opaqueWatermark = await watermarkTransformer

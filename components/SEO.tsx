@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { TITLE } from '#/lib/constants'
-import siteConfig from '#/site.config'
+import siteConfig, { siteTitle } from '#/site.config'
 import type PostType from '#/interfaces/post'
 
 type Props = {
@@ -29,7 +28,7 @@ const CommonSEO = ({
         content={`${siteConfig.siteUrl}${router.asPath}`}
       />
       <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content={TITLE} />
+      <meta property="og:site_name" content={siteTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:title" content={title} />
       <meta property="og:image" content={ogImage} />
@@ -91,7 +90,7 @@ export const SlugSEO = ({
 export const IndexSEO = ({ ogImage }: Props) => {
   return (
     <CommonSEO
-      title={TITLE}
+      title={siteTitle}
       description={siteConfig.description}
       ogType="website"
       ogImage={ogImage}
@@ -99,7 +98,7 @@ export const IndexSEO = ({ ogImage }: Props) => {
   )
 }
 
-export const PageSEO = ({ ogImage, title = TITLE }: Props) => {
+export const PageSEO = ({ ogImage, title = siteTitle }: Props) => {
   return (
     <CommonSEO
       title={title}

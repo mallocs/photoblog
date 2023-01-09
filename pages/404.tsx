@@ -1,6 +1,6 @@
 import { PageSEO } from '#/components/SEO'
 import { getPropsForPosts } from '#/lib/api'
-import { TITLE } from '#/lib/constants'
+import { siteTitle } from '#/site.config'
 
 type Props = {
   ogImage?: string
@@ -9,7 +9,7 @@ type Props = {
 export default function Custom404({ ogImage }: Props) {
   return (
     <div className="min-h-[65vh] flex flex-col justify-center items-center">
-      <PageSEO title={`Page Not Found - ${TITLE}`} ogImage={ogImage} />
+      <PageSEO title={`Page Not Found - ${siteTitle}`} ogImage={ogImage} />
       <div className="flex flex-col items-center justify-start md:flex-row md:items-center md:justify-center md:space-x-6">
         <div className="space-x-2 pt-6 pb-8 md:space-y-5">
           <h1 className="text-8xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 md:border-r-2 md:px-6 md:text-8xl md:leading-14">

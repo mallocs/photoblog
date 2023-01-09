@@ -1,10 +1,10 @@
 import NextLink from 'next/link'
 import {
-  SHOW_SITE_ICON,
-  NAME,
-  NAME_SUFFIX,
-  NAME_SUFFIX_MATCH_SIZE,
-} from '#/lib/constants'
+  showSiteIcon,
+  name,
+  nameSuffix,
+  nameSuffixMatchSize,
+} from '#/site.config'
 // import SiteIcon from './site-icon'
 import SiteIcon from 'components/site-icon'
 
@@ -17,16 +17,16 @@ const SiteName = () => {
             href="/"
             className="hover:text-black flex align-center items-baseline"
           >
-            {SHOW_SITE_ICON && <SiteIcon />}
-            {NAME}
+            {showSiteIcon && <SiteIcon />}
+            {name}
             <span
               className={`font-site-suffix uppercase font-thin tracking-normal ${
-                NAME_SUFFIX_MATCH_SIZE
+                nameSuffixMatchSize
                   ? 'text-[3.1rem] md:text-7xl lg:text-[5.6rem]'
                   : 'text-3xl md:text-5xl lg:text-6xl'
               }`}
             >
-              {NAME_SUFFIX}
+              {nameSuffix}
             </span>
           </NextLink>
         </h1>
