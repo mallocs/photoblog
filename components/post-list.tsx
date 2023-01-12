@@ -11,14 +11,11 @@ type Props = {
 
 const PostList = ({ posts }: Props) => {
   return (
-    <section>
+    <section className="mt-8">
       {posts.map(({ slideshow, slug, title, date, summary, author }, index) => (
         <article key={slug}>
-          <div className="mb-2 ml-8">
-            <div className="mb-1 md:mb-0 text-lg uppercase">
-              <DateFormatter dateString={date} />
-            </div>
-            <h2 className="text-4xl lg:text-5xl leading-tight">
+          <div className="max-w-4xl px-4 mx-auto">
+            <h2 className="mb-3 text-4xl lg:text-5xl leading-tight">
               <Link
                 className="hover:underline"
                 as={`/posts/${slug}#article-start`}
@@ -27,8 +24,17 @@ const PostList = ({ posts }: Props) => {
                 {title}
               </Link>
             </h2>
+            <div className="mb-1 text-lg uppercase">
+              <DateFormatter dateString={date} />
+            </div>
+            <div className="mb-3">
+              <div
+                className="text-lg leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: summary }}
+              />
+            </div>
           </div>
-          <div className="mb-8">
+          <div className="mb-2">
             {slideshow.slides.length > 1 ? (
               <Slideshow
                 id={`main-${String(index)}`}
@@ -46,22 +52,12 @@ const PostList = ({ posts }: Props) => {
             )}
           </div>
           <div
-            className={`mx-6 pb-28 ${
+            className={`mx-6 pb-8 ${
               index !== posts.length - 1
-                ? 'mb-24 border-b border-solid border-zinc-400'
+                ? 'mb-12 border-b border-solid border-zinc-400'
                 : ''
             }`}
-          >
-            <div className="max-w-2xl mx-auto">
-              <div className="mb-3 mr-8 sm:float-left">
-                <Avatar name={author.name} picture={author.picture} />
-              </div>
-              <div
-                className="text-lg leading-relaxed mb-4"
-                dangerouslySetInnerHTML={{ __html: summary }}
-              />
-            </div>
-          </div>
+          ></div>
         </article>
       ))}
     </section>

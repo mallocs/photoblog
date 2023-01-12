@@ -90,8 +90,8 @@ function makeImgSlideshowButtonCSS({
 
 const sliderButtonCommonClassNames =
   'absolute z-30 w-12 h-18 md:w-20 md:h-36 p-2' +
-  ' bg-opacity-40 bg-zinc-200 hover:bg-zinc-300 hover:bg-opacity-80' +
-  ' dark:bg-opacity-40 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:hover:bg-opacity-80 dark:fill-zinc-400'
+  ' bg-opacity-40 hover:bg-zinc-300 hover:bg-opacity-80' +
+  ' dark:bg-opacity-40 dark:hover:bg-zinc-700 dark:hover:bg-opacity-80 dark:fill-zinc-400'
 
 type Props = {
   id: string
@@ -183,11 +183,7 @@ function Slideshow({
   return (
     <>
       <figure {...swipeHandlers}>
-        <div
-          className={
-            'flex items-end justify-center relative bg-zinc-200 dark:bg-zinc-800'
-          }
-        >
+        <div className={'flex items-end justify-center relative'}>
           <button
             className={`top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] left-0 ${sliderButtonCommonClassNames}`}
             title={`Go to slide ${previousSlideIndex + 1}`}
@@ -253,9 +249,9 @@ function Slideshow({
             <RightArrow />
           </button>
         </div>
-        <div className="bg-zinc-200 dark:bg-zinc-800 max-w-full">
+        <div className="max-w-full">
           <figcaption
-            className="figcaption bg-zinc-300 dark:bg-zinc-600 dark:text-zinc-200 py-1 px-4 mx-auto text-lg"
+            className="figcaption bg-zinc-300 dark:bg-zinc-600 py-1 px-4 mx-auto text-lg"
             // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
               maxWidth: `100vw`,
@@ -272,7 +268,7 @@ function Slideshow({
           >
             {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
           </figcaption>
-          <div className="xl:max-w-[80vw] mx-auto w-fit p-4">
+          <div className="xl:max-w-[80vw] mx-auto w-fit p-2">
             {slides.map((slide, index) => (
               <button
                 key={slide.url}
