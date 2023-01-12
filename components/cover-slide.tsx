@@ -24,7 +24,8 @@ const CoverSlide = ({ title, slide, slug }: Props) => {
     />
   )
   return (
-    <div className="sm:mx-0 bg-zinc-200 dark:bg-zinc-800">
+    <div id={`slide-0`} className="sm:mx-0">
+      {' '}
       {slug ? (
         <Link as={`/posts/${slug}`} href="/posts/[slug]">
           {image}
