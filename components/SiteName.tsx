@@ -6,7 +6,7 @@ import {
   nameSuffixMatchSize,
 } from '#/site.config'
 // import SiteIcon from './site-icon'
-import SiteIcon from 'components/site-icon'
+import SiteIcon from '#/components/SiteIcon'
 
 const SiteName = () => {
   return (

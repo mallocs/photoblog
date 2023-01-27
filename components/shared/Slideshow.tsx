@@ -25,6 +25,24 @@ const LeftArrow = () => (
   </svg>
 )
 
+function LeftButton({ previousSlideIndex, handleFadeTransitionFn }) {
+  return (
+    <button
+      className={`top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] left-0 ${sliderButtonCommonClassNames}`}
+      title={`Go to slide ${previousSlideIndex + 1}`}
+      onClick={(event) => {
+        event.currentTarget.blur()
+        handleFadeTransitionFn({
+          event,
+          goToSlideIndex: previousSlideIndex,
+        })
+      }}
+    >
+      <LeftArrow />
+    </button>
+  )
+}
+
 const RightArrow = () => (
   <svg
     role="img"
@@ -36,6 +54,23 @@ const RightArrow = () => (
     <path d="m15.2 43.9-2.8-2.85L29.55 23.9 12.4 6.75l2.8-2.85 20 20Z" />
   </svg>
 )
+
+function RightButton({ nextSlideIndex, handleFadeTransitionFn }) {
+  return (
+    <button
+      className={`absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 ${sliderButtonCommonClassNames}`}
+      title={`Go to slide ${nextSlideIndex + 1}`}
+      onClick={(event) => {
+        handleFadeTransitionFn({
+          event,
+          goToSlideIndex: nextSlideIndex,
+        })
+      }}
+    >
+      <RightArrow />
+    </button>
+  )
+}
 
 function makeSlideshowButtonCSS({ isPressed = false, type }): string {
   if (type === 'dots') {
@@ -184,20 +219,12 @@ function Slideshow({
     <>
       <figure {...swipeHandlers}>
         <div className={'flex items-end justify-center relative'}>
-          <button
-            className={`top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] left-0 ${sliderButtonCommonClassNames}`}
-            title={`Go to slide ${previousSlideIndex + 1}`}
-            onClick={(event) => {
-              event.currentTarget.blur()
-              handleFadeTransition({
-                event,
-                goToSlideIndex: previousSlideIndex,
-              })
-            }}
-          >
-            <LeftArrow />
-          </button>
-
+          {slides.length > 1 && (
+            <LeftButton
+              handleFadeTransitionFn={handleFadeTransition}
+              previousSlideIndex={previousSlideIndex}
+            />
+          )}
           {slides.map(
             (slide, index) =>
               ([slideIndex, nextSlideIndex, previousSlideIndex].some(
@@ -236,18 +263,12 @@ function Slideshow({
                 </NextLink>
               )
           )}
-          <button
-            className={`absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 ${sliderButtonCommonClassNames}`}
-            title={`Go to slide ${nextSlideIndex + 1}`}
-            onClick={(event) => {
-              handleFadeTransition({
-                event,
-                goToSlideIndex: nextSlideIndex,
-              })
-            }}
-          >
-            <RightArrow />
-          </button>
+          {slides.length > 1 && (
+            <RightButton
+              handleFadeTransitionFn={handleFadeTransition}
+              nextSlideIndex={nextSlideIndex}
+            />
+          )}
         </div>
         <div className="max-w-full">
           <figcaption
@@ -268,42 +289,44 @@ function Slideshow({
           >
             {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
           </figcaption>
-          <div className="xl:max-w-[80vw] mx-auto w-fit p-2">
-            {slides.map((slide, index) => (
-              <button
-                key={slide.url}
-                title={
-                  slide.caption
-                    ? `${index + 1}: ${slide?.caption.replace(
-                        /<a .*>(.*)<\/a>/gi,
-                        '$1'
-                      )}`
-                    : `${index + 1}`
-                }
-                className={makeSlideshowButtonCSS({
-                  isPressed: index === slideIndex,
-                  type: indexButtonType,
-                })}
-                style={
-                  indexButtonType === 'images'
-                    ? {
-                        width: `${blurSize}px`,
-                        height: `${blurSize}px`,
-                        backgroundImage: `url(${slide?.blurDataURL})`,
-                      }
-                    : {}
-                }
-                onClick={(event) =>
-                  handleFadeTransition({
-                    event,
-                    goToSlideIndex: index,
-                  })
-                }
-              >
-                {'\u00A0'}
-              </button>
-            ))}
-          </div>
+          {slides.length > 1 && (
+            <div className="xl:max-w-[80vw] mx-auto w-fit p-2">
+              {slides.map((slide, index) => (
+                <button
+                  key={slide.url}
+                  title={
+                    slide.caption
+                      ? `${index + 1}: ${slide?.caption.replace(
+                          /<a .*>(.*)<\/a>/gi,
+                          '$1'
+                        )}`
+                      : `${index + 1}`
+                  }
+                  className={makeSlideshowButtonCSS({
+                    isPressed: index === slideIndex,
+                    type: indexButtonType,
+                  })}
+                  style={
+                    indexButtonType === 'images'
+                      ? {
+                          width: `${blurSize}px`,
+                          height: `${blurSize}px`,
+                          backgroundImage: `url(${slide?.blurDataURL})`,
+                        }
+                      : {}
+                  }
+                  onClick={(event) =>
+                    handleFadeTransition({
+                      event,
+                      goToSlideIndex: index,
+                    })
+                  }
+                >
+                  {'\u00A0'}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </figure>
     </>

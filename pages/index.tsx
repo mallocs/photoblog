@@ -1,9 +1,8 @@
 import path from 'path'
 import fs from 'fs'
 import { useEffect, useState } from 'react'
-import Container from '#/components/container'
-import { IndexSEO } from '#/components/SEO'
-import PostList from '#/components/post-list'
+import { IndexSEO } from '#/components/shared/SEO'
+import PostList from '#/components/PostList'
 import { getPropsForPosts } from '#/lib/api'
 import Post from '#/interfaces/post'
 
@@ -28,9 +27,9 @@ export default function Index({ posts: firstPost, ogImage }: Props) {
   return (
     <>
       <IndexSEO ogImage={ogImage} />
-      <Container>
+      <div className="mx-auto">
         <PostList posts={allPosts} />
-      </Container>
+      </div>
     </>
   )
 }

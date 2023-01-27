@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react'
-import Footer from '#/components/footer'
-import Navbar from '#/components/navbar'
-import SiteName from '#/components/site-name'
+import Footer from '#/components/Footer'
+import Navbar from '#/components/Navbar'
+import SiteName from '#/components/SiteName'
 
 export const DefaultLayout = ({ children }: PropsWithChildren<unknown>) => (
   <div className="min-h-screen flex flex-col">
