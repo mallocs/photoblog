@@ -1,14 +1,10 @@
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
-import Container from '#/components/container'
-import PostBody from '#/components/post-body'
-import PostHeader from '#/components/post-header'
+import Post, { PostTitle } from '#/components/Post'
 import { getPostBySlug, getAllPosts } from '#/lib/api'
-import PostTitle from '#/components/post-title'
 import markdownToHtml from '#/lib/markdownToHtml'
 import type PostType from '#/interfaces/post'
-import PostSlideList from '#/components/post-slidelist'
-import { SlugSEO } from '#/components/SEO'
+import { SlugSEO } from '#/components/shared/SEO'
 import {
   ScrollDownButton,
   ScrollToTopButton,
@@ -21,37 +17,30 @@ type Props = {
   preview?: boolean
 }
 
-export default function Post({ post, morePosts, preview }: Props) {
+export default function Page({ post, morePosts, preview }: Props) {
   const router = useRouter()
 
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
-  return (
-    <Container>
-      {router.isFallback ? (
-        <PostTitle>Loading…</PostTitle>
-      ) : (
-        <>
-          <ScrollToTopButton />
-          <ScrollUpButton />
-          <ScrollDownButton />
-          <article className="mb-32">
-            <SlugSEO {...post} />
-            <PostHeader
-              title={post.title}
-              coverSlide={post.slideshow.slides[0]}
-              date={post.date}
-              author={post.author}
-            />
-            <PostBody content={post.content} />
-            {post.slideshow.slides.length > 1 && (
-              <PostSlideList slides={post.slideshow.slides.slice(1)} />
-            )}
-          </article>
-        </>
-      )}
-    </Container>
+  return router.isFallback ? (
+    <PostTitle>Loading…</PostTitle>
+  ) : (
+    <div className="mx-auto">
+      <ScrollToTopButton />
+      <ScrollUpButton />
+      <ScrollDownButton />
+      <article className="mb-32">
+        <SlugSEO {...post} />
+        <Post
+          title={post.title}
+          date={post.date}
+          author={post.author}
+          content={post.content}
+          slides={post.slideshow.slides}
+        />
+      </article>
+    </div>
   )
 }
 

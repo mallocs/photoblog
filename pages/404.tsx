@@ -1,4 +1,4 @@
-import { PageSEO } from '#/components/SEO'
+import { PageSEO } from '#/components/shared/SEO'
 import { getPropsForPosts } from '#/lib/api'
 import { siteTitle } from '#/site.config'
 

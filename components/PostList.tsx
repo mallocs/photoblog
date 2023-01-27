@@ -1,9 +1,7 @@
-import Avatar from './avatar'
-import DateFormatter from './date-formatter'
-import CoverSlide from './cover-slide'
+import DateFormatter from '#/components/shared/date-formatter'
 import Link from 'next/link'
 import type Post from '#/interfaces/post'
-import Slideshow from './slideshow'
+import Slideshow from '#/components/shared/Slideshow'
 
 type Props = {
   posts: Post[]
@@ -35,21 +33,13 @@ const PostList = ({ posts }: Props) => {
             </div>
           </div>
           <div className="mb-2">
-            {slideshow.slides.length > 1 ? (
-              <Slideshow
-                id={`main-${String(index)}`}
-                slides={slideshow.slides}
-                indexButtonType={slideshow.indexButtonType}
-                priority={index === 0}
-                slug={slug}
-              />
-            ) : (
-              <CoverSlide
-                slug={slug}
-                title={title}
-                slide={slideshow.slides[0]}
-              />
-            )}
+            <Slideshow
+              id={`main-${String(index)}`}
+              slides={slideshow.slides}
+              indexButtonType={slideshow.indexButtonType}
+              priority={index === 0}
+              slug={slug}
+            />
           </div>
           <div
             className={`mx-6 pb-8 ${
