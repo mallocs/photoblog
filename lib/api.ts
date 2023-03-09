@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
-import { SlideExternal, SlideMarkdown } from '../interfaces/slide'
+import { SlideExternal } from '../interfaces/slide'
 import { slideshowIndexButtonOptions } from '../interfaces/slideshow'
 import PostType from '../interfaces/post'
 import siteConfig, { siteTitle } from '#/site.config'
@@ -20,12 +20,12 @@ export function getPostSlugs() {
 const IMG_EXTENSIONS = ['.jpeg', '.jpg', '.gif', '.png']
 
 // Transform markdown slideshow gray matter to external slideshow data
-export function getPostSlideshow({
-  slides: orderedSlides = [], // optionally define slide order
-  captions = {}, // just add captions from markdown
+
+export function getPostSlides({
+  captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
+  // will be added to the end of the array of slides.
   path: currentSlideshowDirectory, // path to slideshow directory in filesystem
 }: {
-  slides: SlideMarkdown[]
   captions: {
     [key: string]: string
   }
@@ -39,60 +39,58 @@ export function getPostSlideshow({
     slideshowUrlBase,
     currentSlideshowDirectory
   )
-  const filenames = fs
-    .readdirSync(currentProcessedDirectory)
-    .filter(
-      (filename) =>
-        // filter out non-images and unsupported image filetypes
-        IMG_EXTENSIONS.some((ext) => filename.toLowerCase().endsWith(ext)) &&
-        // filter out ordered slides so they aren't duplicated
-        !orderedSlides.find(
-          (slide) => slide.filename.toLowerCase() === filename.toLowerCase()
-        )
-    )
-    .map((filename) => ({
-      url: join(currentSlideshowDirectoryUrl, filename),
-      filename,
-    }))
-
-  // make sure to maintain order given in markdown
-  let output: SlideExternal[] = [
-    ...orderedSlides.map(({ filename, caption }) => {
-      return {
-        url: join(currentSlideshowDirectoryUrl, filename),
-        filename,
-        caption,
-      }
-    }),
-    ...filenames,
-  ]
-
-  output = output.map((slide: SlideExternal) =>
-    captions.hasOwnProperty(slide.filename)
-      ? {
-          ...slide,
-          caption: captions[slide.filename],
-        }
-      : slide
-  )
-
   // check if processed image directory exists and
   // check internal directory exists but map to external urls, ie slideshowRootDirectory => slideshowPath
-  if (fs.existsSync(currentProcessedDirectory)) {
-    const manifest = JSON.parse(
-      String(fs.readFileSync(join(currentProcessedDirectory, 'manifest.json')))
+  if (!fs.existsSync(currentProcessedDirectory)) {
+    console.error(
+      `Error: Couldn't find directory for slideshow: ${currentProcessedDirectory}`
     )
-
-    output = output.map((data) => ({
-      ...data,
-      url: manifest[data.filename].url,
-      width: manifest[data.filename].width,
-      height: manifest[data.filename].height,
-      blurDataURL: manifest[data.filename].blurDataURL,
-      //  sizesString: manifest[data.filename].sizesString,
-    }))
+    return []
   }
-  return output
+  if (!fs.existsSync(join(currentProcessedDirectory, 'manifest.json'))) {
+    console.error(
+      `Error: Couldn't find manifest.json for slideshow: ${join(
+        currentProcessedDirectory,
+        'manifest.json'
+      )}`
+    )
+    return []
+  }
+
+  const manifest = JSON.parse(
+    String(fs.readFileSync(join(currentProcessedDirectory, 'manifest.json')))
+  )
+
+  return [
+    ...Object.entries(captions),
+    ...fs
+      .readdirSync(currentProcessedDirectory)
+      .map((filename) => [filename, ''])
+      .filter(([filename, _]) =>
+        // filter out non-images and unsupported image filetypes
+        IMG_EXTENSIONS.some(
+          (ext) =>
+            filename.toLowerCase().endsWith(ext) &&
+            // filter out slides specified by captions so they aren't duplicated
+            !Object.entries(captions).find(
+              ([orderedFilename, _]) =>
+                orderedFilename.toLowerCase() === filename.toLowerCase()
+            )
+        )
+      ),
+    // add in data collected by the processing phase and specified in manifest.json
+  ].map(([filename, caption]) => ({
+    filename,
+    caption,
+    url: join(currentSlideshowDirectoryUrl, filename),
+    ...(manifest[filename] && {
+      url: manifest[filename].url,
+      width: manifest[filename].width,
+      height: manifest[filename].height,
+      blurDataURL: manifest[filename].blurDataURL,
+      //  sizesString: manifest[data.filename].sizesString,
+    }),
+  }))
 }
 
 export function getPostBySlug(
@@ -103,20 +101,20 @@ export function getPostBySlug(
   const fullPath = join(postsDirectory, `${realSlug}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
-
   const post = {
     ...data,
     slug: realSlug,
     content,
-    slideshow: {
-      ...(data.slideshow.indexButtonType &&
-        slideshowIndexButtonOptions.includes(
+    ...(data.slideshow && {
+      slideshow: {
+        ...(slideshowIndexButtonOptions.includes(
           data.slideshow.indexButtonType
         ) && {
           indexButtonType: data.slideshow.indexButtonType,
         }),
-      slides: getPostSlideshow(data.slideshow),
-    },
+        slides: getPostSlides(data.slideshow),
+      },
+    }),
   }
 
   return Object.fromEntries(

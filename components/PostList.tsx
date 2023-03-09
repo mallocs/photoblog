@@ -32,15 +32,19 @@ const PostList = ({ posts }: Props) => {
               />
             </div>
           </div>
-          <div className="mb-2">
-            <Slideshow
-              id={`main-${String(index)}`}
-              slides={slideshow.slides}
-              indexButtonType={slideshow.indexButtonType}
-              priority={index === 0}
-              slug={slug}
-            />
-          </div>
+          {Boolean(slideshow) &&
+            Array.isArray(slideshow.slides) &&
+            slideshow.slides.length > 0 && (
+              <div className="mb-2">
+                <Slideshow
+                  id={`main-${String(index)}`}
+                  slides={slideshow.slides}
+                  indexButtonType={slideshow.indexButtonType}
+                  priority={index === 0}
+                  slug={slug}
+                />
+              </div>
+            )}
           <div
             className={`mx-6 pb-8 ${
               index !== posts.length - 1

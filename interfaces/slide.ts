@@ -1,8 +1,3 @@
-export type SlideMarkdown = {
-  filename: string
-  caption?: string
-}
-
 export type SlideExternal = {
   url: string // external URL
   filename: string
