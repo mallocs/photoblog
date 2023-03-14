@@ -4,12 +4,10 @@ import matter from 'gray-matter'
 import { SlideExternal } from '../interfaces/slide'
 import { slideshowIndexButtonOptions } from '../interfaces/slideshow'
 import PostType from '../interfaces/post'
-import siteConfig, { siteTitle } from '#/site.config'
+import siteConfig from '#/site.config'
 
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
 export const postsDirectory = join(process.cwd(), '_posts')
-
-import { processedDirectory, slideshowUrlBase } from '#/site.config'
 
 export function getPostSlugs() {
   return fs
@@ -32,11 +30,11 @@ export function getPostSlides({
   path: string
 }): SlideExternal[] {
   const currentProcessedDirectory = join(
-    processedDirectory,
+    siteConfig.processedDirectory,
     currentSlideshowDirectory
   )
   const currentSlideshowDirectoryUrl = join(
-    slideshowUrlBase,
+    siteConfig.slideshowUrlBase,
     currentSlideshowDirectory
   )
   // check if processed image directory exists and
@@ -149,7 +147,7 @@ export const getPropsForPosts = async ({
     props: {
       ogImage: `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
         (posts[0]?.slideshow?.slides ?? [])[0]?.url
-      )}&title=${encodeURIComponent(siteTitle)}`,
+      )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
       posts,
     },
   }

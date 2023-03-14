@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-const fs = require('fs')
-const sharp = require('sharp')
-const path = require('path')
-const {
+import fs from 'fs'
+import sharp from 'sharp'
+import path from 'path'
+import {
   getProgressBar,
   getDirectories,
   IMAGE_FILE_TYPES,
   MANIFEST_FILENAME,
-} = require('./utils')
+} from './utils.js'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')

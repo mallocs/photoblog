@@ -1,5 +1,6 @@
-const path = require('path')
-const { siteHostname, siteProtocol } = require('./site.config')
+import path from 'path'
+import config from './site.config.js'
+const { siteHostname, siteProtocol } = config
 
 /**
  * @type {import('next').NextConfig}
@@ -31,4 +32,4 @@ const nextConfig = {
     scrollRestoration: true,
   },
 }
-module.exports = nextConfig
+export default nextConfig

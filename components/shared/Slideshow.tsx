@@ -4,7 +4,7 @@ import { default as NextLink } from 'next/link'
 import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '#/interfaces/slide'
 import { SlideshowIndexButton } from '#/interfaces/slideshow'
-import { blurSize, fadeSpeed } from '#/site.config'
+import siteConfig from '#/site.config'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -197,7 +197,7 @@ function Slideshow({
     setFadeTimeoutId(
       setTimeout(() => {
         requestAnimationFrame(() => setIsFading(Array(slides.length).fill(0)))
-      }, fadeSpeed)
+      }, siteConfig.fadeSpeed)
     )
   }
   const swipeHandlers = useSwipeable({
@@ -243,7 +243,7 @@ function Slideshow({
                       maxHeight: `min(100vh, calc(100vw * ${
                         Number(slides[0].height) / Number(slides[0].width)
                       }))`,
-                      transitionDuration: `${fadeSpeed}ms`,
+                      transitionDuration: `${siteConfig.fadeSpeed}ms`,
                     }}
                     // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
                     // cover for some reason.
@@ -309,8 +309,8 @@ function Slideshow({
                   style={
                     indexButtonType === 'images'
                       ? {
-                          width: `${blurSize}px`,
-                          height: `${blurSize}px`,
+                          width: `${siteConfig.blurSize}px`,
+                          height: `${siteConfig.blurSize}px`,
                           backgroundImage: `url(${slide?.blurDataURL})`,
                         }
                       : {}

@@ -1,9 +1,9 @@
 // Loosely based on https://github.com/timlrx/tailwind-nextjs-starter-blog/blob/master/scripts/compose.js
 
-const fs = require('fs')
-const path = require('path')
-const inquirer = require('inquirer')
-const dedent = require('dedent')
+import fs from 'fs'
+import path from 'path'
+import inquirer from 'inquirer'
+import dedent from 'dedent'
 
 const root = process.cwd()
 

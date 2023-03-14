@@ -1,6 +1,6 @@
-const fs = require('fs')
-const path = require('path')
-const cliProgress = require('cli-progress')
+import fs from 'fs'
+import path from 'path'
+import cliProgress from 'cli-progress'
 
 function getProgressBar() {
   return new cliProgress.SingleBar(
@@ -58,10 +58,7 @@ function ensureDirectoryExists(filePath) {
   fs.mkdirSync(dirName)
 }
 
-module.exports = {
-  getProgressBar,
-  getDirectories,
-  ensureDirectoryExists,
-  IMAGE_FILE_TYPES: ['jpg', 'jpeg', 'webp', 'png', 'avif'],
-  MANIFEST_FILENAME: 'manifest.json',
-}
+export const IMAGE_FILE_TYPES = ['jpg', 'jpeg', 'webp', 'png', 'avif']
+export const MANIFEST_FILENAME = 'manifest.json'
+
+export { getProgressBar, getDirectories, ensureDirectoryExists }

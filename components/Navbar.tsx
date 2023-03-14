@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { navbarLinks } from '#/site.config'
+import siteConfig from '#/site.config'
 
 type Link = {
   name: string
@@ -75,7 +75,7 @@ export default function Navbar() {
   return (
     <nav className="flex justify-between bg-zinc-600 h-11 px-2 sm:px-8">
       <ul className="flex items-center justify-start text-zinc-50 ">
-        {navbarLinks.map(({ name, url }: Link) => (
+        {siteConfig.navbarLinks.map(({ name, url }: Link) => (
           <li key={name}>
             <a
               href={url}

@@ -1,5 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import tailwindConfig from '#/tailwind.config.js'
+import tailwindConfig from '#/tailwind.config.cjs'
 
 const makeGoogleFontLink = () => {
   const fonts = tailwindConfig?.theme?.extend?.fontFamily

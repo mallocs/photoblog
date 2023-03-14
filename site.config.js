@@ -50,4 +50,4 @@ const siteConfig = {
   fadeSpeed: 900,
 }
 
-module.exports = siteConfig
+export default siteConfig

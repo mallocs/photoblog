@@ -1,5 +1,7 @@
 {
   "private": true,
+  "type": "module",
+  "node": ">=14.16",
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -32,7 +34,7 @@
     "cli-progress": "^3.11.2",
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
-    "inquirer": "^8.2.5",
+    "inquirer": "^9.1.4",
     "postcss": "^8.4.14",
     "sharp": "^0.31.0",
     "tailwindcss": "^3.1.4"
