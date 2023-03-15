@@ -12,9 +12,7 @@ slideshow:
     - 
       filename: '36993604272_b8e2dfc0b3_o.jpg'
       caption: 'Egestas tellus rutrum tellus pellentesque.'
-author:
-  name: Joe
-  picture: '/assets/authors/joe.jpeg'
+author: Joe
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus. Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.

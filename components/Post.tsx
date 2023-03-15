@@ -22,7 +22,7 @@ const PostTitle = ({ children }: TitleProps) => {
 type Props = {
   title: string
   date: string
-  author: Author
+  author: Author | string
   content: string
   slides: SlideExternal[]
 }
@@ -37,7 +37,7 @@ const Post = ({ title, date, author, content, slides }: Props) => {
       <div className="max-w-3xl mx-auto px-4">
         <PostTitle>{title}</PostTitle>
         <div className="block mb-6">
-          <Avatar name={author.name} picture={author.picture} />
+          <Avatar author={author} />
         </div>
         <div className="mb-6 text-lg uppercase">
           <DateFormatter dateString={date} />

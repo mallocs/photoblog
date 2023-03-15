@@ -5,19 +5,12 @@ import path from 'path'
 import inquirer from 'inquirer'
 import dedent from 'dedent'
 import DatePrompt from 'inquirer-date-prompt'
+import siteConfig from '../site.config.js'
 
 const root = process.cwd()
 
 const ignoreFiles = ['.DS_Store']
 const DEFAULT_POSTS_DIRECTORY = '_posts'
-
-// const getAuthors = () => {
-//   const authorPath = path.join(root, 'public', 'assets', 'authors')
-//   const authorList = fs
-//     .readdirSync(authorPath)
-//     .map((filename) => path.parse(filename).name)
-//   return authorList
-// }
 
 const getSlideshowPaths = () => {
   const slideshowsPath = path.join(root, 'public', 'assets', 'slideshows')
@@ -61,8 +54,6 @@ const genFrontMatter = (answers) => {
   // const tagArray = answers.tags.split(',')
   // tagArray.forEach((tag, index) => (tagArray[index] = tag.trim()))
   // const tags = "'" + tagArray.join("','") + "'"
-  // const authorArray =
-  //   answers.authors.length > 0 ? "'" + answers.authors.join("','") + "'" : ''
 
   // TODO:
   // tags: [${answers.tags ? tags : ''}]
@@ -73,6 +64,7 @@ const genFrontMatter = (answers) => {
   let frontMatter = dedent`---
   date: '${answers.date}'
   title: ${answers.title ? answers.title : 'Untitled'}
+  author: ${answers.author}
   summary: ${answers.summary ? answers.summary : ' '}
   draft: no
   layout: Default 
@@ -81,10 +73,6 @@ const genFrontMatter = (answers) => {
     indexButtonType: '${answers.indexButtonType}'
     ${answers.addCaptions && getSlideshowCaptionYaml(answers.slideshowPath)}
   `
-
-  // if (answers.authors.length > 0) {
-  //   frontMatter = frontMatter + '\n' + `authors: [${authorArray}]`
-  // }
 
   frontMatter = frontMatter + '\n---'
 
@@ -115,6 +103,12 @@ function main() {
         type: 'date',
         message: 'Enter the date for the post:',
         filter: (date) => date.toISOString(),
+      },
+      {
+        name: 'author',
+        message: 'Choose author:',
+        type: 'list',
+        choices: Object.keys(siteConfig.authors),
       },
       {
         name: 'fileName',
@@ -154,12 +148,7 @@ function main() {
         default: 'images',
         choices: ['images', 'circles', 'dots'],
       },
-      // {
-      //   name: 'authors',
-      //   message: 'Choose authors:',
-      //   type: 'checkbox',
-      //   choices: getAuthors,
-      // },
+
       {
         name: 'summary',
         message: 'Enter post summary:',
