@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import inquirer from 'inquirer'
 import dedent from 'dedent'
+import DatePrompt from 'inquirer-date-prompt'
 
 const root = process.cwd()
 
@@ -57,12 +58,6 @@ function getSlideshowCaptionYaml(folderName) {
 }
 
 const genFrontMatter = (answers) => {
-  let d = new Date()
-  const date = [
-    d.getFullYear(),
-    ('0' + (d.getMonth() + 1)).slice(-2),
-    ('0' + d.getDate()).slice(-2),
-  ].join('-')
   // const tagArray = answers.tags.split(',')
   // tagArray.forEach((tag, index) => (tagArray[index] = tag.trim()))
   // const tags = "'" + tagArray.join("','") + "'"
@@ -76,13 +71,14 @@ const genFrontMatter = (answers) => {
   // layout: ${answers.layout}'
   // canonicalUrl: ${answers.canonicalUrl}
   let frontMatter = dedent`---
-  date: '${date}'
+  date: '${answers.date}'
   title: ${answers.title ? answers.title : 'Untitled'}
   summary: ${answers.summary ? answers.summary : ' '}
   draft: no
   layout: Default 
   slideshow:
     path: '${answers.slideshowPath}'
+    indexButtonType: '${answers.indexButtonType}'
     ${answers.addCaptions && getSlideshowCaptionYaml(answers.slideshowPath)}
   `
 
@@ -105,12 +101,20 @@ const getDefaultDirectory = (answers) => {
 }
 
 function main() {
+  inquirer.registerPrompt('date', DatePrompt)
+
   inquirer
     .prompt([
       {
         name: 'title',
         message: 'Enter post title:',
         type: 'input',
+      },
+      {
+        name: 'date',
+        type: 'date',
+        message: 'Enter the date for the post:',
+        filter: (date) => date.toISOString(),
       },
       {
         name: 'fileName',
