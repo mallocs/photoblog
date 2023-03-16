@@ -59,36 +59,48 @@ export function getPostSlides({
     String(fs.readFileSync(join(currentProcessedDirectory, 'manifest.json')))
   )
 
-  return [
-    ...Object.entries(captions),
-    ...fs
-      .readdirSync(currentProcessedDirectory)
-      .map((filename) => [filename, ''])
-      .filter(([filename, _]) =>
-        // filter out non-images and unsupported image filetypes
-        IMG_EXTENSIONS.some(
-          (ext) =>
-            filename.toLowerCase().endsWith(ext) &&
+  return (
+    [
+      ...Object.entries(captions),
+      ...fs
+        .readdirSync(currentProcessedDirectory)
+        .filter(
+          (directoryFilename) =>
+            // filter out unsupported filetypes
+            IMG_EXTENSIONS.some((ext) =>
+              directoryFilename.toLowerCase().endsWith(ext)
+            ) &&
             // filter out slides specified by captions so they aren't duplicated
             !Object.entries(captions).find(
-              ([orderedFilename, _]) =>
-                orderedFilename.toLowerCase() === filename.toLowerCase()
+              ([captionedFilename, _]) =>
+                captionedFilename.toLowerCase() ===
+                directoryFilename.toLowerCase()
             )
         )
-      ),
-    // add in data collected by the processing phase and specified in manifest.json
-  ].map(([filename, caption]) => ({
-    filename,
-    caption,
-    url: join(currentSlideshowDirectoryUrl, filename),
-    ...(manifest[filename] && {
-      url: manifest[filename].url,
-      width: manifest[filename].width,
-      height: manifest[filename].height,
-      blurDataURL: manifest[filename].blurDataURL,
-      //  sizesString: manifest[data.filename].sizesString,
-    }),
-  }))
+        .map((filename) => [filename, '']),
+    ]
+      // filter out images that don't exist in manifest
+      .filter(([filename, _]) => {
+        if (filename in manifest) {
+          return true
+        }
+        console.error(`File not found in manifest.json: ${filename}`)
+        return false
+      })
+      // add in data collected by the processing phase and specified in manifest.json
+      .map(([filename, caption]) => ({
+        filename,
+        caption,
+        url: join(currentSlideshowDirectoryUrl, filename),
+        ...(manifest[filename] && {
+          url: manifest[filename].url,
+          width: manifest[filename].width,
+          height: manifest[filename].height,
+          blurDataURL: manifest[filename].blurDataURL,
+          //  sizesString: manifest[data.filename].sizesString,
+        }),
+      }))
+  )
 }
 
 export function getPostBySlug(
