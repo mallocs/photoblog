@@ -5,14 +5,12 @@ date: '2021-03-16'
 slideshow:
   path: '20220820-goats'
   indexButtonType: 'dots'
-  slides:
-    - 
-      filename: '37074396272_9287cff838_o.jpg'
-      caption: 'Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.'
-    - 
-      filename: '36993604272_b8e2dfc0b3_o.jpg'
-      caption: 'Egestas tellus rutrum tellus pellentesque.'
-author: Joe
+  captions:
+    37074396272_9287cff838_o.jpg: 'Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.'
+    36993604272_b8e2dfc0b3_o.jpg: 'Egestas tellus rutrum tellus pellentesque.'
+author:
+  name: Joe
+  picture: '/assets/authors/joe.jpeg'
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus. Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.

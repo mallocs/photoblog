@@ -5,13 +5,10 @@ date: '2022-08-20'
 slideshow:
   path: '20220820-goats'
   indexButtonType: 'circles'
-  slides:
-    - 
-      filename: '27906395555_4880721d41_o.jpg'
-      caption: 'Tristique senectus et netus et malesuada'
-    - 
-      filename: '36993604272_b8e2dfc0b3_o.jpg'
-      caption: 'Egestas tellus rutrum tellus pellentesque.'
+  captions:
+    27906395555_4880721d41_o.jpg: 'Tristique senectus et netus et malesuada'
+    36993604272_b8e2dfc0b3_o.jpg: 'Egestas tellus rutrum tellus pellentesque.'
+
 author:
   name: Billy
   picture: '/assets/authors/billy.jpeg'

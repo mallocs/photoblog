@@ -5,16 +5,10 @@ date: '2022-10-25'
 slideshow:
   path: '20221025-sunsets'
   indexButtonType: 'images'
-  slides:
-    - 
-      filename: '15406885214_f19957abf5_o.jpg'
-      caption: 'Slide order is easily maintained in Markdown.'
-    -
-      filename: '5239185843_a22cb00ffd_o.jpg'
-      caption: 'Captions are also easy in Markdown.'
-    -
-      filename: '30636716482_25e4f18f0f_o.jpg'
-      caption: 'Portrait mode photos should be sized appropriately.'
+  captions:
+    15406885214_f19957abf5_o.jpg: 'Slide order is easily maintained in Markdown.'
+    5239185843_a22cb00ffd_o.jpg: 'Captions are also easy in Markdown.'
+    30636716482_25e4f18f0f_o.jpg: 'Portrait mode photos should be sized appropriately.'
 author:
   name: Harold
   picture: '/assets/authors/harold.jpeg'
