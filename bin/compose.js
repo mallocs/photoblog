@@ -1,11 +1,9 @@
-// Loosely based on https://github.com/timlrx/tailwind-nextjs-starter-blog/blob/master/scripts/compose.js
-
 import fs from 'fs'
 import path from 'path'
 import inquirer from 'inquirer'
-import dedent from 'dedent'
 import DatePrompt from 'inquirer-date-prompt'
 import siteConfig from '../site.config.js'
+import matter from 'gray-matter'
 
 const root = process.cwd()
 
@@ -32,7 +30,7 @@ const getSlideshowPaths = () => {
 //   return layoutList
 // }
 
-function getSlideshowCaptionYaml(folderName) {
+function getSlideshowCaptionObject(folderName) {
   const slideshowsPath = path.join(
     root,
     'public',
@@ -46,37 +44,9 @@ function getSlideshowCaptionYaml(folderName) {
       ignoreFiles.every((ignoreFileName) => ignoreFileName != fileName)
     )
     .reduce((accumulator, current) => {
-      return `${accumulator}\n      ${current}: ""`
-    }, 'captions: ')
-}
-
-const genFrontMatter = (answers) => {
-  // const tagArray = answers.tags.split(',')
-  // tagArray.forEach((tag, index) => (tagArray[index] = tag.trim()))
-  // const tags = "'" + tagArray.join("','") + "'"
-
-  // TODO:
-  // tags: [${answers.tags ? tags : ''}]
-  //  tags:
-  // draft:  ${answers.draft === 'yes' ? true : false}
-  // layout: ${answers.layout}'
-  // canonicalUrl: ${answers.canonicalUrl}
-  let frontMatter = dedent`---
-  date: '${answers.date}'
-  title: ${answers.title ? answers.title : 'Untitled'}
-  author: ${answers.author}
-  summary: ${answers.summary ? answers.summary : ' '}
-  draft: no
-  layout: Default 
-  slideshow:
-    path: '${answers.slideshowPath}'
-    indexButtonType: '${answers.indexButtonType}'
-    ${answers.addCaptions && getSlideshowCaptionYaml(answers.slideshowPath)}
-  `
-
-  frontMatter = frontMatter + '\n---'
-
-  return frontMatter
+      accumulator[current] = ''
+      return accumulator
+    }, {})
 }
 
 // Remove special characters and replace space with -
@@ -96,6 +66,7 @@ function main() {
       {
         name: 'title',
         message: 'Enter post title:',
+        default: 'Untitled',
         type: 'input',
       },
       {
@@ -184,7 +155,17 @@ function main() {
       // },
     ])
     .then((answers) => {
-      const frontMatter = genFrontMatter(answers)
+      const frontMatter = matter.stringify('', {
+        date: answers.date,
+        title: answers.title ? answers.title : 'Untitled',
+        author: answers.author,
+        summary: answers.summary ? answers.summary : ' ',
+        slideshow: {
+          path: answers.slideshowPath,
+          indexButtonType: answers.indexButtonType,
+          captions: getSlideshowCaptionObject(answers.slideshowPath),
+        },
+      })
       if (!fs.existsSync(DEFAULT_POSTS_DIRECTORY))
         fs.mkdirSync(DEFAULT_POSTS_DIRECTORY, { recursive: true })
 
