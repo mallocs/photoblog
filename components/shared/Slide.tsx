@@ -12,7 +12,7 @@ type Props = {
 function SaveButton({ saveFn, disabled }) {
   return (
     <button
-      className="inline absolute left-20 top-1 rounded pointer p-2 bg-primary text-xs text-black font-bold uppercase leading-normal shadow-md shadow-zinc-500/20 dark:shadow-slate-300/70 transition-all hover:shadow-md hover:shadow-zinc-500/40 dark:hover:shadow-slate-400/50 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:opacity-40 disabled:shadow-none"
+      className="inline absolute left-20 top-1 rounded pointer p-2 bg-primary text-sm text-black font-bold uppercase leading-normal shadow-md shadow-zinc-500/20 dark:shadow-slate-300/70 transition-all hover:shadow-md hover:shadow-zinc-500/40 dark:hover:shadow-slate-400/50 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:opacity-40 disabled:shadow-none"
       title="Save changes"
       onClick={saveFn}
       disabled={disabled}
@@ -25,7 +25,7 @@ function SaveButton({ saveFn, disabled }) {
 function UndoButton({ undoFn, disabled }) {
   return (
     <button
-      className="inline absolute left-4 top-1 rounded pointer p-2 bg-primary text-xs text-black font-bold uppercase leading-normal shadow-md shadow-zinc-500/20 dark:shadow-slate-300/70 transition-all hover:shadow-md hover:shadow-zinc-500/40 dark:hover:shadow-slate-400/50 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:opacity-40 disabled:shadow-none"
+      className="inline absolute left-4 top-1 rounded pointer p-2 bg-primary text-sm text-black font-bold uppercase leading-normal shadow-md shadow-zinc-500/20 dark:shadow-slate-300/70 transition-all hover:shadow-md hover:shadow-zinc-500/40 dark:hover:shadow-slate-400/50 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:opacity-40 disabled:shadow-none"
       title="Undo changes"
       onClick={undoFn}
       disabled={disabled}

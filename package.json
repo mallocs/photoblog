@@ -20,6 +20,7 @@
     "inquirer-date-prompt": "^3.0.0",
     "next": "latest",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-swipeable": "^7.0.0",
     "remark": "^14.0.2",
