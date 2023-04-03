@@ -34,7 +34,8 @@ export default function handler(
   if (!(filename in m.data.slideshow.captions)) {
     return res.status(400).json({ status: `Error: caption entry not found` })
   }
-  m.data.slideshow.captions[filename] = caption
+
+  m.data.slideshow.captions[filename] = caption.replace(/&nbsp;/g, ' ').trim()
 
   const output = matter.stringify(m.content, m.data)
 
