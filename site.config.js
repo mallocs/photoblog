@@ -40,6 +40,7 @@ const siteConfig = {
     imageHeight: 630,
     imageWidth: 1200,
   },
+  postsDirectory: '_posts',
   assetsBaseFolderPath: ASSETS_BASE_FOLDER_PATH,
   slideshowFolderPath: ASSETS_BASE_FOLDER_PATH + 'slideshows',
   slideshowUrlBase: '/assets/' + PROCESSED_DIRECTORY_NAME,
@@ -60,6 +61,13 @@ const siteConfig = {
     },
     Joe: { name: 'Joe', picture: '/assets/authors/joe.jpeg' },
   },
+  imageFileTypes: ['jpg', 'jpeg', 'gif', 'webp', 'png', 'avif'],
+  ignoreFiles: ['.DS_Store'],
+  manifestFileName: 'manifest.json',
+}
+
+if (process !== undefined) {
+  siteConfig.root = process.cwd()
 }
 
 export default siteConfig

@@ -19,13 +19,13 @@ function getProgressBar() {
         // calculate elapsed time
         const elapsedTime = Math.round(stopTime - params.startTime)
         function msToTime(ms) {
-          let seconds = (ms / 1000).toFixed(1)
-          let minutes = (ms / (1000 * 60)).toFixed(1)
-          let hours = (ms / (1000 * 60 * 60)).toFixed(1)
-          let days = (ms / (1000 * 60 * 60 * 24)).toFixed(1)
-          if (seconds < 60) return seconds + ' seconds'
-          else if (minutes < 60) return minutes + ' minutes'
-          else if (hours < 24) return hours + ' hours'
+          let seconds = ms / 1000
+          let minutes = ms / (1000 * 60)
+          let hours = ms / (1000 * 60 * 60)
+          let days = ms / (1000 * 60 * 60 * 24)
+          if (seconds < 60) return seconds.toFixed(1) + ' seconds'
+          else if (minutes < 60) return minutes.toFixed(1) + ' minutes'
+          else if (hours < 24) return hours.toFixed(1) + ' hours'
           else return days + ' days'
         }
 
@@ -57,8 +57,5 @@ function ensureDirectoryExists(filePath) {
   ensureDirectoryExists(dirName)
   fs.mkdirSync(dirName)
 }
-
-export const IMAGE_FILE_TYPES = ['jpg', 'jpeg', 'webp', 'png', 'avif']
-export const MANIFEST_FILENAME = 'manifest.json'
 
 export { getProgressBar, getDirectories, ensureDirectoryExists }

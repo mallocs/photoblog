@@ -1,14 +1,10 @@
-#!/usr/bin/env node
-
 import fs from 'fs'
 import sharp from 'sharp'
 import path from 'path'
-import {
-  getProgressBar,
-  getDirectories,
-  IMAGE_FILE_TYPES,
-  MANIFEST_FILENAME,
-} from './utils.js'
+import { getAllPosts } from '#/lib/api'
+
+import { getProgressBar, getDirectories } from '#/bin/utils'
+import siteConfig from '#/site.config'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')
@@ -51,7 +47,7 @@ const getDimensions = (H, W, h, w, outputRatio) => {
 // const nw = Math.sqrt(factorIncrease) * w
 // return [Math.floor(nh), Math.floor(nw)]
 
-const watermarkCheckOptions = (options = {}) => {
+const watermarkCheckOptions = (options: { opacity: number; ratio: number }) => {
   const { ratio, opacity } = options
   if (ratio > 1) {
     throw ErrorScaleRatio
@@ -89,9 +85,6 @@ async function processor(opts = {}) {
     )
   }
 
-  const siteConfigPath = path.join(process.cwd(), 'site.config.js')
-  const siteJsConfig = await import(siteConfigPath)
-
   const {
     processedDirectory,
     slideshowUrlBase,
@@ -101,20 +94,30 @@ async function processor(opts = {}) {
     saturation,
     slideshowFolderPath,
     blurSize,
-  } = { ...siteJsConfig?.default, ...opts }
+  } = { ...siteConfig, ...opts }
 
   watermarkCheckOptions({
-    watermarkSizeRatio,
-    watermarkOpacity,
+    ratio: watermarkSizeRatio,
+    opacity: watermarkOpacity,
   })
 
   const directories = getDirectories(slideshowFolderPath)
-  const fileData = directories.reduce(
+
+  type DirectoryData = {
+    imageCount: number // total number of images being processed
+    directories: {
+      // directory name => list of files in the directory
+      [key: string]: string[]
+    }
+  }
+  const fileData: DirectoryData = directories.reduce(
     (fileData, currentDirectory) => {
       fileData.directories[currentDirectory] = fs
         .readdirSync(path.join(slideshowFolderPath, currentDirectory))
         .filter((filename) =>
-          IMAGE_FILE_TYPES.includes(filename.split('.').pop().toLowerCase())
+          siteConfig.imageFileTypes.includes(
+            filename.split('.').pop().toLowerCase()
+          )
         )
       fileData.imageCount += fileData.directories[currentDirectory].length
       return fileData
@@ -159,10 +162,10 @@ async function processor(opts = {}) {
 
     const directoryDataFilePath = path.join(
       currentProcessedDirectory,
-      MANIFEST_FILENAME
+      siteConfig.manifestFileName
     )
     const directoryData = fs.existsSync(directoryDataFilePath)
-      ? JSON.parse(fs.readFileSync(directoryDataFilePath))
+      ? JSON.parse(fs.readFileSync(directoryDataFilePath, 'utf8'))
       : {}
 
     for (const file of files) {

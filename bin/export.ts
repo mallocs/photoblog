@@ -1,15 +1,13 @@
-#!/usr/bin/env node
-
-const fs = require('fs')
-const sharp = require('sharp')
-const path = require('path')
-const {
+import fs from 'fs'
+import path from 'path'
+import sharp from 'sharp'
+import {
   getProgressBar,
   ensureDirectoryExists,
   getDirectories,
-  IMAGE_FILE_TYPES,
-  MANIFEST_FILENAME,
-} = require('./utils')
+} from './utils.js'
+import siteConfig from '../site.config.js'
+import nextJsConfig from '../next.config.mjs'
 
 async function exporter(opts = {}) {
   console.log('----  Begin exporting... ---- ')
@@ -24,26 +22,20 @@ async function exporter(opts = {}) {
     )
   }
 
-  // Read in the configuration parameters
-  // Path to Next.js config in the current directory
-  const nextConfigPath = path.join(process.cwd(), 'next.config.mjs')
-  const nextJsConfig = await import(nextConfigPath)
-
-  const processorConfig = nextJsConfig.default?.env
-  const imageConfig = nextJsConfig.default?.images
+  const imageConfig = nextJsConfig?.images
   const defaults = {
-    processedDirectory: processorConfig._processorPROCESSED_DIRECTORY,
-    resizedDirectoryName: processorConfig._processorRESIZED_DIRECTORY_NAME,
-    slideshowUrlBase: processorConfig._processorSLIDESHOW_URL_BASE,
+    processedDirectory: siteConfig.processedDirectory,
+    resizedDirectoryName: siteConfig.resizedDirectoryName,
+    slideshowUrlBase: siteConfig.slideshowUrlBase,
     imageSizes: [
       ...(imageConfig.imageSizes || [16, 32, 48, 64, 96, 128, 256, 384]),
       ...(imageConfig.deviceSizes || [
         640, 750, 828, 1080, 1200, 1920, 2048, 3840,
       ]),
     ],
-    quality: processorConfig._processorIMAGE_QUALITY,
-    storePicturesInWEBP: processorConfig._processorSTORE_PICTURES_IN_WEBP,
-    blurSize: processorConfig._processorBLUR_SIZE,
+    quality: siteConfig.imageQuality,
+    storePicturesInWEBP: siteConfig.storeFilesInWebP,
+    blurSize: siteConfig.blurSize,
   }
 
   const {
@@ -57,12 +49,22 @@ async function exporter(opts = {}) {
   } = { ...defaults, ...opts }
 
   const directories = getDirectories(processedDirectory)
-  const fileData = directories.reduce(
+
+  type DirectoryData = {
+    imageCount: number // total number of images being processed
+    directories: {
+      // directory name => list of files in the directory
+      [key: string]: string[]
+    }
+  }
+  const fileData: DirectoryData = directories.reduce(
     (fileData, currentSlideshowDirectory) => {
       fileData.directories[currentSlideshowDirectory] = fs
         .readdirSync(path.join(processedDirectory, currentSlideshowDirectory))
         .filter((filename) =>
-          IMAGE_FILE_TYPES.includes(filename.split('.').pop().toLowerCase())
+          siteConfig.imageFileTypes.includes(
+            filename.split('.').pop().toLowerCase()
+          )
         )
       fileData.imageCount +=
         fileData.directories[currentSlideshowDirectory].length
@@ -119,10 +121,10 @@ async function exporter(opts = {}) {
 
     const directoryDataFilePath = path.join(
       currentProcessedDirectory,
-      MANIFEST_FILENAME
+      siteConfig.manifestFileName
     )
     const directoryData = fs.existsSync(directoryDataFilePath)
-      ? JSON.parse(fs.readFileSync(directoryDataFilePath))
+      ? JSON.parse(fs.readFileSync(directoryDataFilePath, 'utf8'))
       : {}
 
     const currentResizedDirectory = path.join(

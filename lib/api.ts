@@ -1,13 +1,13 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
-import { SlideExternal } from '../interfaces/slide'
-import { slideshowIndexButtonOptions } from '../interfaces/slideshow'
-import PostType from '../interfaces/post'
+import { SlideExternal } from '#/interfaces/slide'
+import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
+import PostType from '#/interfaces/post'
 import siteConfig from '#/site.config'
 
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
-export const postsDirectory = join(process.cwd(), '_posts')
+export const postsDirectory = join(siteConfig.root, siteConfig.postsDirectory)
 
 export function getPostSlugs() {
   return fs
@@ -15,10 +15,7 @@ export function getPostSlugs() {
     .filter((fileName) => fileName.endsWith('md'))
 }
 
-const IMG_EXTENSIONS = ['.jpeg', '.jpg', '.gif', '.png']
-
 // Transform markdown slideshow gray matter to external slideshow data
-
 export function getPostSlides({
   captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
   // will be added to the end of the array of slides.
@@ -67,7 +64,7 @@ export function getPostSlides({
         .filter(
           (directoryFilename) =>
             // filter out unsupported filetypes
-            IMG_EXTENSIONS.some((ext) =>
+            siteConfig.imageFileTypes.some((ext) =>
               directoryFilename.toLowerCase().endsWith(ext)
             ) &&
             // filter out slides specified by captions so they aren't duplicated

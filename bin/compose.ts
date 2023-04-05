@@ -2,23 +2,19 @@ import fs from 'fs'
 import path from 'path'
 import inquirer from 'inquirer'
 import DatePrompt from 'inquirer-date-prompt'
-import siteConfig from '../site.config.js'
 import matter from 'gray-matter'
+import siteConfig from '../site.config.js'
 
-const root = process.cwd()
-
-const ignoreFiles = ['.DS_Store']
-const DEFAULT_POSTS_DIRECTORY = '_posts'
-
-const getSlideshowPaths = () => {
-  const slideshowsPath = path.join(root, 'public', 'assets', 'slideshows')
-  const slideshowsList = fs
+function getSlideshowPaths({
+  slideshowsPath = path.join(siteConfig.root, siteConfig.slideshowFolderPath),
+  ignoreFiles = siteConfig.ignoreFiles,
+}) {
+  return fs
     .readdirSync(slideshowsPath)
     .map((filename) => path.parse(filename).name)
     .filter((fileName) =>
       ignoreFiles.every((ignoreFileName) => ignoreFileName != fileName)
     )
-  return slideshowsList
 }
 
 // const getLayouts = () => {
@@ -30,16 +26,14 @@ const getSlideshowPaths = () => {
 //   return layoutList
 // }
 
-function getSlideshowCaptionObject(folderName) {
-  const slideshowsPath = path.join(
-    root,
-    'public',
-    'assets',
-    'slideshows',
-    folderName
-  )
+function getSlideshowCaptionObject({
+  slideshowsPath = path.join(siteConfig.root, siteConfig.slideshowFolderPath),
+  ignoreFiles = siteConfig.ignoreFiles,
+  folderName,
+}) {
+  const slideshowPath = path.join(slideshowsPath, folderName)
   return fs
-    .readdirSync(slideshowsPath)
+    .readdirSync(slideshowPath)
     .filter((fileName) =>
       ignoreFiles.every((ignoreFileName) => ignoreFileName != fileName)
     )
@@ -89,8 +83,8 @@ function main() {
         },
         validate(input, answers) {
           const fileFullPath = path.join(
-            root,
-            DEFAULT_POSTS_DIRECTORY,
+            siteConfig.root,
+            siteConfig.postsDirectory,
             `${input || getDefaultDirectory(answers)}.md`
           )
           if (!fs.existsSync(fileFullPath)) {
@@ -163,15 +157,17 @@ function main() {
         slideshow: {
           path: answers.slideshowPath,
           indexButtonType: answers.indexButtonType,
-          captions: getSlideshowCaptionObject(answers.slideshowPath),
+          captions: getSlideshowCaptionObject({
+            folderName: answers.slideshowPath,
+          }),
         },
       })
-      if (!fs.existsSync(DEFAULT_POSTS_DIRECTORY))
-        fs.mkdirSync(DEFAULT_POSTS_DIRECTORY, { recursive: true })
+      if (!fs.existsSync(siteConfig.postsDirectory))
+        fs.mkdirSync(siteConfig.postsDirectory, { recursive: true })
 
       const fileFullPath = path.join(
-        root,
-        DEFAULT_POSTS_DIRECTORY,
+        siteConfig.root,
+        siteConfig.postsDirectory,
         `${answers.fileName}.md`
       )
       fs.writeFile(fileFullPath, frontMatter, { flag: 'wx' }, (err) => {

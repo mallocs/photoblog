@@ -8,9 +8,9 @@
     "start": "next start",
     "typecheck": "tsc",
     "lint": "next lint",
-    "process": "node ./bin/process.js",
-    "compose": "node ./bin/compose.js",
-    "exportImages": "npm run process && node ./bin/export.js",
+    "process": "tsx ./bin/process",
+    "compose": "tsx  ./bin/compose",
+    "exportImages": "npm run process && tsx ./bin/export",
     "export": "next build && next export"
   },
   "dependencies": {
@@ -25,7 +25,7 @@
     "react-swipeable": "^7.0.0",
     "remark": "^14.0.2",
     "remark-html": "^15.0.1",
-    "typescript": "^4.7.4"
+    "typescript": "^5.0.3"
   },
   "devDependencies": {
     "@types/node": "^18.7.7",
@@ -38,6 +38,7 @@
     "inquirer": "^9.1.4",
     "postcss": "^8.4.14",
     "sharp": "^0.31.0",
-    "tailwindcss": "^3.1.4"
+    "tailwindcss": "^3.1.4",
+    "tsx": "^3.12.6"
   }
 }
