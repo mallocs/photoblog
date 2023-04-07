@@ -1,8 +1,7 @@
 import fs from 'fs'
 import sharp from 'sharp'
 import path from 'path'
-import { getAllPosts } from '#/lib/api'
-
+import { getPostMatter, getPostSlugs } from '#/lib/api'
 import { getProgressBar, getDirectories } from '#/bin/utils'
 import siteConfig from '#/site.config'
 
@@ -110,8 +109,15 @@ async function processor(opts = {}) {
       [key: string]: string[]
     }
   }
+  const postedSlideshowFolders = getPostSlugs().map(
+    (slug) => getPostMatter(slug).data.slideshow.path
+  )
   const fileData: DirectoryData = directories.reduce(
     (fileData, currentDirectory) => {
+      // only process directories that have been included in a post
+      if (!postedSlideshowFolders.includes(currentDirectory)) {
+        return fileData
+      }
       fileData.directories[currentDirectory] = fs
         .readdirSync(path.join(slideshowFolderPath, currentDirectory))
         .filter((filename) =>

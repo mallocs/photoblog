@@ -13,6 +13,7 @@ export function getPostSlugs() {
   return fs
     .readdirSync(postsDirectory)
     .filter((fileName) => fileName.endsWith('md'))
+    .map((filename) => filename.replace(/\.md$/, ''))
 }
 
 // Transform markdown slideshow gray matter to external slideshow data
@@ -100,17 +101,29 @@ export function getPostSlides({
   )
 }
 
+// Assumes a .md file exists in the postsDirectory for the passed slug
+// returns a blank matter file on errors
+export function getPostMatter(slug: string): matter.GrayMatterFile<string> {
+  const fullPath = join(postsDirectory, `${slug}.md`)
+  try {
+    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    return matter(fileContents)
+  } catch (err) {
+    console.error(
+      `Error reading file ${fullPath} based on slug passed: ${slug}`
+    )
+  }
+  return matter('')
+}
+
 export function getPostBySlug(
   slug: string,
   fields: string[] = []
 ): Partial<PostType> {
-  const realSlug = slug.replace(/\.md$/, '')
-  const fullPath = join(postsDirectory, `${realSlug}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
-  const { data, content } = matter(fileContents)
+  const { data, content } = getPostMatter(slug)
   const post = {
     ...data,
-    slug: realSlug,
+    slug,
     content,
     ...(data.slideshow && {
       slideshow: {
