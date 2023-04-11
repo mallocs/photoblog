@@ -4,6 +4,7 @@
 // in the compose script
 // import defaultPicture from './public/assets/authors/default.png'
 // import mainAuthorPicture from './public/assets/authors/me.jpg'
+import { join } from 'path'
 
 const ASSETS_BASE_FOLDER_PATH = 'public/assets/'
 const PROCESSED_DIRECTORY_NAME = 'processed'
@@ -51,7 +52,7 @@ const siteConfig = {
   saturation: 1.1,
   watermarkSizeRatio: 0.15,
   imageQuality: 75,
-  storeFilesInWebP: false,
+  storePicturesInWEBP: false,
   blurSize: 40,
   fadeSpeed: 900,
   authors: {
@@ -68,6 +69,7 @@ const siteConfig = {
 
 if (process !== undefined) {
   siteConfig.root = process.cwd()
+  siteConfig.postsDirectoryFullPath = join(process.cwd(), '_posts')
 }
 
 export default siteConfig

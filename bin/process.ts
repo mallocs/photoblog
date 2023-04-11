@@ -2,7 +2,7 @@ import fs from 'fs'
 import sharp from 'sharp'
 import path from 'path'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
-import { getProgressBar, getDirectories } from '#/bin/utils'
+import { getProgressBar, getDirectoryData } from '#/bin/utils'
 import siteConfig from '#/site.config'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
@@ -46,15 +46,20 @@ const getDimensions = (H, W, h, w, outputRatio) => {
 // const nw = Math.sqrt(factorIncrease) * w
 // return [Math.floor(nh), Math.floor(nw)]
 
-const watermarkCheckOptions = (options: { opacity: number; ratio: number }) => {
-  const { ratio, opacity } = options
+const watermarkCheckOptions = ({
+  opacity,
+  ratio,
+}: {
+  opacity: number
+  ratio: number
+}) => {
   if (ratio > 1) {
     throw ErrorScaleRatio
   }
   if (opacity > 1) {
     throw ErrorOpacity
   }
-  return options
+  return { opacity, ratio }
 }
 
 async function makeBlurDataURL({ path, size, saturation = 1, brightness = 1 }) {
@@ -100,36 +105,14 @@ async function processor(opts = {}) {
     opacity: watermarkOpacity,
   })
 
-  const directories = getDirectories(slideshowFolderPath)
-
-  type DirectoryData = {
-    imageCount: number // total number of images being processed
-    directories: {
-      // directory name => list of files in the directory
-      [key: string]: string[]
-    }
-  }
   const postedSlideshowFolders = getPostSlugs().map(
     (slug) => getPostMatter(slug).data.slideshow.path
   )
-  const fileData: DirectoryData = directories.reduce(
-    (fileData, currentDirectory) => {
-      // only process directories that have been included in a post
-      if (!postedSlideshowFolders.includes(currentDirectory)) {
-        return fileData
-      }
-      fileData.directories[currentDirectory] = fs
-        .readdirSync(path.join(slideshowFolderPath, currentDirectory))
-        .filter((filename) =>
-          siteConfig.imageFileTypes.includes(
-            filename.split('.').pop().toLowerCase()
-          )
-        )
-      fileData.imageCount += fileData.directories[currentDirectory].length
-      return fileData
-    },
-    { directories: {}, imageCount: 0 }
-  )
+  const fileData = getDirectoryData(slideshowFolderPath, {
+    // only process directories that have been included in a post
+    filterDirectoriesFn: (directoryName) =>
+      postedSlideshowFolders.includes(directoryName),
+  })
 
   console.log(
     `Found ${fileData.imageCount} supported images in ${slideshowFolderPath} and subdirectories.`
@@ -154,7 +137,7 @@ async function processor(opts = {}) {
 
   // Loop through all directories/images
   for (const [fileDirectory, files] of Object.entries(fileData.directories)) {
-    // // Check if directory has already been processed
+    // Check if directory has already been processed
     const currentProcessedDirectory = path.join(
       processedDirectory,
       fileDirectory

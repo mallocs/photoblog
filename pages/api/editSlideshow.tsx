@@ -3,8 +3,7 @@ import { join } from 'path'
 import matter from 'gray-matter'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { isDevEnvironment } from '#/lib/isDevEnvironment'
-
-export const postsDirectory = join(process.cwd(), '_posts')
+import siteConfig from '#/site.config'
 
 type Data = {
   data?: {
@@ -24,7 +23,7 @@ export default function handler(
 
   const { slug, slides } = req.body
 
-  const filePath = join(postsDirectory, `${slug}.md`)
+  const filePath = join(siteConfig.postsDirectoryFullPath, `${slug}.md`)
   if (!fs.existsSync(filePath)) {
     return res.status(400).json({ status: `Error: file not found` })
   }

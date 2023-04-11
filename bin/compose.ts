@@ -83,8 +83,7 @@ function main() {
         },
         validate(input, answers) {
           const fileFullPath = path.join(
-            siteConfig.root,
-            siteConfig.postsDirectory,
+            siteConfig.postsDirectoryFullPath,
             `${input || getDefaultDirectory(answers)}.md`
           )
           if (!fs.existsSync(fileFullPath)) {
@@ -166,8 +165,7 @@ function main() {
         fs.mkdirSync(siteConfig.postsDirectory, { recursive: true })
 
       const fileFullPath = path.join(
-        siteConfig.root,
-        siteConfig.postsDirectory,
+        siteConfig.postsDirectoryFullPath,
         `${answers.fileName}.md`
       )
       fs.writeFile(fileFullPath, frontMatter, { flag: 'wx' }, (err) => {

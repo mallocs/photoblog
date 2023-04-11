@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import cliProgress from 'cli-progress'
+import siteConfig from '#/site.config.js'
 
 function getProgressBar() {
   return new cliProgress.SingleBar(
@@ -43,6 +44,36 @@ function getProgressBar() {
   )
 }
 
+function getDirectoryData(
+  directoryFullPath,
+  {
+    filterDirectoriesFn = (_: string): boolean => true,
+    filterImagesFn = (filename) =>
+      siteConfig.imageFileTypes.includes(
+        filename.split('.').pop().toLowerCase()
+      ),
+  } = {}
+): {
+  imageCount: number // total number of images being processed
+  directories: {
+    // directory name => list of files in the directory
+    [key: string]: string[]
+  }
+} {
+  const directories = getDirectories(directoryFullPath)
+
+  return directories.filter(filterDirectoriesFn).reduce(
+    (fileData, currentDirectory) => {
+      fileData.directories[currentDirectory] = fs
+        .readdirSync(path.join(directoryFullPath, currentDirectory))
+        .filter(filterImagesFn)
+      fileData.imageCount += fileData.directories[currentDirectory].length
+      return fileData
+    },
+    { directories: {}, imageCount: 0 }
+  )
+}
+
 const getDirectories = (source) =>
   fs
     .readdirSync(source, { withFileTypes: true })
@@ -58,4 +89,9 @@ function ensureDirectoryExists(filePath) {
   fs.mkdirSync(dirName)
 }
 
-export { getProgressBar, getDirectories, ensureDirectoryExists }
+export {
+  getProgressBar,
+  getDirectories,
+  ensureDirectoryExists,
+  getDirectoryData,
+}

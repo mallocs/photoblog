@@ -7,11 +7,9 @@ import PostType from '#/interfaces/post'
 import siteConfig from '#/site.config'
 
 // After processing, slideshows should have a subdirectory with this name that includes the processed files
-export const postsDirectory = join(siteConfig.root, siteConfig.postsDirectory)
-
 export function getPostSlugs() {
   return fs
-    .readdirSync(postsDirectory)
+    .readdirSync(siteConfig.postsDirectoryFullPath)
     .filter((fileName) => fileName.endsWith('md'))
     .map((filename) => filename.replace(/\.md$/, ''))
 }
@@ -104,7 +102,7 @@ export function getPostSlides({
 // Assumes a .md file exists in the postsDirectory for the passed slug
 // returns a blank matter file on errors
 export function getPostMatter(slug: string): matter.GrayMatterFile<string> {
-  const fullPath = join(postsDirectory, `${slug}.md`)
+  const fullPath = join(siteConfig.postsDirectoryFullPath, `${slug}.md`)
   try {
     const fileContents = fs.readFileSync(fullPath, 'utf8')
     return matter(fileContents)

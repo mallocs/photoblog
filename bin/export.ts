@@ -4,10 +4,10 @@ import sharp from 'sharp'
 import {
   getProgressBar,
   ensureDirectoryExists,
-  getDirectories,
+  getDirectoryData,
 } from './utils.js'
-import siteConfig from '../site.config.js'
-import nextJsConfig from '../next.config.mjs'
+import siteConfig from '#/site.config.js'
+import nextJsConfig from '#/next.config.mjs'
 
 async function exporter(opts = {}) {
   console.log('----  Begin exporting... ---- ')
@@ -22,63 +22,24 @@ async function exporter(opts = {}) {
     )
   }
 
-  const imageConfig = nextJsConfig?.images
-  const defaults = {
-    processedDirectory: siteConfig.processedDirectory,
-    resizedDirectoryName: siteConfig.resizedDirectoryName,
-    slideshowUrlBase: siteConfig.slideshowUrlBase,
-    imageSizes: [
-      ...(imageConfig.imageSizes || [16, 32, 48, 64, 96, 128, 256, 384]),
-      ...(imageConfig.deviceSizes || [
-        640, 750, 828, 1080, 1200, 1920, 2048, 3840,
-      ]),
-    ],
-    quality: siteConfig.imageQuality,
-    storePicturesInWEBP: siteConfig.storeFilesInWebP,
-    blurSize: siteConfig.blurSize,
-  }
-
   const {
     processedDirectory,
     resizedDirectoryName,
     slideshowUrlBase,
     imageSizes,
-    quality,
+    imageQuality,
     storePicturesInWEBP,
     blurSize,
-  } = { ...defaults, ...opts }
+  } = { ...siteConfig, ...nextJsConfig.images, ...opts }
 
-  const directories = getDirectories(processedDirectory)
+  const widths = [blurSize, ...imageSizes]
+  const progressBar = getProgressBar()
 
-  type DirectoryData = {
-    imageCount: number // total number of images being processed
-    directories: {
-      // directory name => list of files in the directory
-      [key: string]: string[]
-    }
-  }
-  const fileData: DirectoryData = directories.reduce(
-    (fileData, currentSlideshowDirectory) => {
-      fileData.directories[currentSlideshowDirectory] = fs
-        .readdirSync(path.join(processedDirectory, currentSlideshowDirectory))
-        .filter((filename) =>
-          siteConfig.imageFileTypes.includes(
-            filename.split('.').pop().toLowerCase()
-          )
-        )
-      fileData.imageCount +=
-        fileData.directories[currentSlideshowDirectory].length
-      return fileData
-    },
-    { directories: {}, imageCount: 0 }
-  )
+  const fileData = getDirectoryData(processedDirectory)
 
   console.log(
     `Found ${fileData.imageCount} supported images in ${processedDirectory} and subdirectories.`
   )
-
-  const widths = [blurSize, ...imageSizes]
-  const progressBar = getProgressBar()
 
   if (fileData.imageCount > 0) {
     console.log(`Using sizes: ${widths.toString()}`)
@@ -177,20 +138,20 @@ async function exporter(opts = {}) {
         await mainTransformer.clone().resize(width)
         if (extension === 'avif') {
           if (mainTransformer.avif) {
-            const avifQuality = quality - 15
+            const avifQuality = imageQuality - 15
             mainTransformer.avif({
               quality: Math.max(avifQuality, 0),
               chromaSubsampling: '4:2:0', // same as webp
             })
           } else {
-            mainTransformer.webp({ quality })
+            mainTransformer.webp({ quality: imageQuality })
           }
         } else if (extension === 'webp' || storePicturesInWEBP) {
-          mainTransformer.webp({ quality })
+          mainTransformer.webp({ quality: imageQuality })
         } else if (extension === 'png') {
-          mainTransformer.png({ quality })
+          mainTransformer.png({ quality: imageQuality })
         } else if (extension === 'jpeg' || extension === 'jpg') {
-          mainTransformer.jpeg({ quality })
+          mainTransformer.jpeg({ quality: imageQuality })
         }
 
         // Write the optimized image to the file system
