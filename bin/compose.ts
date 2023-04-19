@@ -118,6 +118,13 @@ function main() {
         message: 'Enter post summary:',
         type: 'input',
       },
+      {
+        name: 'coordinates',
+        message: 'Extract and display latitude and longitude',
+        type: 'list',
+        default: 'yes',
+        choices: ['yes', 'no'],
+      },
       // {
       //   name: 'draft',
       //   message: 'Set post as draft?',
@@ -154,6 +161,7 @@ function main() {
         author: answers.author,
         summary: answers.summary ? answers.summary : ' ',
         slideshow: {
+          coordinates: answers.coordinates,
           path: answers.slideshowPath,
           indexButtonType: answers.indexButtonType,
           captions: getSlideshowCaptionObject({

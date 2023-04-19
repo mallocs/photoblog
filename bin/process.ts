@@ -1,8 +1,11 @@
 import fs from 'fs'
 import sharp from 'sharp'
+import exifReader from 'exif-reader'
 import path from 'path'
+import matter from 'gray-matter'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
 import { getProgressBar, getDirectoryData } from '#/bin/utils'
+import { getLatLngDecimalFromExif } from '#/bin/geoUtils'
 import siteConfig from '#/site.config'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
@@ -105,15 +108,20 @@ async function processor(opts = {}) {
     opacity: watermarkOpacity,
   })
 
-  const postedSlideshowFolders = getPostSlugs().map(
-    (slug) => getPostMatter(slug).data.slideshow.path
+  const postedArticlesMatter = getPostSlugs().reduce(
+    (accumulator, currentSlug) => {
+      const matter = getPostMatter(currentSlug)
+      const path = matter.data.slideshow.path
+      return accumulator.set(path, matter)
+    },
+    new Map<string, matter.GrayMatterFile<string>>()
   )
+
   const fileData = getDirectoryData(slideshowFolderPath, {
     // only process directories that have been included in a post
     filterDirectoriesFn: (directoryName) =>
-      postedSlideshowFolders.includes(directoryName),
+      postedArticlesMatter.has(directoryName),
   })
-
   console.log(
     `Found ${fileData.imageCount} supported images in ${slideshowFolderPath} and subdirectories.`
   )
@@ -156,6 +164,15 @@ async function processor(opts = {}) {
     const directoryData = fs.existsSync(directoryDataFilePath)
       ? JSON.parse(fs.readFileSync(directoryDataFilePath, 'utf8'))
       : {}
+
+    const extractExifLatLng =
+      Boolean(
+        postedArticlesMatter.get(fileDirectory)?.data.slideshow.coordinates
+      ) &&
+      Boolean(
+        postedArticlesMatter.get(fileDirectory)?.data.slideshow.coordinates !==
+          'no'
+      )
 
     for (const file of files) {
       const processedPath = path.join(currentProcessedDirectory, file)
@@ -243,6 +260,9 @@ async function processor(opts = {}) {
 
       directoryData[file] = {
         ...directoryData[file],
+        ...(extractExifLatLng && {
+          map: getLatLngDecimalFromExif(exifReader(mainMetadata.exif)),
+        }),
         url: path.join(slideshowUrlBase, fileDirectory, file),
         width: mainImageActualWidth,
         height: mainImageActualHeight,
