@@ -92,6 +92,7 @@ export function getPostSlides({
           url: manifest[filename].url,
           width: manifest[filename].width,
           height: manifest[filename].height,
+          geodata: manifest[filename].geodata ?? null,
           blurDataURL: manifest[filename].blurDataURL,
           //  sizesString: manifest[data.filename].sizesString,
         }),

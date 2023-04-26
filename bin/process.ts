@@ -1,11 +1,10 @@
 import fs from 'fs'
 import sharp from 'sharp'
-import exifReader from 'exif-reader'
 import path from 'path'
 import matter from 'gray-matter'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
 import { getProgressBar, getDirectoryData } from '#/bin/utils'
-import { getLatLngDecimalFromExif } from '#/bin/geoUtils'
+import { geocodeFromExif } from '#/bin/geoUtils'
 import siteConfig from '#/site.config'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
@@ -165,13 +164,12 @@ async function processor(opts = {}) {
       ? JSON.parse(fs.readFileSync(directoryDataFilePath, 'utf8'))
       : {}
 
-    const extractExifLatLng =
+    const shouldGeocode =
       Boolean(
-        postedArticlesMatter.get(fileDirectory)?.data.slideshow.coordinates
+        postedArticlesMatter.get(fileDirectory)?.data.slideshow.geocode
       ) &&
       Boolean(
-        postedArticlesMatter.get(fileDirectory)?.data.slideshow.coordinates !==
-          'no'
+        postedArticlesMatter.get(fileDirectory)?.data.slideshow.geocode !== 'no'
       )
 
     for (const file of files) {
@@ -260,16 +258,18 @@ async function processor(opts = {}) {
 
       directoryData[file] = {
         ...directoryData[file],
-        ...(extractExifLatLng && {
-          map: getLatLngDecimalFromExif(exifReader(mainMetadata.exif)),
+        ...(shouldGeocode && {
+          geodata: await geocodeFromExif(mainMetadata.exif),
         }),
         url: path.join(slideshowUrlBase, fileDirectory, file),
         width: mainImageActualWidth,
         height: mainImageActualHeight,
       }
+      fs.writeFileSync(
+        directoryDataFilePath,
+        JSON.stringify(directoryData, null, 4)
+      )
     }
-    let manifest = JSON.stringify(directoryData, null, 4)
-    fs.writeFileSync(directoryDataFilePath, manifest)
   }
 
   console.log('----  End processing... ---- ')

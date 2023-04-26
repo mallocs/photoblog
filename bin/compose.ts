@@ -119,8 +119,8 @@ function main() {
         type: 'input',
       },
       {
-        name: 'coordinates',
-        message: 'Extract and display latitude and longitude',
+        name: 'geocode',
+        message: 'Extract latitude and longitude and reverse geocode',
         type: 'list',
         default: 'yes',
         choices: ['yes', 'no'],
@@ -161,7 +161,7 @@ function main() {
         author: answers.author,
         summary: answers.summary ? answers.summary : ' ',
         slideshow: {
-          coordinates: answers.coordinates,
+          geocode: answers.geocode,
           path: answers.slideshowPath,
           indexButtonType: answers.indexButtonType,
           captions: getSlideshowCaptionObject({

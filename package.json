@@ -19,6 +19,7 @@
     "exif-reader": "^1.2.0",
     "gray-matter": "^4.0.3",
     "inquirer-date-prompt": "^3.0.0",
+    "local-reverse-geocoder": "^0.15.0",
     "next": "latest",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",

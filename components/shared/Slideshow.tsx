@@ -13,6 +13,21 @@ const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
 
+function LocationDetails({ data }) {
+  if (data === null) {
+    return null
+  }
+
+  const { name, admin1Code, distance } = data
+  return (
+    <div className="font-extralight">
+      {distance < 5
+        ? `${name}, ${admin1Code.name}`
+        : `Near ${name}, ${admin1Code.name}`}
+    </div>
+  )
+}
+
 const LeftArrow = () => (
   <svg
     role="img"
@@ -145,6 +160,7 @@ function Slideshow({
 }: Props) {
   const sessionStorageKey = SESSION_STORAGE_KEY + id
   const [slideIndex, setSlideIndex] = useState(0)
+  const [showMetadetails, setShowMetadetails] = useState(true)
 
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -283,11 +299,30 @@ function Slideshow({
                 Number(slides[0].width) / Number(slides[0].height)
               })`,
             }}
-            dangerouslySetInnerHTML={{
-              __html: slides[slideIndex].caption || '\u00A0',
-            }}
           >
-            {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
+            <div className="flex justify-between">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: slides[slideIndex].caption || '\u00A0',
+                }}
+              >
+                {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
+              </span>
+              {Boolean(slides[slideIndex].geodata) && (
+                <button
+                  title={`${
+                    showMetadetails ? 'Hide details' : 'Show photo details'
+                  }`}
+                  className="self-end font-bold text-2xl font-sans text-primary dark:text-primaryDark hover:text-zinc-100 dark:hover:text-zinc-100"
+                  onClick={() => setShowMetadetails(!showMetadetails)}
+                >{`${showMetadetails ? '–' : '+'}`}</button>
+              )}
+            </div>
+            {showMetadetails && Boolean(slides[slideIndex].geodata) && (
+              <div className="border-t border-solid border-zinc-100 dark:border-zinc-900">
+                <LocationDetails data={slides[slideIndex].geodata} />
+              </div>
+            )}
           </figcaption>
           {slides.length > 1 && (
             <div className="xl:max-w-[80vw] mx-auto w-fit p-2">
