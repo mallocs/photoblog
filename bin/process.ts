@@ -4,7 +4,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
 import { getProgressBar, getDirectoryData } from '#/bin/utils'
-import { geocodeFromExif } from '#/bin/geoUtils'
+import { geocodeFromExif, getLatLngDecimalFromExif } from '#/bin/geoUtils'
 import siteConfig from '#/site.config'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
@@ -261,6 +261,7 @@ async function processor(opts = {}) {
         ...(shouldGeocode && {
           geodata: await geocodeFromExif(mainMetadata.exif),
         }),
+        ...getLatLngDecimalFromExif(mainMetadata.exif), // latitude, longitude
         url: path.join(slideshowUrlBase, fileDirectory, file),
         width: mainImageActualWidth,
         height: mainImageActualHeight,

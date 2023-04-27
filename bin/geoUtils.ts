@@ -17,7 +17,8 @@ function convertDMSToDD(degrees, minutes, seconds, direction) {
   return dd
 }
 
-export function getLatLngDecimalFromExif(exif): CoordinateDecimals {
+export function getLatLngDecimalFromExif(rawExif): CoordinateDecimals {
+  const exif = exifReader(rawExif)
   if (!exif || !exif.gps) {
     console.error(
       "Couldn't extract GPS latitude and longitude from given EXIF data"
@@ -71,8 +72,7 @@ export async function geocode(point: CoordinateDecimals) {
 }
 
 export async function geocodeFromExif(rawExif) {
-  const exif = exifReader(rawExif)
-  const point = getLatLngDecimalFromExif(exif)
+  const point = getLatLngDecimalFromExif(rawExif)
   if (typeof point === 'undefined') {
     return undefined
   }
