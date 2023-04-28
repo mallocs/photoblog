@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import cliProgress from 'cli-progress'
+import exifReader from 'exif-reader'
+import { getLatLngDecimalFromExif, geocodeFromExif } from './geoUtils'
 import siteConfig from '#/site.config.js'
 
 function getProgressBar() {
@@ -102,6 +104,29 @@ function promisify(f) {
       args.push(callback)
       f.call(this, ...args)
     })
+  }
+}
+
+function getExifDateTimeOriginal(exif) {
+  if (!exif || !exif.exif) {
+    return undefined
+  }
+  return exif.exif.DateTimeOriginal
+}
+
+export async function getExifData({
+  rawExif,
+  exif = exifReader(rawExif),
+  dateTimeOriginal = true,
+  coordinates = true,
+  geocode = true,
+}) {
+  return {
+    ...(dateTimeOriginal && {
+      dateTimeOriginal: getExifDateTimeOriginal(exif),
+    }),
+    ...(coordinates && { ...getLatLngDecimalFromExif(exif) }),
+    ...(geocode && { geodata: await geocodeFromExif(exif) }),
   }
 }
 

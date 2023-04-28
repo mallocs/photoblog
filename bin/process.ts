@@ -3,8 +3,7 @@ import sharp from 'sharp'
 import path from 'path'
 import matter from 'gray-matter'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
-import { getProgressBar, getDirectoryData } from '#/bin/utils'
-import { geocodeFromExif, getLatLngDecimalFromExif } from '#/bin/geoUtils'
+import { getProgressBar, getDirectoryData, getExifData } from '#/bin/utils'
 import siteConfig from '#/site.config'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
@@ -258,10 +257,10 @@ async function processor(opts = {}) {
 
       directoryData[file] = {
         ...directoryData[file],
-        ...(shouldGeocode && {
-          geodata: await geocodeFromExif(mainMetadata.exif),
-        }),
-        ...getLatLngDecimalFromExif(mainMetadata.exif), // latitude, longitude
+        ...(await getExifData({
+          rawExif: mainMetadata.exif,
+          geocode: shouldGeocode,
+        })),
         url: path.join(slideshowUrlBase, fileDirectory, file),
         width: mainImageActualWidth,
         height: mainImageActualHeight,

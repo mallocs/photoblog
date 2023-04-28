@@ -1,5 +1,4 @@
 import geocoder from 'local-reverse-geocoder'
-import exifReader from 'exif-reader'
 import { promisify } from './utils'
 
 type CoordinateDegrees = [number, number, number]
@@ -17,8 +16,7 @@ function convertDMSToDD(degrees, minutes, seconds, direction) {
   return dd
 }
 
-export function getLatLngDecimalFromExif(rawExif): CoordinateDecimals {
-  const exif = exifReader(rawExif)
+export function getLatLngDecimalFromExif(exif): CoordinateDecimals {
   if (!exif || !exif.gps) {
     console.error(
       "Couldn't extract GPS latitude and longitude from given EXIF data"
@@ -71,8 +69,8 @@ export async function geocode(point: CoordinateDecimals) {
   return await geocodePromise(point)
 }
 
-export async function geocodeFromExif(rawExif) {
-  const point = getLatLngDecimalFromExif(rawExif)
+export async function geocodeFromExif(exif) {
+  const point = getLatLngDecimalFromExif(exif)
   if (typeof point === 'undefined') {
     return undefined
   }
