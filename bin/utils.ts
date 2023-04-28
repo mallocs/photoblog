@@ -111,7 +111,9 @@ function getExifDateTimeOriginal(exif) {
   if (!exif || !exif.exif) {
     return undefined
   }
-  return exif.exif.DateTimeOriginal
+  // exif-reader seems to assume utc and ignores the exif timezone offset field.
+  // https://github.com/devongovett/exif-reader/blob/7c4ab9d475621cab87ed720037dd2955025cdefe/index.js#L203
+  return exif.exif.DateTimeOriginal.toISOString().slice(0, -5)
 }
 
 export async function getExifData({

@@ -5,6 +5,7 @@ import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '#/interfaces/slide'
 import { SlideshowIndexButton } from '#/interfaces/slideshow'
 import siteConfig from '#/site.config'
+import DateFormatter from '#/components/shared/date-formatter'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -18,13 +19,13 @@ function LocationDetails({ data }) {
     return null
   }
 
-  const { name, admin1Code, distance } = data
+  const { name, admin1Code, admin2Code, distance } = data
   return (
-    <div className="font-extralight">
-      {distance < 5
+    <span>
+      {distance < 10
         ? `${name}, ${admin1Code.name}`
-        : `Near ${name}, ${admin1Code.name}`}
-    </div>
+        : `${admin2Code.name}, ${admin1Code.name}`}
+    </span>
   )
 }
 
@@ -319,7 +320,15 @@ function Slideshow({
               )}
             </div>
             {showMetadetails && Boolean(slides[slideIndex].geodata) && (
-              <div className="border-t border-solid border-zinc-100 dark:border-zinc-900">
+              <div className="font-extralight text-sm pt-1 border-t border-solid border-zinc-100 dark:border-zinc-900">
+                {Boolean(slides[slideIndex].dateTimeOriginal) && (
+                  <span className="mr-2">
+                    <DateFormatter
+                      dateString={slides[slideIndex].dateTimeOriginal}
+                      format="L/d h a"
+                    />
+                  </span>
+                )}
                 <LocationDetails data={slides[slideIndex].geodata} />
               </div>
             )}

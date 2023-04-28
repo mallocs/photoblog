@@ -8,4 +8,5 @@ export type SlideExternal = {
   height?: string
   blurDataURL?: string
   geodata?: unknown
+  dateTimeOriginal?: string
 }
