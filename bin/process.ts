@@ -171,100 +171,47 @@ async function processor(opts = {}) {
         postedArticlesMatter.get(fileDirectory)?.data.slideshow.geocode !== 'no'
       )
 
+    const shouldExtractDateTimeOriginal =
+      Boolean(
+        postedArticlesMatter.get(fileDirectory)?.data.slideshow.showDatetimes
+      ) &&
+      Boolean(
+        postedArticlesMatter.get(fileDirectory)?.data.slideshow
+          .showDatetimes !== 'no'
+      )
+
     for (const file of files) {
-      const processedPath = path.join(currentProcessedDirectory, file)
       if (directoryData.hasOwnProperty(file)) {
-        incrementProgressbar(processedPath)
+        incrementProgressbar(path.join(currentProcessedDirectory, file))
         continue
       }
-      directoryData[file] = {}
-      let imagePath = path.join(slideshowFolderPath, fileDirectory, file)
-
+      const processedPath = path.join(currentProcessedDirectory, file)
       // Begin sharp transformation logic
-      const mainTransformer = await sharp(imagePath)
-      const mainMetadata = await mainTransformer.metadata()
-      mainTransformer.rotate()
-      // account for exif orientation
-      const [mainImageActualHeight, mainImageActualWidth] =
-        mainMetadata.orientation <= 4 || mainMetadata.orientation === undefined
-          ? [mainMetadata.height, mainMetadata.width]
-          : [mainMetadata.width, mainMetadata.height]
-
-      if (watermarkFile !== null) {
-        const watermarkTransformer = await sharp(watermarkFile)
-        const watermarkMetadata = await watermarkTransformer.metadata()
-
-        const [watermarkActualHeight, watermarkActualWidth] =
-          watermarkMetadata.orientation <= 4 ||
-          watermarkMetadata.orientation === undefined
-            ? [watermarkMetadata.height, watermarkMetadata.width]
-            : [watermarkMetadata.width, watermarkMetadata.height]
-
-        const [newHeight, newWidth] = getDimensions(
-          mainImageActualHeight,
-          mainImageActualWidth,
-          watermarkActualHeight,
-          watermarkActualWidth,
-          watermarkSizeRatio
-        )
-
-        const opaqueWatermark = await watermarkTransformer
-          .resize(newWidth, newHeight)
-          .composite([
-            {
-              input: Buffer.from([
-                255,
-                255,
-                255,
-                Math.floor(255 * watermarkOpacity),
-              ]),
-              raw: {
-                width: 1,
-                height: 1,
-                channels: 4,
-              },
-              tile: true,
-              blend: 'dest-in',
-            },
-          ])
-          .toBuffer()
-
-        await mainTransformer
-          .composite([
-            {
-              input: opaqueWatermark,
-              top: mainImageActualHeight - Math.floor(1.5 * newHeight),
-              left:
-                mainImageActualWidth - Math.floor(newWidth + 0.5 * newHeight),
-            },
-          ])
-          .toBuffer()
-      }
-
-      await mainTransformer
-        .modulate({
-          saturation,
-        })
-        .toFile(processedPath)
-      incrementProgressbar(processedPath)
-
-      directoryData[file].blurDataURL = blurSize
-        ? await makeBlurDataURL({
-            path: processedPath,
-            size: blurSize,
-          })
-        : null
+      const transformer = await sharp(
+        path.join(slideshowFolderPath, fileDirectory, file)
+      )
+      const metadata = await transformer.metadata()
 
       directoryData[file] = {
-        ...directoryData[file],
-        ...(await getExifData({
-          rawExif: mainMetadata.exif,
-          geocode: shouldGeocode,
+        ...(await processImage({
+          processedPath,
+          transformer,
+          metadata,
+          watermarkFile,
+          watermarkOpacity,
+          watermarkSizeRatio,
+          saturation,
+          blurSize,
+        })),
+        ...(await processMetadata({
+          metadata,
+          shouldGeocode,
+          shouldExtractDateTimeOriginal,
         })),
         url: path.join(slideshowUrlBase, fileDirectory, file),
-        width: mainImageActualWidth,
-        height: mainImageActualHeight,
       }
+      incrementProgressbar(processedPath)
+
       fs.writeFileSync(
         directoryDataFilePath,
         JSON.stringify(directoryData, null, 4)
@@ -276,3 +223,103 @@ async function processor(opts = {}) {
 }
 
 processor()
+
+async function processMetadata({
+  metadata,
+  shouldGeocode,
+  shouldExtractDateTimeOriginal,
+}) {
+  return {
+    ...(await getExifData({
+      rawExif: metadata.exif,
+      coordinates: shouldGeocode,
+      geocode: shouldGeocode,
+      dateTimeOriginal: shouldExtractDateTimeOriginal,
+    })),
+  }
+}
+
+async function processImage({
+  processedPath,
+  transformer,
+  metadata,
+  watermarkFile,
+  watermarkOpacity,
+  watermarkSizeRatio,
+  saturation,
+  blurSize,
+}) {
+  transformer.rotate()
+  // account for exif orientation
+  const [mainImageActualHeight, mainImageActualWidth] =
+    metadata.orientation <= 4 || metadata.orientation === undefined
+      ? [metadata.height, metadata.width]
+      : [metadata.width, metadata.height]
+
+  if (watermarkFile !== null) {
+    const watermarkTransformer = await sharp(watermarkFile)
+    const watermarkMetadata = await watermarkTransformer.metadata()
+
+    const [watermarkActualHeight, watermarkActualWidth] =
+      watermarkMetadata.orientation <= 4 ||
+      watermarkMetadata.orientation === undefined
+        ? [watermarkMetadata.height, watermarkMetadata.width]
+        : [watermarkMetadata.width, watermarkMetadata.height]
+
+    const [newHeight, newWidth] = getDimensions(
+      mainImageActualHeight,
+      mainImageActualWidth,
+      watermarkActualHeight,
+      watermarkActualWidth,
+      watermarkSizeRatio
+    )
+
+    const opaqueWatermark = await watermarkTransformer
+      .resize(newWidth, newHeight)
+      .composite([
+        {
+          input: Buffer.from([
+            255,
+            255,
+            255,
+            Math.floor(255 * watermarkOpacity),
+          ]),
+          raw: {
+            width: 1,
+            height: 1,
+            channels: 4,
+          },
+          tile: true,
+          blend: 'dest-in',
+        },
+      ])
+      .toBuffer()
+
+    await transformer
+      .composite([
+        {
+          input: opaqueWatermark,
+          top: mainImageActualHeight - Math.floor(1.5 * newHeight),
+          left: mainImageActualWidth - Math.floor(newWidth + 0.5 * newHeight),
+        },
+      ])
+      .toBuffer()
+  }
+
+  await transformer
+    .modulate({
+      saturation,
+    })
+    .toFile(processedPath)
+
+  return {
+    blurDataURL: blurSize
+      ? await makeBlurDataURL({
+          path: processedPath,
+          size: blurSize,
+        })
+      : null,
+    width: mainImageActualWidth,
+    height: mainImageActualHeight,
+  }
+}

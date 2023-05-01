@@ -125,6 +125,13 @@ function main() {
         default: 'yes',
         choices: ['yes', 'no'],
       },
+      {
+        name: 'showDatetimes',
+        message: 'Show photo date and time',
+        type: 'list',
+        default: 'yes',
+        choices: ['yes', 'no'],
+      },
       // {
       //   name: 'draft',
       //   message: 'Set post as draft?',
@@ -162,6 +169,7 @@ function main() {
         summary: answers.summary ? answers.summary : ' ',
         slideshow: {
           geocode: answers.geocode,
+          showDatetimes: answers.showDatetimes,
           path: answers.slideshowPath,
           indexButtonType: answers.indexButtonType,
           captions: getSlideshowCaptionObject({

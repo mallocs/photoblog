@@ -14,18 +14,28 @@ const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
 
-function LocationDetails({ data }) {
-  if (data === null) {
+function LocationDetails({ geodata }) {
+  if (!Boolean(geodata)) {
     return null
   }
 
-  const { name, admin1Code, admin2Code, distance } = data
+  const { name, admin1Code, admin2Code, distance } = geodata
   return (
     <span>
       {distance < 10
         ? `${name}, ${admin1Code.name}`
         : `${admin2Code.name}, ${admin1Code.name}`}
     </span>
+  )
+}
+
+function CaptionDate({ dateTimeOriginal }) {
+  return (
+    Boolean(dateTimeOriginal) && (
+      <span className="mr-2">
+        <DateFormatter dateString={dateTimeOriginal} format="L/d h a" />
+      </span>
+    )
   )
 }
 
@@ -162,6 +172,9 @@ function Slideshow({
   const sessionStorageKey = SESSION_STORAGE_KEY + id
   const [slideIndex, setSlideIndex] = useState(0)
   const [showMetadetails, setShowMetadetails] = useState(true)
+  const hasMetaDetails =
+    Boolean(slides[slideIndex].geodata) ||
+    Boolean(slides[slideIndex].dateTimeOriginal)
 
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -309,7 +322,7 @@ function Slideshow({
               >
                 {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
               </span>
-              {Boolean(slides[slideIndex].geodata) && (
+              {hasMetaDetails && (
                 <button
                   title={`${
                     showMetadetails ? 'Hide details' : 'Show photo details'
@@ -319,17 +332,12 @@ function Slideshow({
                 >{`${showMetadetails ? '–' : '+'}`}</button>
               )}
             </div>
-            {showMetadetails && Boolean(slides[slideIndex].geodata) && (
+            {hasMetaDetails && showMetadetails && (
               <div className="font-extralight text-sm pt-1 border-t border-solid border-zinc-100 dark:border-zinc-900">
-                {Boolean(slides[slideIndex].dateTimeOriginal) && (
-                  <span className="mr-2">
-                    <DateFormatter
-                      dateString={slides[slideIndex].dateTimeOriginal}
-                      format="L/d h a"
-                    />
-                  </span>
-                )}
-                <LocationDetails data={slides[slideIndex].geodata} />
+                <CaptionDate
+                  dateTimeOriginal={slides[slideIndex].dateTimeOriginal}
+                />
+                <LocationDetails geodata={slides[slideIndex].geodata} />
               </div>
             )}
           </figcaption>
