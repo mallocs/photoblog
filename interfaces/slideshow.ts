@@ -1,7 +1,7 @@
 import { SlideExternal } from './slide'
 
-export type SlideshowIndexButton = 'circles' | 'dots' | 'images'
-export const slideshowIndexButtonOptions = ['circles', 'dots', 'images']
+export type SlideshowIndexButton = 'images' | 'circles' | 'dots'
+export const slideshowIndexButtonOptions = ['images', 'circles', 'dots']
 
 export type SlideshowInternal = {
   indexButtonType?: SlideshowIndexButton
@@ -10,5 +10,6 @@ export type SlideshowInternal = {
 
 export type SlideshowExternal = {
   indexButtonType?: SlideshowIndexButton
+  dateRange?: [string, string]
   slides: SlideExternal[]
 }

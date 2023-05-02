@@ -1,6 +1,6 @@
 import markdownStyles from './markdown-styles.module.css'
 import Avatar from '#/components/shared/Avatar'
-import DateFormatter from '#/components/shared/date-formatter'
+import DateFormatter from '#/components/shared/DateFormatter'
 import type Author from '#/interfaces/author'
 import { SlideExternal } from '#/interfaces/slide'
 import Slide from '#/components/shared/Slide'

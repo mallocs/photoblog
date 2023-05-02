@@ -35,7 +35,7 @@ function getProgressBar() {
         if (params.value >= params.total) {
           return (
             progressString +
-            `\nFinished optimization in: ${msToTime(elapsedTime)}`
+            `\nFinished processing in: ${msToTime(elapsedTime)}`
           )
         } else {
           return progressString

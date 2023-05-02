@@ -5,7 +5,7 @@ import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '#/interfaces/slide'
 import { SlideshowIndexButton } from '#/interfaces/slideshow'
 import siteConfig from '#/site.config'
-import DateFormatter from '#/components/shared/date-formatter'
+import DateFormatter from '#/components/shared/DateFormatter'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -33,7 +33,7 @@ function CaptionDate({ dateTimeOriginal }) {
   return (
     Boolean(dateTimeOriginal) && (
       <span className="mr-2">
-        <DateFormatter dateString={dateTimeOriginal} format="L/d h a" />
+        <DateFormatter dateString={dateTimeOriginal} format="L/d h aaa" />
       </span>
     )
   )

@@ -1,14 +1,16 @@
 import fs from 'fs'
 import path from 'path'
 import inquirer from 'inquirer'
+import { input } from '@inquirer/prompts'
 import DatePrompt from 'inquirer-date-prompt'
 import matter from 'gray-matter'
-import siteConfig from '../site.config.js'
+import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
+import siteConfig from '#/site.config.js'
 
 function getSlideshowPaths({
   slideshowsPath = path.join(siteConfig.root, siteConfig.slideshowFolderPath),
   ignoreFiles = siteConfig.ignoreFiles,
-}) {
+} = {}): string[] {
   return fs
     .readdirSync(slideshowsPath)
     .map((filename) => path.parse(filename).name)
@@ -44,164 +46,153 @@ function getSlideshowCaptionObject({
 }
 
 // Remove special characters and replace space with -
-const getDefaultDirectory = (answers) => {
-  return answers.title
+const getDefaultDirectory = (input) => {
+  return input
     .toLowerCase()
     .replace(/[^a-zA-Z0-9 ]/g, '')
     .replace(/ /g, '-')
     .replace(/-+/g, '-')
 }
 
-function main() {
+async function main() {
   inquirer.registerPrompt('date', DatePrompt)
 
-  inquirer
-    .prompt([
-      {
-        name: 'title',
-        message: 'Enter post title:',
-        default: 'Untitled',
-        type: 'input',
-      },
-      {
-        name: 'date',
-        type: 'date',
-        message: 'Enter the date for the post:',
-        filter: (date) => date.toISOString(),
-      },
-      {
-        name: 'author',
-        message: 'Choose author:',
-        type: 'list',
-        choices: Object.keys(siteConfig.authors),
-      },
-      {
-        name: 'fileName',
-        message: 'Choose filename:',
-        default(answers) {
-          return getDefaultDirectory(answers)
-        },
-        validate(input, answers) {
-          const fileFullPath = path.join(
-            siteConfig.postsDirectoryFullPath,
-            `${input || getDefaultDirectory(answers)}.md`
-          )
-          if (!fs.existsSync(fileFullPath)) {
-            return true
-          }
-          return 'Filename already exists. Chose another name or delete the existing entry.'
-        },
-        type: 'input',
-      },
-      {
-        name: 'slideshowPath',
-        message: 'Choose slideshow directory:',
-        type: 'list',
-        choices: getSlideshowPaths,
-      },
-      {
-        name: 'addCaptions',
-        message: 'Add captions',
-        type: 'list',
-        choices: ['yes', 'no'],
-      },
-      {
-        name: 'indexButtonType',
-        message: 'What type of navigation buttons',
-        type: 'list',
-        default: 'images',
-        choices: ['images', 'circles', 'dots'],
-      },
-
-      {
-        name: 'summary',
-        message: 'Enter post summary:',
-        type: 'input',
-      },
-      {
-        name: 'geocode',
-        message: 'Extract latitude and longitude and reverse geocode',
-        type: 'list',
-        default: 'yes',
-        choices: ['yes', 'no'],
-      },
-      {
-        name: 'showDatetimes',
-        message: 'Show photo date and time',
-        type: 'list',
-        default: 'yes',
-        choices: ['yes', 'no'],
-      },
-      // {
-      //   name: 'draft',
-      //   message: 'Set post as draft?',
-      //   type: 'list',
-      //   choices: ['yes', 'no'],
-      // },
-      // {
-      //   name: 'private',
-      //   message: 'Set post as private?',
-      //   type: 'list',
-      //   choices: ['yes', 'no'],
-      // },
-      // {
-      //   name: 'tags',
-      //   message: 'Any Tags? Separate them with , or leave empty if no tags.',
-      //   type: 'input',
-      // },
-      // {
-      //   name: 'layout',
-      //   message: 'Select layout',
-      //   type: 'list',
-      //   choices: getLayouts,
-      // },
-      // {
-      //   name: 'canonicalUrl',
-      //   message: 'Enter canonical url:',
-      //   type: 'input',
-      // },
-    ])
-    .then((answers) => {
-      const frontMatter = matter.stringify('', {
-        date: answers.date,
-        title: answers.title ? answers.title : 'Untitled',
-        author: answers.author,
-        summary: answers.summary ? answers.summary : ' ',
-        slideshow: {
-          geocode: answers.geocode,
-          showDatetimes: answers.showDatetimes,
-          path: answers.slideshowPath,
-          indexButtonType: answers.indexButtonType,
-          captions: getSlideshowCaptionObject({
-            folderName: answers.slideshowPath,
-          }),
-        },
-      })
-      if (!fs.existsSync(siteConfig.postsDirectory))
-        fs.mkdirSync(siteConfig.postsDirectory, { recursive: true })
-
-      const fileFullPath = path.join(
-        siteConfig.postsDirectoryFullPath,
-        `${answers.fileName}.md`
-      )
-      fs.writeFile(fileFullPath, frontMatter, { flag: 'wx' }, (err) => {
-        if (err) {
-          if (err.code === 'EEXIST') {
-          }
-          throw err
-        } else {
-          console.log(`Blog post generated successfully at ${answers.fileName}`)
-        }
-      })
+  try {
+    const title = await input({
+      message: 'Enter post title:',
+      default: 'Untitled',
     })
-    .catch((error) => {
-      console.log(error)
-      if (error.isTtyError) {
-        console.log("Prompt couldn't be rendered in the current environment")
+
+    const { date } = await inquirer.prompt({
+      name: 'date',
+      type: 'date',
+      message: 'Enter the date for the post:',
+      filter: (date) => date.toISOString(),
+    })
+
+    const { author } = await inquirer.prompt({
+      name: 'author',
+      type: 'list',
+      message: 'Choose author:',
+      choices: Object.keys(siteConfig.authors),
+    })
+    const { filename } = await inquirer.prompt({
+      name: 'filename',
+      message: 'Choose filename:',
+      default: getDefaultDirectory(title),
+      validate(input, answers) {
+        const fileFullPath = path.join(
+          siteConfig.postsDirectoryFullPath,
+          `${input || getDefaultDirectory(answers)}.md`
+        )
+        if (!fs.existsSync(fileFullPath)) {
+          return true
+        }
+        return 'Filename already exists. Chose another name or delete the existing entry.'
+      },
+    })
+
+    const { slideshowPath } = await inquirer.prompt({
+      name: 'slideshowPath',
+      message: 'Choose slideshow directory:',
+      type: 'list',
+      choices: getSlideshowPaths,
+    })
+
+    const { indexButtonType } = await inquirer.prompt({
+      name: 'indexButtonType',
+      message: 'What type of navigation buttons',
+      type: 'list',
+      default: 'images',
+      choices: slideshowIndexButtonOptions,
+    })
+    const summary = await input({
+      message: 'Enter post summary:',
+    })
+    const { geocode } = await inquirer.prompt({
+      name: 'geocode',
+      message: 'Extract latitude and longitude and reverse geocode',
+      type: 'list',
+      default: 'yes',
+      choices: ['yes', 'no'],
+    })
+    const { showDatetimes } = await inquirer.prompt({
+      name: 'showDatetimes',
+      message: 'Show photo date and time',
+      type: 'list',
+      default: 'yes',
+      choices: ['yes', 'no'],
+    })
+
+    // TODO types
+    // {
+    //   name: 'draft',
+    //   message: 'Set post as draft?',
+    //   type: 'list',
+    //   choices: ['yes', 'no'],
+    // },
+    // {
+    //   name: 'private',
+    //   message: 'Set post as private?',
+    //   type: 'list',
+    //   choices: ['yes', 'no'],
+    // },
+    // {
+    //   name: 'tags',
+    //   message: 'Any Tags? Separate them with , or leave empty if no tags.',
+    //   type: 'input',
+    // },
+    // {
+    //   name: 'layout',
+    //   message: 'Select layout',
+    //   type: 'list',
+    //   choices: getLayouts,
+    // },
+    // {
+    //   name: 'canonicalUrl',
+    //   message: 'Enter canonical url:',
+    //   type: 'input',
+    // }
+    const frontMatter = matter.stringify('', {
+      date,
+      title: title !== undefined ? title : 'Untitled',
+      author,
+      summary: summary !== undefined ? summary : ' ',
+      slideshow: {
+        geocode,
+        showDatetimes,
+        path: slideshowPath,
+        indexButtonType,
+        captions: getSlideshowCaptionObject({
+          folderName: slideshowPath,
+        }),
+      },
+    })
+
+    if (!fs.existsSync(siteConfig.postsDirectory))
+      fs.mkdirSync(siteConfig.postsDirectory, { recursive: true })
+
+    const fileFullPath = path.join(
+      siteConfig.postsDirectoryFullPath,
+      `${filename}.md`
+    )
+    fs.writeFile(fileFullPath, frontMatter, { flag: 'wx' }, (err) => {
+      if (err) {
+        if (err.code === 'EEXIST') {
+        }
+        throw err
       } else {
-        console.log('Something went wrong, sorry!')
+        console.log(`Blog post generated successfully at ${filename}`)
       }
     })
+  } catch (error) {
+    console.log(error)
+    if (error.isTtyError) {
+      console.log("Prompt couldn't be rendered in the current environment")
+    } else {
+      console.log('Something went wrong, sorry!')
+    }
+  }
 }
 
 main()

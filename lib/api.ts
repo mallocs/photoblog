@@ -2,7 +2,6 @@ import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
 import { SlideExternal } from '#/interfaces/slide'
-import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
 import PostType from '#/interfaces/post'
 import siteConfig from '#/site.config'
 
@@ -14,11 +13,35 @@ export function getPostSlugs() {
     .map((filename) => filename.replace(/\.md$/, ''))
 }
 
+function getEarliestAndLatestSlideDatetime(slides: SlideExternal[]): {
+  slides: SlideExternal[]
+  dateRange?: [string, string]
+} {
+  if (!slides[0].dateTimeOriginal) {
+    return { slides }
+  }
+  let earliestSlide = slides[0].dateTimeOriginal
+  let latestSlide = slides[0].dateTimeOriginal
+
+  for (let slide of slides) {
+    let currentDate = new Date(slide.dateTimeOriginal)
+    if (currentDate < new Date(earliestSlide)) {
+      earliestSlide = slide.dateTimeOriginal
+    } else if (currentDate > new Date(latestSlide)) {
+      latestSlide = slide.dateTimeOriginal
+    }
+  }
+
+  return {
+    slides,
+    dateRange: [earliestSlide, latestSlide],
+  }
+}
+
 // Transform markdown slideshow gray matter to external slideshow data
-export function getPostSlides({
-  captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
-  // will be added to the end of the array of slides.
-  path: currentSlideshowDirectory, // path to slideshow directory in filesystem
+function getPostSlides({
+  captions = {}, // see getPostSlideshow comments
+  path: currentSlideshowDirectory,
 }: {
   captions: {
     [key: string]: string
@@ -93,6 +116,24 @@ export function getPostSlides({
   )
 }
 
+function getPostSlideshow({
+  captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
+  // will be added to the end of the array of slides.
+  path, // path to slideshow directory in filesystem
+  indexButtonType = 'dots',
+}: {
+  captions: {
+    [key: string]: string
+  }
+  indexButtonType: string
+  path: string
+}) {
+  return {
+    indexButtonType,
+    ...getEarliestAndLatestSlideDatetime(getPostSlides({ captions, path })),
+  }
+}
+
 // Assumes a .md file exists in the postsDirectory for the passed slug
 // returns a blank matter file on errors
 export function getPostMatter(slug: string): matter.GrayMatterFile<string> {
@@ -117,16 +158,7 @@ export function getPostBySlug(
     ...data,
     slug,
     content,
-    ...(data.slideshow && {
-      slideshow: {
-        ...(slideshowIndexButtonOptions.includes(
-          data.slideshow.indexButtonType
-        ) && {
-          indexButtonType: data.slideshow.indexButtonType,
-        }),
-        slides: getPostSlides(data.slideshow),
-      },
-    }),
+    slideshow: getPostSlideshow(data.slideshow),
   }
 
   return Object.fromEntries(

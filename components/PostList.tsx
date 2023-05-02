@@ -1,7 +1,8 @@
-import DateFormatter from '#/components/shared/date-formatter'
+import DateFormatter from '#/components/shared/DateFormatter'
 import Link from 'next/link'
 import type Post from '#/interfaces/post'
 import Slideshow from '#/components/shared/Slideshow'
+import DateRangeFormatter from '#/components/shared/DateRangeFormatter'
 
 type Props = {
   posts: Post[]
@@ -22,8 +23,12 @@ const PostList = ({ posts }: Props) => {
                 {title}
               </Link>
             </h2>
-            <div className="mb-1 text-lg uppercase">
-              <DateFormatter dateString={date} />
+            <div className="mb-1 font-medium uppercase">
+              {Array.isArray(slideshow.dateRange) ? (
+                <DateRangeFormatter dateRange={slideshow.dateRange} />
+              ) : (
+                <DateFormatter dateString={date} />
+              )}
             </div>
             <div className="mb-3">
               <div
