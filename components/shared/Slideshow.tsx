@@ -140,11 +140,11 @@ function makeImgSlideshowButtonCSS({
   isPressed: boolean
 }): string {
   return (
-    `m-2 bg-no-repeat bg-cover bg-center shadow-[3px_3px_5px_1px] shadow-zinc-700 dark:shadow-slate-400` +
+    `m-2 bg-no-repeat bg-cover bg-center shadow-zinc-700 dark:shadow-slate-400` +
     `${
       isPressed
         ? ' border-2 shadow-[1px_1px_5px_-1px]'
-        : ' hover:border-2 hover:shadow-[1px_1px_5px_-1px]'
+        : ' shadow-[3px_3px_5px_1px] hover:border-2 hover:shadow-[1px_1px_5px_-1px]'
     }`
   )
 }
