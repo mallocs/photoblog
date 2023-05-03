@@ -3,8 +3,17 @@
 @tailwind utilities;
 
 @layer base {
-  a:hover {
+  a {
     @apply text-primary dark:text-primaryDark
+  }
+  a:hover {
+    @apply underline
+  }
+  h1 a, h2 a, h3 a {
+    @apply text-black dark:text-zinc-200
+  }
+  h1 a:hover, h2 a:hover, h3 a:hover {
+    @apply text-primary dark:text-primaryDark no-underline
   }
 }
 

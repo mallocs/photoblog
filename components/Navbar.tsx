@@ -74,12 +74,12 @@ function ColorModeButton() {
 export default function Navbar() {
   return (
     <nav className="flex justify-between bg-zinc-600 h-11 px-2 sm:px-8">
-      <ul className="flex items-center justify-start text-zinc-50 ">
+      <ul className="flex items-center justify-start">
         {siteConfig.navbarLinks.map(({ name, url }: Link) => (
           <li key={name}>
             <a
               href={url}
-              className="mr-4 sm:mr-10 px-4 py-2 uppercase font-sans text-xl font-medium text-zinc-50 hover:bg-zinc-600 rounded"
+              className="mr-4 sm:mr-10 px-4 py-2 uppercase rounded font-sans text-xl font-medium text-zinc-50 dark:text-zinc-50 hover:no-underline hover:bg-zinc-600"
             >
               {name}
             </a>
