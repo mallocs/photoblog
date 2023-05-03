@@ -3,6 +3,7 @@ import { default as NextImage } from 'next/image'
 import { isDevEnvironment } from '#/lib/isDevEnvironment'
 import { useContext, useState } from 'react'
 import { EditContext } from '#/pages/posts/[slug]'
+import SlideCaption from '#/components/shared/SlideCaption'
 
 type Props = {
   slide: SlideExternal
@@ -44,15 +45,16 @@ function EditableFigcaption({ slide }) {
 
   return (
     <>
-      <figcaption
-        contentEditable={editModeEnabled && !isSubmitting}
-        className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto"
-        onInput={(e) => setEditedCaption(e.currentTarget.innerHTML)}
-        key={editCount}
-        dangerouslySetInnerHTML={{
-          __html: caption || '\u00A0',
+      <SlideCaption
+        caption={caption}
+        geodata={slide.geodata}
+        dateTimeOriginal={slide.dateTimeOriginal}
+        captionProps={{
+          contentEditable: editModeEnabled && !isSubmitting,
+          onInput: (e) => setEditedCaption(e.currentTarget.innerHTML),
+          key: editCount,
         }}
-      ></figcaption>
+      />
       {editModeEnabled && (
         <span className="relative">
           <UndoButton
@@ -99,21 +101,20 @@ function Slide({ slide, id }: Props) {
           alt="slideshow"
           key={slide.url}
           src={slide.url}
-          width={Number(slide?.width)}
-          height={Number(slide?.height)}
+          width={Number(slide.width)}
+          height={Number(slide.height)}
           placeholder="blur"
-          blurDataURL={slide?.blurDataURL}
+          blurDataURL={slide.blurDataURL}
           sizes="100vw"
         />
         {isDevEnvironment ? (
           <EditableFigcaption slide={slide} />
         ) : (
-          <figcaption
-            className="bg-zinc-300 dark:bg-zinc-400 py-1 px-4 mx-auto"
-            dangerouslySetInnerHTML={{
-              __html: slide?.caption || '\u00A0',
-            }}
-          ></figcaption>
+          <SlideCaption
+            caption={slide.caption}
+            geodata={slide.geodata}
+            dateTimeOriginal={slide?.dateTimeOriginal}
+          />
         )}
       </figure>
     </div>

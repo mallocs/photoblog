@@ -5,7 +5,7 @@ import { useSwipeable } from 'react-swipeable'
 import { SlideExternal } from '#/interfaces/slide'
 import { SlideshowIndexButton } from '#/interfaces/slideshow'
 import siteConfig from '#/site.config'
-import DateFormatter from '#/components/shared/DateFormatter'
+import SlideCaption from '#/components/shared/SlideCaption'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -13,31 +13,6 @@ const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 //   const lastDotIndex = src.lastIndexOf('.')
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
-
-function LocationDetails({ geodata }) {
-  if (!Boolean(geodata)) {
-    return null
-  }
-
-  const { name, admin1Code, admin2Code, distance } = geodata
-  return (
-    <span>
-      {distance < 10
-        ? `${name}, ${admin1Code.name}`
-        : `${admin2Code.name}, ${admin1Code.name}`}
-    </span>
-  )
-}
-
-function CaptionDate({ dateTimeOriginal }) {
-  return (
-    Boolean(dateTimeOriginal) && (
-      <span className="mr-2">
-        <DateFormatter dateString={dateTimeOriginal} format="L/d h aaa" />
-      </span>
-    )
-  )
-}
 
 const LeftArrow = () => (
   <svg
@@ -171,10 +146,6 @@ function Slideshow({
 }: Props) {
   const sessionStorageKey = SESSION_STORAGE_KEY + id
   const [slideIndex, setSlideIndex] = useState(0)
-  const [showMetadetails, setShowMetadetails] = useState(true)
-  const hasMetaDetails =
-    Boolean(slides[slideIndex].geodata) ||
-    Boolean(slides[slideIndex].dateTimeOriginal)
 
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -301,8 +272,10 @@ function Slideshow({
           )}
         </div>
         <div className="max-w-full">
-          <figcaption
-            className="figcaption bg-zinc-300 dark:bg-zinc-600 py-1 px-4 mx-auto text-lg"
+          <SlideCaption
+            caption={slides[slideIndex].caption}
+            geodata={slides[slideIndex].geodata}
+            dateTimeOriginal={slides[slideIndex].dateTimeOriginal}
             // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
               maxWidth: `100vw`,
@@ -313,34 +286,7 @@ function Slideshow({
                 Number(slides[0].width) / Number(slides[0].height)
               })`,
             }}
-          >
-            <div className="flex justify-between">
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: slides[slideIndex].caption || '\u00A0',
-                }}
-              >
-                {/* Using || so empty strings don't collapse. 0, null, and undefined also get replaced */}
-              </span>
-              {hasMetaDetails && (
-                <button
-                  title={`${
-                    showMetadetails ? 'Hide details' : 'Show photo details'
-                  }`}
-                  className="self-end font-bold text-2xl font-sans text-primary dark:text-primaryDark hover:text-zinc-100 dark:hover:text-zinc-100"
-                  onClick={() => setShowMetadetails(!showMetadetails)}
-                >{`${showMetadetails ? '–' : '+'}`}</button>
-              )}
-            </div>
-            {hasMetaDetails && showMetadetails && (
-              <div className="font-extralight text-sm pt-1 border-t border-solid border-zinc-100 dark:border-zinc-900">
-                <CaptionDate
-                  dateTimeOriginal={slides[slideIndex].dateTimeOriginal}
-                />
-                <LocationDetails geodata={slides[slideIndex].geodata} />
-              </div>
-            )}
-          </figcaption>
+          />
           {slides.length > 1 && (
             <div className="xl:max-w-[80vw] mx-auto w-fit p-2">
               {slides.map((slide, index) => (
