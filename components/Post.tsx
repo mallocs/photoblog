@@ -6,6 +6,7 @@ import { SlideExternal } from '#/interfaces/slide'
 import Slide from '#/components/shared/Slide'
 import SlideList from '#/components/shared/SlideList'
 import { ReactNode } from 'react'
+import DateRangeFormatter from './shared/DateRangeFormatter'
 
 type TitleProps = {
   children?: ReactNode
@@ -22,12 +23,20 @@ const PostTitle = ({ children }: TitleProps) => {
 type Props = {
   title: string
   date: string
+  slideshowDateRange?: [string, string]
   author: Author | string
   content: string
   slides: SlideExternal[]
 }
 
-const Post = ({ title, date, author, content, slides }: Props) => {
+const Post = ({
+  title,
+  date,
+  slideshowDateRange,
+  author,
+  content,
+  slides,
+}: Props) => {
   return (
     <>
       <Slide slide={slides[0]} id={`slide-0`} key={slides[0]?.url} />
@@ -40,7 +49,11 @@ const Post = ({ title, date, author, content, slides }: Props) => {
           <Avatar author={author} />
         </div>
         <div className="mb-6 text-lg uppercase">
-          <DateFormatter dateString={date} />
+          {Array.isArray(slideshowDateRange) ? (
+            <DateRangeFormatter dateRange={slideshowDateRange} />
+          ) : (
+            <DateFormatter dateString={date} />
+          )}
         </div>
       </div>
       <div className="max-w-3xl mx-auto px-4">

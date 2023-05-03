@@ -133,9 +133,10 @@ function Page({ post, morePosts, preview }: Props) {
         <Post
           title={post.title}
           date={post.date}
+          slideshowDateRange={post.slideshow?.dateRange}
           author={post.author}
           content={post.content}
-          slides={post.slideshow.slides}
+          slides={post.slideshow?.slides}
         />
       </article>
     </div>
