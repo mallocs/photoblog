@@ -17,25 +17,26 @@ function convertDMSToDD(degrees, minutes, seconds, direction) {
 }
 
 export function getLatLngDecimalFromExif(exif): CoordinateDecimals {
-  if (!exif || !exif.gps) {
+  try {
+    const {
+      gps: { GPSLatitudeRef, GPSLatitude, GPSLongitudeRef, GPSLongitude },
+    }: {
+      gps: {
+        GPSLatitudeRef: string
+        GPSLatitude: CoordinateDegrees
+        GPSLongitudeRef: string
+        GPSLongitude: CoordinateDegrees
+      }
+    } = exif
+    return {
+      latitude: convertDMSToDD(...GPSLatitude, GPSLatitudeRef),
+      longitude: convertDMSToDD(...GPSLongitude, GPSLongitudeRef),
+    }
+  } catch (error) {
     console.error(
       "Couldn't extract GPS latitude and longitude from given EXIF data"
     )
     return undefined
-  }
-  const {
-    gps: { GPSLatitudeRef, GPSLatitude, GPSLongitudeRef, GPSLongitude },
-  }: {
-    gps: {
-      GPSLatitudeRef: string
-      GPSLatitude: CoordinateDegrees
-      GPSLongitudeRef: string
-      GPSLongitude: CoordinateDegrees
-    }
-  } = exif
-  return {
-    latitude: convertDMSToDD(...GPSLatitude, GPSLatitudeRef),
-    longitude: convertDMSToDD(...GPSLongitude, GPSLongitudeRef),
   }
 }
 
