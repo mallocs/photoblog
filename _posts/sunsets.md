@@ -3,12 +3,16 @@ title: 'Sunsets'
 summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus.'
 date: '2022-10-25'
 slideshow:
-  path: '20221025-sunsets'
+  path: '20230504-sunsets'
+  showDatetimes: yes
+  geocode: yes
   indexButtonType: 'images'
   captions:
-    15406885214_f19957abf5_o.jpg: 'Slide order is easily maintained in Markdown.'
-    5239185843_a22cb00ffd_o.jpg: 'Captions are also easy in Markdown.'
-    30636716482_25e4f18f0f_o.jpg: 'Portrait mode photos should be sized appropriately.'
+    IMG_7305.JPG: 'Slide order is easily maintained in Markdown.'
+    IMG_7135.JPG: 'Slides can be optionally geocoded with location infomation added to the caption.'
+    IMG_7321.JPG: 'Date and time can be optionally added to the captions.'
+    IMG_7084.JPG: 'Captions and slide order can be edited in dev mode.'
+    IMG_7293.JPG: 'Portrait mode photos are automatically sized appropriately.'
 author:
   name: Harold
   picture: '/assets/authors/harold.jpeg'

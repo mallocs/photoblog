@@ -1,0 +1,197 @@
+{
+    "IMG_7084.JPG": {
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAeACgDASIAAhEBAxEB/8QAHAAAAQQDAQAAAAAAAAAAAAAABgAFBwgBAgQD/8QAMBAAAQMDAgMFBwUAAAAAAAAAAQIDBAAFERIhBhNBBzFRYZEUI3KBobHRIjI1cfD/xAAZAQACAwEAAAAAAAAAAAAAAAABBAACBQP/xAAdEQADAAIDAQEAAAAAAAAAAAAAAQIDERIhQVET/9oADAMBAAIRAxEAPwCWOz1FsMsITLjPrCQrQlxK9j3HbptRTxdaYUmIFkIbWOowAapbw/aLtCltrtk8MPAglSdQ5I8VKGwPlXdxLf8AiV0PRpFydmttqwVpeJSTsc71R/py6IplT2T1cLBCZUfaJTDPxuJT9zTHPt1jYVpeusBCvAvp/NVvkXu8IcBcXKC1HH6k6vl1ryPEL6kYefb5ue5TQT67U3GW/WLVhW+ifJLXD6R/MQMHweTSqvLl3WkcxxsL+H9v0O1Ko8lfQLCi0dstcGO+RHhtMMKynDZUNX9701XXh3hht52TI5hccIHuyNJx10n5jathelOPOQ1tBSUK0k92cjI+n+NZcZt8lvU42/zO7OrP3rNl0nts0nprSQOL4S4bnc0W67PMyNwElOoJPn19ab3+z4SwUuyoUxrIyoHCx6/k0SKHv3Go7i8aAopcxj1G5rjkyVQ28GPHWU43xjbpTCyX4zg4n4A9z7KIvPJiz0toJwA4kpx5dRSotF6S+XEoZLTqdtjlO/zpUOdB4o//2Q==",
+        "width": 4032,
+        "height": 3024,
+        "dateTimeOriginal": "2022-12-18T15:59:38",
+        "latitude": 38.92733333333333,
+        "longitude": -119.95074444444445,
+        "geodata": {
+            "geoNameId": "5397664",
+            "name": "South Lake Tahoe",
+            "asciiName": "South Lake Tahoe",
+            "alternateNames": "Al Tahoe,Bihou Park,Bijou,Rowland's,Saut Lejk Takho,South Lake Tahoe,Stateline,TVL,Tahoe Valley,Tallac Village,nan tai hao hu,sa'utha leka taho'i,swt lyk tahw  kalyfrnya,swwth lak tahwy,Саут Лейк Тахо,Саут Лејк Тахо,ساوتھ شور لیک تاہو,سوت لیک تاهو، کالیفرنیا,سووث لاك تاهوي,साउथ लेक ताहोई,南太浩湖",
+            "latitude": "38.93324",
+            "longitude": "-119.98435",
+            "featureClass": "P",
+            "featureCode": "PPL",
+            "countryCode": "US",
+            "cc2": null,
+            "admin1Code": {
+                "name": "California",
+                "asciiName": "California",
+                "geoNameId": "5332921"
+            },
+            "admin2Code": {
+                "name": "El Dorado County",
+                "asciiName": "El Dorado County",
+                "geoNameId": "5345659"
+            },
+            "admin3Code": null,
+            "admin4Code": null,
+            "population": "21706",
+            "elevation": "1901",
+            "dem": "1902",
+            "timezone": "America/Los_Angeles",
+            "modificationDate": "2017-03-09",
+            "distance": 2.980148301811215
+        },
+        "url": "/assets/processed/20230504-sunsets/IMG_7084.JPG"
+    },
+    "IMG_7135.JPG": {
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAeACgDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAUGAwcC/8QAKRAAAQMDAwIFBQAAAAAAAAAAAQACAwQFEQYSIUFRBxMVMaEyYnKBsf/EABcBAQEBAQAAAAAAAAAAAAAAAAQDBQL/xAAeEQACAgICAwAAAAAAAAAAAAAAAQIRAxNRgRIhcf/aAAwDAQACEQMRAD8AZWfTDa6aOIAZccJ/qnw2jtNHFUbmyA8FoHsVK2C53qGqid6iw4I4NO1dI8VKq80lpthguUTjKzc8PgBBOBzj9rC25LfXzs0NcfVHL2afAJwzCyqrGQ36V4lu2pGjLK+3Z7OpOP6kVfe9WtJPqVuI7CmACZjzZXwGljhybVdpLQeEKcrNR6lyfMqLc7viFCUp5CLhDkRWzW9zpntc+q8wN6OYOfhUOrvF69XyGkjkNMxkDAxgEfRcsDg3aQOCM4RNONrSG+569MoupN2L8mlRTya1uzjzJBjtsPPysJNU1rziQQk9uQpwu2uaAMA8ABZyOGARuHPRWiqJuKY8mv8AK5+17I8/khTkmCSTlx+5Csro5cEf/9k=",
+        "width": 4032,
+        "height": 3024,
+        "dateTimeOriginal": "2022-12-20T16:10:27",
+        "latitude": 38.16184722222222,
+        "longitude": -120.80120833333334,
+        "geodata": {
+            "geoNameId": "5405554",
+            "name": "Valley Springs",
+            "asciiName": "Valley Springs",
+            "alternateNames": "Spring Valley,Valley Spring,Valley Springs",
+            "latitude": "38.19159",
+            "longitude": "-120.8291",
+            "featureClass": "P",
+            "featureCode": "PPL",
+            "countryCode": "US",
+            "cc2": null,
+            "admin1Code": {
+                "name": "California",
+                "asciiName": "California",
+                "geoNameId": "5332921"
+            },
+            "admin2Code": {
+                "name": "Calaveras County",
+                "asciiName": "Calaveras County",
+                "geoNameId": "5332628"
+            },
+            "admin3Code": null,
+            "admin4Code": null,
+            "population": "3553",
+            "elevation": "204",
+            "dem": "208",
+            "timezone": "America/Los_Angeles",
+            "modificationDate": "2011-05-14",
+            "distance": 4.108763685041363
+        },
+        "url": "/assets/processed/20230504-sunsets/IMG_7135.JPG"
+    },
+    "IMG_7293.JPG": {
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAoAB4DASIAAhEBAxEB/8QAGwAAAQUBAQAAAAAAAAAAAAAABQACBAYIAwf/xAAsEAACAQMDAgUCBwAAAAAAAAABAgMABBEFEiExYQYTIlGBFCMyM0FxkbLx/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAIDAQT/xAAcEQACAgMBAQAAAAAAAAAAAAAAAQIRMUGhEiH/2gAMAwEAAhEDEQA/APctE0/RL/w7J5cqyMqnezcMh7iqLPZ2QEg87eQ2MBdpFG7Exz6YwWIKz8YJwRVd1aBbWFtqmWRTwzHay9j71KLQzIU2myw7niZiqnIHah9xMhI3kA0U+vuLi3IEblQOuaAzIZHJ6VQUNJPaXsG3RvEdq7DgKkiMf7VDvdGu5IVkuNVklOODHzn5yc1kxmaE/bUfHWpdpruqW0YjtNQu4VJ/LjkIH8UsYNYfAc09GkjY6kdyxXcmw/izgZ+KauiXUYIN36jyQf8AazxH4j1Yx/dvrx0H6tM1NGqTS87pWPuSaqvmXwS70QhCOfUOntT47Qq+5ZDnH7GlSrn9MejqnoiKbV2kcjr3p2e2O2KVKi2af//Z",
+        "width": 3024,
+        "height": 4032,
+        "dateTimeOriginal": "2022-12-22T13:14:48",
+        "latitude": 34.54066944444444,
+        "longitude": -119.24014444444444,
+        "geodata": {
+            "geoNameId": "5378880",
+            "name": "Ojai",
+            "asciiName": "Ojai",
+            "alternateNames": "Nordhoff,Ojai,Ojailand,Ojain,Okhaj,ao hai zhen,awhay,awjy,ohai,oja'i,Охай,Охај,أوجي,اوهای,ओजाइ,奧海鎮,오하이",
+            "latitude": "34.44805",
+            "longitude": "-119.24289",
+            "featureClass": "P",
+            "featureCode": "PPL",
+            "countryCode": "US",
+            "cc2": null,
+            "admin1Code": {
+                "name": "California",
+                "asciiName": "California",
+                "geoNameId": "5332921"
+            },
+            "admin2Code": {
+                "name": "Ventura County",
+                "asciiName": "Ventura County",
+                "geoNameId": "5405889"
+            },
+            "admin3Code": null,
+            "admin4Code": null,
+            "population": "7627",
+            "elevation": "227",
+            "dem": "232",
+            "timezone": "America/Los_Angeles",
+            "modificationDate": "2017-03-09",
+            "distance": 10.301885556483477
+        },
+        "url": "/assets/processed/20230504-sunsets/IMG_7293.JPG"
+    },
+    "IMG_7305.JPG": {
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAeACgDASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAcGCAEDBAL/xAA0EAACAQMCAwQFDQAAAAAAAAABAgMABBEFIQYSExQxQVEVIjJhkSMkNGJjcXOBgpKhwfH/xAAXAQEBAQEAAAAAAAAAAAAAAAADBAAC/8QAJBEAAQMCBAcAAAAAAAAAAAAAAQACEQQhAwUUQhITIpGx0eH/2gAMAwEAAhEDEQA/AIfHZh1dsLk77Ctw03qAkBebG33+VS3Sek0a9sgEYPe8oCD4N3/lUgstC0m6cdFraUk96yD/AGiNWxoSCncTdKGewuYW6QR5MnfbvPlW+0ZLKMiYPG5PiPVNOdeDbNSGIkYjGzHmx7s+XjXXJwzayqAIWAUYGAKHWgXTCmBtKUFjBFfv8lzYJGWVScUU2ItEg09X7HF0y3tE4orakG8rjlhtoSatuNNTVUHaEcA7AwBt/hXfHxnq7khQD58trg/xSR9M3mR84mwPtDWTrN+R9Kmx+I1G6lYdoTNqnjcU+LDinXOrmGJw+NyLZs1OND4w1dNPulnsZJ3KZDm3YGP31Uh9WvvG5l/ea8pq9+vNy3c4yMHDncVJj5WzFEQAqsGv4T13CslqHE/ETu3TUBfrwkf3RVZHvZ29qWQ/qNFK3LmARA7fUb61znTPj0v/2Q==",
+        "width": 4032,
+        "height": 3024,
+        "dateTimeOriginal": "2022-12-22T16:47:48",
+        "latitude": 34.05201388888889,
+        "longitude": -118.9602888888889,
+        "geodata": {
+            "geoNameId": "5334619",
+            "name": "Casa Conejo",
+            "asciiName": "Casa Conejo",
+            "alternateNames": null,
+            "latitude": "34.18362",
+            "longitude": "-118.94343",
+            "featureClass": "P",
+            "featureCode": "PPLX",
+            "countryCode": "US",
+            "cc2": null,
+            "admin1Code": {
+                "name": "California",
+                "asciiName": "California",
+                "geoNameId": "5332921"
+            },
+            "admin2Code": {
+                "name": "Ventura County",
+                "asciiName": "Ventura County",
+                "geoNameId": "5405889"
+            },
+            "admin3Code": null,
+            "admin4Code": null,
+            "population": "3249",
+            "elevation": "199",
+            "dem": "203",
+            "timezone": "America/Los_Angeles",
+            "modificationDate": "2018-04-18",
+            "distance": 14.715997510322198
+        },
+        "url": "/assets/processed/20230504-sunsets/IMG_7305.JPG"
+    },
+    "IMG_7321.JPG": {
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAeACgDASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAABQcABAYDCP/EACkQAAEDAwIFBAMBAAAAAAAAAAECAwQABREGIQcSIkFhFDFRkRNCgXH/xAAYAQADAQEAAAAAAAAAAAAAAAAABAUDAv/EABwRAAMAAgMBAAAAAAAAAAAAAAABAhFRA0FhEv/aAAwDAQACEQMRAD8AKaf0kNVzVqb5ErVlRyaz+tdKGzTFx1pGU/FG7HdJFr64y1IXj3Fcr3LkXV4uSFFaz3NVJyn4Iup+fRVToXKTgUIfi7+1MmTZXHMkINCpFgd36DTGELuzAOR/FSte9YXR+h+qlcOUCsfXD616W1SzyMzZCZyRzKjnAOPkZG9VNXOacsUxUW3+onSmyUuDICEn4zivM8XiJdoAKIUh6EFbH0pDaldt1DqP+Zx4oZJvEu5PqckyZDjiySpS3Cok+d6iy3squVoe914g261DEiPBQrGyPyqWr6TWWmcYbf1Bm1IdPbAUnP8ATSnW3kH281TeRyjbvW6tmL4p0MO4cYHSpSWrHFyNsqcO31UpVucvNjB/tSjLfYKIXR//2Q==",
+        "width": 4032,
+        "height": 3024,
+        "dateTimeOriginal": "2022-12-24T14:50:14",
+        "latitude": 34.05139166666666,
+        "longitude": -118.92871944444445,
+        "geodata": {
+            "geoNameId": "5369906",
+            "name": "Malibu",
+            "asciiName": "Malibu",
+            "alternateNames": null,
+            "latitude": "34.02577",
+            "longitude": "-118.7804",
+            "featureClass": "P",
+            "featureCode": "PPL",
+            "countryCode": "US",
+            "cc2": null,
+            "admin1Code": {
+                "name": "California",
+                "asciiName": "California",
+                "geoNameId": "5332921"
+            },
+            "admin2Code": {
+                "name": "Los Angeles County",
+                "asciiName": "Los Angeles County",
+                "geoNameId": "5368381"
+            },
+            "admin3Code": null,
+            "admin4Code": null,
+            "population": "12965",
+            "elevation": "32",
+            "dem": "44",
+            "timezone": "America/Los_Angeles",
+            "modificationDate": "2017-03-09",
+            "distance": 13.960379465215995
+        },
+        "url": "/assets/processed/20230504-sunsets/IMG_7321.JPG"
+    }
+}

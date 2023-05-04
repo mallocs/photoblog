@@ -1,9 +1,10 @@
 ---
-title: 'Single Sunset'
+title: 'Single Photo'
 summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus.'
 date: '2021-11-20'
 slideshow:
-  path: '20211020-single_sunset'
+  path: '20220117-single_photo'
+  showDatetimes: yes
 author:
   name: Harold
   picture: '/assets/authors/harold.jpeg'
