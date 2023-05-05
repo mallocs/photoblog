@@ -48,7 +48,7 @@ const siteConfig = {
   processedDirectory: ASSETS_BASE_FOLDER_PATH + PROCESSED_DIRECTORY_NAME,
   resizedDirectoryName: 'resized',
   watermarkFile: ASSETS_BASE_FOLDER_PATH + 'watermark.png',
-  watermarkOpacity: 0.6,
+  watermarkOpacity: 0.3,
   saturation: 1.1,
   watermarkSizeRatio: 0.15,
   imageQuality: 75,
