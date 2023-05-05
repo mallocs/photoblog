@@ -141,6 +141,22 @@ async function processor(opts = {}) {
     })
   }
 
+  function falsyNo(value) {
+    return Boolean(value) && value !== 'no'
+  }
+  function getMatterProcessingOptions(fileDirectory) {
+    const slideshowMatterData =
+      postedArticlesMatter.get(fileDirectory)?.data.slideshow
+
+    return {
+      geocode: falsyNo(slideshowMatterData.geocode),
+      showDatetimes: falsyNo(slideshowMatterData.showDatetimes),
+      stripExif: falsyNo(slideshowMatterData.stripExif),
+      artist: slideshowMatterData.artist,
+      copyright: slideshowMatterData.copyright,
+    }
+  }
+
   // Loop through all directories/images
   for (const [fileDirectory, files] of Object.entries(fileData.directories)) {
     // Check if directory has already been processed
@@ -163,23 +179,6 @@ async function processor(opts = {}) {
       ? JSON.parse(fs.readFileSync(directoryDataFilePath, 'utf8'))
       : {}
 
-    const shouldGeocode =
-      Boolean(
-        postedArticlesMatter.get(fileDirectory)?.data.slideshow.geocode
-      ) &&
-      Boolean(
-        postedArticlesMatter.get(fileDirectory)?.data.slideshow.geocode !== 'no'
-      )
-
-    const shouldExtractDateTimeOriginal =
-      Boolean(
-        postedArticlesMatter.get(fileDirectory)?.data.slideshow.showDatetimes
-      ) &&
-      Boolean(
-        postedArticlesMatter.get(fileDirectory)?.data.slideshow
-          .showDatetimes !== 'no'
-      )
-
     for (const file of files) {
       if (directoryData.hasOwnProperty(file)) {
         incrementProgressbar(path.join(currentProcessedDirectory, file))
@@ -194,6 +193,7 @@ async function processor(opts = {}) {
 
       directoryData[file] = {
         ...(await processImage({
+          ...getMatterProcessingOptions(fileDirectory),
           processedPath,
           transformer,
           metadata,
@@ -204,9 +204,8 @@ async function processor(opts = {}) {
           blurSize,
         })),
         ...(await processMetadata({
+          ...getMatterProcessingOptions(fileDirectory),
           metadata,
-          shouldGeocode,
-          shouldExtractDateTimeOriginal,
         })),
         url: path.join(slideshowUrlBase, fileDirectory, file),
       }
@@ -224,22 +223,21 @@ async function processor(opts = {}) {
 
 processor()
 
-async function processMetadata({
-  metadata,
-  shouldGeocode,
-  shouldExtractDateTimeOriginal,
-}) {
+async function processMetadata({ metadata, geocode, showDatetimes }) {
   return {
     ...(await getExifData({
       rawExif: metadata.exif,
-      coordinates: shouldGeocode,
-      geocode: shouldGeocode,
-      dateTimeOriginal: shouldExtractDateTimeOriginal,
+      coordinates: geocode,
+      geocode,
+      dateTimeOriginal: showDatetimes,
     })),
   }
 }
 
 async function processImage({
+  stripExif,
+  copyright,
+  artist,
   processedPath,
   transformer,
   metadata,
@@ -306,11 +304,32 @@ async function processImage({
       .toBuffer()
   }
 
-  await transformer
-    .modulate({
-      saturation,
-    })
-    .toFile(processedPath)
+  const outputMetadata = {
+    exif: {
+      IFD0: {
+        ...(copyright && { Copyright: copyright }),
+        ...(artist && { Artist: artist }),
+      },
+    },
+  }
+
+  if (stripExif) {
+    // sharp doesn't seem to have a way to strip exif data when using .withMetadata
+    // so this strips the exif data and then adds in the requested fields.
+    const buffer = await transformer
+      .modulate({
+        saturation,
+      })
+      .toBuffer()
+    await sharp(buffer).withMetadata(outputMetadata).toFile(processedPath)
+  } else {
+    await transformer
+      .modulate({
+        saturation,
+      })
+      .withMetadata(outputMetadata)
+      .toFile(processedPath)
+  }
 
   return {
     blurDataURL: blurSize
