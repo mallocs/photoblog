@@ -3,10 +3,9 @@ import path from 'path'
 import cliProgress from 'cli-progress'
 import exifReader from 'exif-reader'
 import { getLatLngDecimalFromExif, geocodeFromExif } from './geoUtils'
-import siteConfig from '#/site.config.js'
 
 function getProgressBar() {
-  return new cliProgress.SingleBar(
+  return new cliProgress.MultiBar(
     {
       stopOnComplete: true,
       format: (options, params, payload) => {
@@ -43,36 +42,6 @@ function getProgressBar() {
       },
     },
     cliProgress.Presets.shades_classic
-  )
-}
-
-function getDirectoryData(
-  directoryFullPath,
-  {
-    filterDirectoriesFn = (_: string): boolean => true,
-    filterImagesFn = (filename) =>
-      siteConfig.imageFileTypes.includes(
-        filename.split('.').pop().toLowerCase()
-      ),
-  } = {}
-): {
-  imageCount: number // total number of images being processed
-  directories: {
-    // directory name => list of files in the directory
-    [key: string]: string[]
-  }
-} {
-  const directories = getDirectories(directoryFullPath)
-
-  return directories.filter(filterDirectoriesFn).reduce(
-    (fileData, currentDirectory) => {
-      fileData.directories[currentDirectory] = fs
-        .readdirSync(path.join(directoryFullPath, currentDirectory))
-        .filter(filterImagesFn)
-      fileData.imageCount += fileData.directories[currentDirectory].length
-      return fileData
-    },
-    { directories: {}, imageCount: 0 }
   )
 }
 
@@ -116,7 +85,7 @@ function getExifDateTimeOriginal(exif) {
   return exif.exif.DateTimeOriginal.toISOString().slice(0, -5)
 }
 
-export async function getExifData({
+async function getExifData({
   rawExif,
   exif = exifReader(rawExif),
   dateTimeOriginal = true,
@@ -133,9 +102,9 @@ export async function getExifData({
 }
 
 export {
+  getExifData,
   promisify,
   getProgressBar,
   getDirectories,
   ensureDirectoryExists,
-  getDirectoryData,
 }

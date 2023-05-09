@@ -9,8 +9,9 @@
     "typecheck": "tsc",
     "lint": "next lint",
     "process": "tsx ./bin/process",
+    "reprocess": "tsx ./bin/process --rebuild",
     "compose": "tsx  ./bin/compose",
-    "exportImages": "npm run process && tsx ./bin/export",
+    "exportImages": "tsx ./bin/process --export",
     "export": "next build && next export"
   },
   "dependencies": {

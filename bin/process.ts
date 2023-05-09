@@ -3,8 +3,9 @@ import sharp from 'sharp'
 import path from 'path'
 import matter from 'gray-matter'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
-import { getProgressBar, getDirectoryData, getExifData } from '#/bin/utils'
+import { getProgressBar, getExifData, ensureDirectoryExists } from '#/bin/utils'
 import siteConfig from '#/site.config'
+import nextJsConfig from '#/next.config.mjs'
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')
@@ -77,7 +78,105 @@ async function makeBlurDataURL({ path, size, saturation = 1, brightness = 1 }) {
   return `data:image/${blurInfo.format};base64,${blurData.toString('base64')}`
 }
 
-async function processor(opts = {}) {
+const postedArticlesMatter = getPostSlugs().reduce(
+  (accumulator, currentSlug) => {
+    const matter = getPostMatter(currentSlug)
+    const path = matter.data.slideshow.path
+    return accumulator.set(path, matter)
+  },
+  new Map<string, matter.GrayMatterFile<string>>()
+)
+function falsyNo(value) {
+  return Boolean(value) && value !== 'no'
+}
+function getMatterProcessingOptions(fileDirectory) {
+  const slideshowMatterData =
+    postedArticlesMatter.get(fileDirectory)?.data.slideshow
+
+  return {
+    geocode: falsyNo(slideshowMatterData.geocode),
+    showDatetimes: falsyNo(slideshowMatterData.showDatetimes),
+    stripExif: falsyNo(slideshowMatterData.stripExif),
+    artist: slideshowMatterData.artist,
+    copyright: slideshowMatterData.copyright,
+  }
+}
+
+function preprocess(
+  postedDirectories: string[],
+  inputDirectory,
+  outputDirectory,
+  {
+    filterImagesFn = (filename) =>
+      siteConfig.imageFileTypes.includes(
+        filename.split('.').pop().toLowerCase()
+      ),
+    manifestFileName = siteConfig.manifestFileName,
+    rebuild = false,
+  } = {}
+): {
+  imageCount: number // total number of images being processed
+  directories: {
+    // directory name => list of files in the directory
+    [key: string]: {
+      files: string[]
+      manifestData: JSON[]
+      outputDirectory: string
+      manifestFilePath: string
+    }
+  }
+} {
+  ensureDirectoryExists(outputDirectory)
+  return postedDirectories.reduce(
+    (fileData, currentDirectory) => {
+      // Check if directory has already been processed
+      const currentOutputDirectory = path.join(
+        outputDirectory,
+        currentDirectory
+      )
+      ensureDirectoryExists(currentOutputDirectory)
+
+      const currentManifestFilePath = path.join(
+        currentOutputDirectory,
+        manifestFileName
+      )
+      const manifestData =
+        !rebuild && fs.existsSync(currentManifestFilePath)
+          ? JSON.parse(fs.readFileSync(currentManifestFilePath, 'utf8'))
+          : {}
+      fileData.directories[currentDirectory] = {
+        files: fs
+          .readdirSync(path.join(inputDirectory, currentDirectory))
+          .filter(filterImagesFn)
+          .filter((file) => !(file in manifestData)),
+        manifestData,
+        outputDirectory: currentOutputDirectory,
+        manifestFilePath: currentManifestFilePath,
+      }
+
+      fileData.imageCount += fileData.directories[currentDirectory].files.length
+      return fileData
+    },
+    { directories: {}, imageCount: 0 }
+  )
+}
+
+async function processor({
+  widths = undefined,
+  rebuild = false,
+  ...opts
+} = {}) {
+  const {
+    processedDirectory,
+    manifestFileName,
+    slideshowUrlBase,
+    watermarkFile,
+    watermarkSizeRatio,
+    watermarkOpacity,
+    saturation,
+    slideshowFolderPath,
+    blurSize,
+  } = { ...siteConfig, ...opts }
   console.log('----  Begin processing... ---- ')
 
   // Give the user a warning, if the public directory of Next.js is not found as the user
@@ -90,46 +189,47 @@ async function processor(opts = {}) {
     )
   }
 
-  const {
-    processedDirectory,
-    slideshowUrlBase,
-    watermarkFile,
-    watermarkSizeRatio,
-    watermarkOpacity,
-    saturation,
-    slideshowFolderPath,
-    blurSize,
-  } = { ...siteConfig, ...opts }
-
   watermarkCheckOptions({
     ratio: watermarkSizeRatio,
     opacity: watermarkOpacity,
   })
 
-  const postedArticlesMatter = getPostSlugs().reduce(
-    (accumulator, currentSlug) => {
-      const matter = getPostMatter(currentSlug)
-      const path = matter.data.slideshow.path
-      return accumulator.set(path, matter)
-    },
-    new Map<string, matter.GrayMatterFile<string>>()
+  const directoryData = preprocess(
+    Array.from(postedArticlesMatter.keys()),
+    slideshowFolderPath,
+    processedDirectory,
+    { rebuild, manifestFileName }
   )
 
-  const fileData = getDirectoryData(slideshowFolderPath, {
-    // only process directories that have been included in a post
-    filterDirectoriesFn: (directoryName) =>
-      postedArticlesMatter.has(directoryName),
-  })
   console.log(
-    `Found ${fileData.imageCount} supported images in ${slideshowFolderPath} and subdirectories.`
+    `Found ${directoryData.imageCount} supported images in ${slideshowFolderPath} and subdirectories.`
   )
 
-  const progressBar = getProgressBar()
-
-  if (fileData.imageCount > 0) {
-    console.log(`Start processing ${fileData.imageCount} images...`)
-    progressBar.start(fileData.imageCount, 0, { sizeOfGeneratedImages: 0 })
+  if (directoryData.imageCount === 0) {
+    return
   }
+
+  if (Array.isArray(widths)) {
+    console.log(`Using sizes: ${widths.toString()}`)
+    console.log(
+      `Start processing ${directoryData.imageCount} images with ${
+        widths.length
+      } sizes resulting in ${
+        directoryData.imageCount * widths.length
+      } optimized images...`
+    )
+  } else {
+    console.log(`Start processing ${directoryData.imageCount} images...`)
+  }
+
+  const multiBar = getProgressBar()
+  const progressBar = multiBar.create(
+    directoryData.imageCount * (widths?.length ?? 1),
+    0,
+    {
+      sizeOfGeneratedImages: 0,
+    }
+  )
   let sizeOfGeneratedImages = 0
   function incrementProgressbar(filenameAndPath) {
     const stats = fs.statSync(filenameAndPath)
@@ -140,58 +240,26 @@ async function processor(opts = {}) {
       sizeOfGeneratedImages: sizeOfGeneratedImages.toFixed(1),
     })
   }
+  const oldConsoleLog = console.log
+  const oldConsoleError = console.error
 
-  function falsyNo(value) {
-    return Boolean(value) && value !== 'no'
-  }
-  function getMatterProcessingOptions(fileDirectory) {
-    const slideshowMatterData =
-      postedArticlesMatter.get(fileDirectory)?.data.slideshow
-
-    return {
-      geocode: falsyNo(slideshowMatterData.geocode),
-      showDatetimes: falsyNo(slideshowMatterData.showDatetimes),
-      stripExif: falsyNo(slideshowMatterData.stripExif),
-      artist: slideshowMatterData.artist,
-      copyright: slideshowMatterData.copyright,
-    }
-  }
+  console.log = (...args) => args.forEach((arg) => multiBar.log(`${arg}\n`))
+  console.error = (...args) => args.forEach((arg) => multiBar.log(`${arg}\n`))
 
   // Loop through all directories/images
-  for (const [fileDirectory, files] of Object.entries(fileData.directories)) {
-    // Check if directory has already been processed
-    const currentProcessedDirectory = path.join(
-      processedDirectory,
-      fileDirectory
-    )
-    if (!fs.existsSync(processedDirectory)) {
-      fs.mkdirSync(processedDirectory)
-    }
-    if (!fs.existsSync(currentProcessedDirectory)) {
-      fs.mkdirSync(currentProcessedDirectory)
-    }
-
-    const directoryDataFilePath = path.join(
-      currentProcessedDirectory,
-      siteConfig.manifestFileName
-    )
-    const directoryData = fs.existsSync(directoryDataFilePath)
-      ? JSON.parse(fs.readFileSync(directoryDataFilePath, 'utf8'))
-      : {}
-
+  for (const [
+    fileDirectory,
+    { files, manifestData, outputDirectory, manifestFilePath },
+  ] of Object.entries(directoryData.directories)) {
     for (const file of files) {
-      if (directoryData.hasOwnProperty(file)) {
-        incrementProgressbar(path.join(currentProcessedDirectory, file))
-        continue
-      }
-      const processedPath = path.join(currentProcessedDirectory, file)
+      const processedPath = path.join(outputDirectory, file)
       // Begin sharp transformation logic
       const transformer = await sharp(
         path.join(slideshowFolderPath, fileDirectory, file)
       )
       const metadata = await transformer.metadata()
 
-      directoryData[file] = {
+      manifestData[file] = {
         ...(await processImage({
           ...getMatterProcessingOptions(fileDirectory),
           processedPath,
@@ -207,21 +275,112 @@ async function processor(opts = {}) {
           ...getMatterProcessingOptions(fileDirectory),
           metadata,
         })),
+        ...(await generateWidths({
+          file,
+          fileDirectory,
+          widths,
+          outputDirectory,
+          transformer,
+          incrementProgressbar,
+        })),
         url: path.join(slideshowUrlBase, fileDirectory, file),
       }
       incrementProgressbar(processedPath)
-
-      fs.writeFileSync(
-        directoryDataFilePath,
-        JSON.stringify(directoryData, null, 4)
-      )
+      fs.writeFileSync(manifestFilePath, JSON.stringify(manifestData, null, 4))
     }
   }
-
   console.log('----  End processing... ---- ')
+  console.log = oldConsoleLog
+  console.error = oldConsoleError
 }
 
-processor()
+async function generateWidths({
+  file,
+  fileDirectory,
+  widths,
+  outputDirectory,
+  transformer,
+  incrementProgressbar,
+  ...opts
+}) {
+  if (!widths) {
+    return {}
+  }
+  const {
+    resizedDirectoryName,
+    storePicturesInWEBP,
+    imageQuality,
+    slideshowUrlBase,
+  } = { ...siteConfig, ...opts }
+  const currentResizedDirectory = path.join(
+    outputDirectory,
+    resizedDirectoryName
+  )
+  ensureDirectoryExists(currentResizedDirectory)
+  let extension = storePicturesInWEBP
+    ? 'webp'
+    : file.split('.').pop().toLowerCase()
+  const filename = path.parse(file).name
+
+  // if (directoryData[file]?.widthsToUrls) {
+  //   Object.keys(directoryData[file]?.widthsToUrls).forEach((widthString) =>
+  //     incrementProgressbar(
+  //       path.join(
+  //         currentResizedDirectory,
+  //         `${filename}-w${widthString}.${extension.toLowerCase()}`
+  //       )
+  //     )
+  //   )
+  // }
+  const widthsToUrls = {}
+
+  // Loop through all widths
+  for (const width of widths) {
+    const resizedAndProcessedFileNameAndPath = path.join(
+      currentResizedDirectory,
+      `${filename}-w${width}.${extension.toLowerCase()}`
+    )
+
+    await transformer.clone().resize(width)
+    if (extension === 'avif') {
+      if (transformer.avif) {
+        const avifQuality = imageQuality - 15
+        transformer.avif({
+          quality: Math.max(avifQuality, 0),
+          chromaSubsampling: '4:2:0', // same as webp
+        })
+      } else {
+        transformer.webp({ quality: imageQuality })
+      }
+    } else if (extension === 'webp') {
+      transformer.webp({ quality: imageQuality })
+    } else if (extension === 'png') {
+      transformer.png({ quality: imageQuality })
+    } else if (extension === 'jpeg' || extension === 'jpg') {
+      transformer.jpeg({ quality: imageQuality })
+    }
+
+    // Write the optimized image to the file system
+    ensureDirectoryExists(resizedAndProcessedFileNameAndPath)
+    await transformer.toFile(resizedAndProcessedFileNameAndPath)
+    incrementProgressbar(resizedAndProcessedFileNameAndPath)
+    widthsToUrls[width] = path.join(
+      slideshowUrlBase,
+      fileDirectory,
+      `${filename}-w${width}.${extension.toLowerCase()}`
+    )
+  }
+  return {
+    srcset: Object.entries(widthsToUrls).reduce(
+      (srcset, [currentSize, filenameAndPath], index) =>
+        index > 0
+          ? `${srcset}, ${filenameAndPath} ${currentSize}w`
+          : `${filenameAndPath} ${currentSize}w`,
+      ''
+    ),
+    widthsToUrls,
+  }
+}
 
 async function processMetadata({ metadata, geocode, showDatetimes }) {
   return {
@@ -341,4 +500,18 @@ async function processImage({
     width: mainImageActualWidth,
     height: mainImageActualHeight,
   }
+}
+
+if (process.argv.includes('--export')) {
+  const { imageSizes, blurSize } = {
+    ...siteConfig,
+    ...nextJsConfig.images,
+  }
+
+  processor({
+    widths: [blurSize, ...imageSizes],
+    rebuild: true, // process.argv.includes('--rebuild'),
+  })
+} else {
+  processor({ rebuild: process.argv.includes('--rebuild') })
 }

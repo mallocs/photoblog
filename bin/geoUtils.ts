@@ -16,7 +16,7 @@ function convertDMSToDD(degrees, minutes, seconds, direction) {
   return dd
 }
 
-export function getLatLngDecimalFromExif(exif): CoordinateDecimals {
+function getLatLngDecimalFromExif(exif): CoordinateDecimals {
   try {
     const {
       gps: { GPSLatitudeRef, GPSLatitude, GPSLongitudeRef, GPSLongitude },
@@ -66,11 +66,11 @@ const geocodePromise = promisify(async (point: CoordinateDecimals, cb) => {
   })
 })
 
-export async function geocode(point: CoordinateDecimals) {
+async function geocode(point: CoordinateDecimals) {
   return await geocodePromise(point)
 }
 
-export async function geocodeFromExif(exif) {
+async function geocodeFromExif(exif) {
   const point = getLatLngDecimalFromExif(exif)
   if (typeof point === 'undefined') {
     return undefined
@@ -83,3 +83,5 @@ export async function geocodeFromExif(exif) {
     return undefined
   }
 }
+
+export { geocodeFromExif, geocode, getLatLngDecimalFromExif }
