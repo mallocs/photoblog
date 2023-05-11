@@ -1,30 +1,6 @@
 import { useState } from 'react'
 import DateFormatter from '#/components/shared/DateFormatter'
-
-function LocationDetails({ geodata }) {
-  if (!Boolean(geodata)) {
-    return null
-  }
-
-  const { name, admin1Code, admin2Code, distance } = geodata
-
-  if (admin1Code?.name == undefined && admin2Code?.name == undefined) {
-    return <span>{name}</span>
-  } else if (admin2Code?.name == undefined) {
-    return (
-      <span>
-        {distance < 10 ? `${name}, ${admin1Code.name}` : `${admin1Code.name}`}
-      </span>
-    )
-  }
-  return (
-    <span>
-      {distance < 10
-        ? `${name}, ${admin1Code.name}`
-        : `${admin2Code.name}, ${admin1Code.name}`}
-    </span>
-  )
-}
+import LocationDetails from '#/components/shared/LocationDetails'
 
 function CaptionDate({ dateTimeOriginal }) {
   return (
@@ -42,12 +18,13 @@ function SlideCaption({
   dateTimeOriginal = null,
   captionProps = {},
   style = {},
+  extendClassName = '',
 }) {
   const [showMetadetails, setShowMetadetails] = useState(true)
   const hasMetaDetails = Boolean(geodata) || Boolean(dateTimeOriginal)
   return (
     <figcaption
-      className="figcaption bg-zinc-300 dark:bg-zinc-600 py-1 px-4 mx-auto text-lg"
+      className={`figcaption bg-zinc-300 dark:bg-zinc-600 py-1 px-4 mx-auto text-lg ${extendClassName}`}
       style={style}
     >
       <div className="flex justify-between">

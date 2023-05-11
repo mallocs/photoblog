@@ -53,7 +53,7 @@ function scrollToTopFn() {
   scrollToPosition(0)
 }
 
-function useSlideObserver(callbackFn) {
+export function useSlideObserver(callbackFn) {
   const observerRef = useRef(new SlideObserver())
 
   useEffect(() => {
@@ -90,12 +90,22 @@ class SlideObserver {
     this.callbacks.push(callbackFn)
   }
   getClosestSlideToViewportBottom() {
-    return Array.from(this.currentSlides.values())
-      .sort(
-        (a, b) =>
-          a.getBoundingClientRect().bottom - b.getBoundingClientRect().bottom
+    let closest = Infinity
+    return Array.from(
+      this.currentSlides.size ? this.currentSlides.values() : this.slideList
+    ).reduce((closestSlide, currentSlide) => {
+      const currentDistance = Math.min(
+        Math.abs(
+          currentSlide.getBoundingClientRect().bottom - window.innerHeight
+        ),
+        Math.abs(currentSlide.getBoundingClientRect().top - window.innerHeight)
       )
-      .pop()
+      if (currentDistance < closest) {
+        closest = currentDistance
+        return currentSlide
+      }
+      return closestSlide
+    }, undefined)
   }
 
   isSlideBottomVisible(slideElement: Element) {
@@ -121,12 +131,9 @@ class SlideObserver {
   }
 
   getPreviousSlide() {
-    const closestSlide = this.getClosestSlideToViewportBottom()
-    return this.isSlideBottomVisible(closestSlide)
-      ? document.querySelector(
-          `#slide-${Number(closestSlide.id.slice(6)) - 1}`
-        ) || closestSlide
-      : closestSlide
+    return document.querySelector(
+      `#slide-${Number(this.getClosestSlideToViewportBottom().id.slice(6)) - 1}`
+    )
   }
 
   setupIntersectionObserver() {
@@ -134,16 +141,19 @@ class SlideObserver {
       return
     }
     this.slideList = document.querySelectorAll('div[id^=slide-]')
-    this.io = new IntersectionObserver((entries) => {
-      this.callbacks.forEach((callbackFn) => callbackFn(entries, this))
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          this.currentSlides.set(entry.target.id, entry.target)
-        } else {
-          this.currentSlides.delete(entry.target.id)
-        }
-      })
-    })
+    this.io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            this.currentSlides.set(entry.target.id, entry.target)
+          } else {
+            this.currentSlides.delete(entry.target.id)
+          }
+        })
+        this.callbacks.forEach((callbackFn) => callbackFn(entries, this))
+      },
+      { threshold: 0.01 }
+    )
     this.slideList.forEach((el) => {
       this.io.observe(el)
     })
@@ -151,7 +161,7 @@ class SlideObserver {
 }
 
 const buttonOpacityFn = (show: boolean) => (show ? 'opacity-40' : 'opacity-0')
-const buttonSharedCSS = `transition-opacity duration-300 fixed rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500`
+const buttonSharedCSS = `transition-opacity duration-300 rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500`
 
 export function ScrollToTopButton() {
   const [show, setShowFn] = useState(false)
@@ -165,9 +175,7 @@ export function ScrollToTopButton() {
 
   return (
     <button
-      className={`${buttonSharedCSS} ${buttonOpacityFn(
-        show
-      )} bottom-20 right-8 `}
+      className={`${buttonSharedCSS} ${buttonOpacityFn(show)}`}
       title={`Go to top`}
       onClick={(event) => {
         event.currentTarget.blur()
@@ -191,7 +199,7 @@ export function ScrollUpButton() {
 
   return (
     <button
-      className={`${buttonSharedCSS} ${buttonOpacityFn(show)} bottom-4 right-8`}
+      className={`${buttonSharedCSS} ${buttonOpacityFn(show)}`}
       title={`Go to previous image`}
       onClick={(event) => {
         event.currentTarget.blur()
@@ -215,9 +223,7 @@ export function ScrollDownButton() {
 
   return (
     <button
-      className={`${buttonSharedCSS} ${buttonOpacityFn(
-        show
-      )} bottom-4 right-[calc(50%_-_1.5rem)]`}
+      className={`${buttonSharedCSS} ${buttonOpacityFn(show)}`}
       title={`Go to next image`}
       onClick={(event) => {
         event.currentTarget.blur()
