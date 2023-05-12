@@ -67,7 +67,7 @@ const siteConfig = {
   manifestFileName: 'manifest.json',
 }
 
-if (process !== undefined) {
+if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {
   siteConfig.root = process.cwd()
   siteConfig.postsDirectoryFullPath = join(process.cwd(), '_posts')
 }
