@@ -17,7 +17,7 @@ function getEarliestAndLatestSlideDatetime(slides: SlideExternal[]): {
   slides: SlideExternal[]
   dateRange?: [string, string]
 } {
-  if (!slides[0].dateTimeOriginal) {
+  if (!slides[0]?.dateTimeOriginal) {
     return { slides }
   }
   let earliestSlide = slides[0].dateTimeOriginal
