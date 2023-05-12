@@ -48,7 +48,7 @@ export function MapButton() {
 export function FixedPositionMap() {
   return (
     <div className="fixed bottom-6 right-24 w-80 h-72 p-2 bg-white rounded-lg border-2 border-zinc-400 text-black dark:text-black">
-      <div className="absolute translate-x-[-50%] translate-y-[-50%] top-1/2 left-1/2">
+      <div className="absolute top-0 bottom-0 left-0 right-0 m-auto w-fit h-fit">
         Unknown Coordinates
       </div>
       <MapWithNoSSR />
