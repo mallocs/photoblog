@@ -29,7 +29,7 @@ const CancelIcon = () => (
 )
 
 export function MapButton() {
-  const [showMap, setShowMapFn] = useState(false)
+  const [showMap, setShowMapFn] = useState(true)
   return (
     <>
       {showMap && <FixedPositionMap />}
@@ -37,7 +37,7 @@ export function MapButton() {
         title={showMap ? 'Close Map' : 'Show Map'}
         onClick={() => setShowMapFn(!showMap)}
         type="button"
-        className="hidden md:block transition-opacity duration-300 rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500 opacity-40"
+        className="transition-opacity duration-300 rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500 opacity-40"
       >
         {showMap ? <CancelIcon /> : <ShowMapIcon />}
       </button>
@@ -47,7 +47,7 @@ export function MapButton() {
 
 export function FixedPositionMap() {
   return (
-    <div className="fixed bottom-6 right-24 w-80 h-72 p-2 bg-white rounded-lg border-2 border-zinc-400 text-black dark:text-black">
+    <div className="fixed bottom-12 right-24 w-72 h-64 p-2 bg-white rounded-lg border-2 border-zinc-400 text-black dark:text-black">
       <div className="absolute top-0 bottom-0 left-0 right-0 m-auto w-fit h-fit">
         Unknown Coordinates
       </div>

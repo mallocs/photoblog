@@ -9,6 +9,7 @@ export type SlideshowInternal = {
 }
 
 export type SlideshowExternal = {
+  showMap: boolean
   indexButtonType?: SlideshowIndexButton
   dateRange?: [string, string]
   slides: SlideExternal[]

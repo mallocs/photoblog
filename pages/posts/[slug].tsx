@@ -126,12 +126,16 @@ function Page({ post, morePosts, preview }: Props) {
     <PostTitle>Loading…</PostTitle>
   ) : (
     <div className="mx-auto">
-      <div className="fixed right-7 bottom-4 gap-3 flex flex-col">
+      <div className="fixed right-6 bottom-0 gap-3 flex flex-col">
         <ScrollToTopButton />
         <ScrollUpButton />
-        <MapButton />
+        {Boolean(post.slideshow?.showMap) && (
+          <div className="hidden md:block ">
+            <MapButton />
+          </div>
+        )}
       </div>
-      <div className="fixed bottom-4 right-[calc(50%_-_1.5rem)]">
+      <div className="fixed bottom-2 right-[calc(50%_-_1.5rem)]">
         <ScrollDownButton />
       </div>
 

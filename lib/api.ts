@@ -121,14 +121,17 @@ function getPostSlideshow({
   // will be added to the end of the array of slides.
   path, // path to slideshow directory in filesystem
   indexButtonType = 'dots',
+  geocode = false,
 }: {
   captions: {
     [key: string]: string
   }
-  indexButtonType: string
   path: string
+  indexButtonType: string
+  geocode: boolean | string
 }) {
   return {
+    showMap: Boolean(geocode) && geocode !== 'no',
     indexButtonType,
     ...getEarliestAndLatestSlideDatetime(getPostSlides({ captions, path })),
   }
