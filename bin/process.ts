@@ -361,7 +361,6 @@ async function generateWidths({
     }
 
     // Write the optimized image to the file system
-    ensureDirectoryExists(resizedAndProcessedFileNameAndPath)
     await transformer.toFile(resizedAndProcessedFileNameAndPath)
     incrementProgressbar(resizedAndProcessedFileNameAndPath)
     widthsToUrls[width] = path.join(

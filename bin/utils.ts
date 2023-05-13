@@ -51,13 +51,11 @@ const getDirectories = (source) =>
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name)
 
-function ensureDirectoryExists(filePath) {
-  const dirName = path.dirname(filePath)
-  if (fs.existsSync(dirName)) {
+function ensureDirectoryExists(dir) {
+  if (fs.existsSync(dir)) {
     return true
   }
-  ensureDirectoryExists(dirName)
-  fs.mkdirSync(dirName)
+  fs.mkdirSync(dir, { recursive: true })
 }
 
 function promisify(f) {
