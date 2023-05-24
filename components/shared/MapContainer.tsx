@@ -3,7 +3,10 @@ import { Icon } from 'leaflet'
 import { useEffect, useContext, useState } from 'react'
 import { SlidesContext } from '#/contexts/SlideContext'
 import SlideCaption from '#/components/shared/SlideCaption'
-import { useSlideObserver } from '#/components/ScrollButtons'
+import {
+  getClosestToViewportBottomIndex,
+  registerGroupCallback,
+} from '#/lib/intersection-observer-group/observe'
 import 'leaflet/dist/leaflet.css'
 
 function MapComponent() {
@@ -56,6 +59,13 @@ const RecenterAutomatically = ({ latitude, longitude }) => {
   return null
 }
 
+const useClosestToViewportBottom = (observerId, callbackFn) =>
+  useEffect(() => {
+    registerGroupCallback(observerId, () => {
+      callbackFn(getClosestToViewportBottomIndex(observerId))
+    })
+  }, [callbackFn, observerId])
+
 export default function Map() {
   const slides = useContext(SlidesContext)
   const [center, setCenterFn] = useState([
@@ -63,11 +73,8 @@ export default function Map() {
     slides[0]?.longitude,
   ])
   const [latitude, longitude] = center
-  useSlideObserver((_, slideObserver) => {
-    const slideIndex = Number(
-      slideObserver.getClosestSlideToViewportBottom().id.slice(6)
-    )
-    setCenterFn([slides[slideIndex].latitude, slides[slideIndex].longitude])
+  useClosestToViewportBottom('slide', (index) => {
+    setCenterFn([slides[index].latitude, slides[index].longitude])
   })
   return (
     latitude !== undefined &&

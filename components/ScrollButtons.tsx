@@ -1,4 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
+import {
+  getNextObservedElement,
+  getPreviousObservedElement,
+  getObservedByTop,
+  registerGroupCallback,
+} from '#/lib/intersection-observer-group/observe'
 
 const UpDoubleArrow = () => (
   <svg
@@ -53,129 +59,37 @@ function scrollToTopFn() {
   scrollToPosition(0)
 }
 
-export function useSlideObserver(callbackFn) {
-  const observerRef = useRef(new SlideObserver())
-
-  useEffect(() => {
-    const slideObserver = observerRef.current
-    slideObserver.setupIntersectionObserver()
-    slideObserver.registerCallback(callbackFn)
-    return () => {
-      slideObserver.destroy()
-    }
-  }, [callbackFn])
-  return observerRef
-}
-
-class SlideObserver {
-  static _instance: SlideObserver
-  callbacks = []
-  currentSlides: Map<string, Element> = new Map()
-  io: IntersectionObserver
-  slideList: NodeListOf<Element>
-  constructor() {
-    if (!SlideObserver._instance) {
-      SlideObserver._instance = this
-    }
-    return SlideObserver._instance
-  }
-
-  destroy() {
-    if (typeof SlideObserver._instance !== 'undefined') {
-      delete SlideObserver._instance
-    }
-  }
-
-  registerCallback(callbackFn) {
-    this.callbacks.push(callbackFn)
-  }
-  getClosestSlideToViewportBottom() {
-    let closest = Infinity
-    return Array.from(
-      this.currentSlides.size ? this.currentSlides.values() : this.slideList
-    ).reduce((closestSlide, currentSlide) => {
-      const currentDistance = Math.min(
-        Math.abs(
-          currentSlide.getBoundingClientRect().bottom - window.innerHeight
-        ),
-        Math.abs(currentSlide.getBoundingClientRect().top - window.innerHeight)
-      )
-      if (currentDistance < closest) {
-        closest = currentDistance
-        return currentSlide
-      }
-      return closestSlide
-    }, undefined)
-  }
-
-  isSlideBottomVisible(slideElement: Element) {
-    return (
-      slideElement.getBoundingClientRect().bottom <= window.innerHeight + 30
-    )
-  }
-
-  isLastSlide(slideElement: Element) {
-    return slideElement === this.slideList[this.slideList.length - 1]
-  }
-  isFirstSlide(slideElement: Element) {
-    return slideElement === this.slideList[0]
-  }
-
-  getNextSlide() {
-    const closestSlide = this.getClosestSlideToViewportBottom()
-    return this.isSlideBottomVisible(closestSlide)
-      ? document.querySelector(
-          `#slide-${Number(closestSlide.id.slice(6)) + 1}`
-        ) || closestSlide
-      : closestSlide
-  }
-
-  getPreviousSlide() {
-    return document.querySelector(
-      `#slide-${Number(this.getClosestSlideToViewportBottom().id.slice(6)) - 1}`
-    )
-  }
-
-  setupIntersectionObserver() {
-    if (typeof document === 'undefined' || typeof this.io !== 'undefined') {
-      return
-    }
-    this.slideList = document.querySelectorAll('div[id^=slide-]')
-    this.io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            this.currentSlides.set(entry.target.id, entry.target)
-          } else {
-            this.currentSlides.delete(entry.target.id)
-          }
-        })
-        this.callbacks.forEach((callbackFn) => callbackFn(entries, this))
-      },
-      { threshold: 0.01 }
-    )
-    this.slideList.forEach((el) => {
-      this.io.observe(el)
-    })
-  }
-}
-
-const buttonOpacityFn = (show: boolean) => (show ? 'opacity-40' : 'opacity-0')
+const buttonOpacityFn = (hide: boolean) => (hide ? 'opacity-0' : 'opacity-40')
 const buttonSharedCSS = `transition-opacity duration-300 rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500`
 
-export function ScrollToTopButton() {
-  const [show, setShowFn] = useState(false)
-
-  useSlideObserver((entries, slideObserver) => {
-    entries.forEach((entry) => {
-      slideObserver.isFirstSlide(entry.target) &&
-        setShowFn(!entry.isIntersecting)
+const useIsFirstObservedElementVisible = (observerId, callbackFn) =>
+  useEffect(() => {
+    registerGroupCallback('slide', (entries) => {
+      const topSlide = getObservedByTop(observerId)[0]
+      entries.forEach((entry) => {
+        entry.target === topSlide && callbackFn(entry.isIntersecting)
+      })
     })
-  })
+  }, [callbackFn, observerId])
+
+const useIsLastObservedElementVisible = (observerId, callbackFn) =>
+  useEffect(() => {
+    registerGroupCallback('slide', (entries) => {
+      const lastSlide = getObservedByTop(observerId).at(-1)
+      entries.forEach((entry) => {
+        entry.target === lastSlide && callbackFn(entry.isIntersecting)
+      })
+    })
+  }, [callbackFn, observerId])
+
+export function ScrollToTopButton() {
+  const [hide, setHideFn] = useState(true)
+
+  useIsFirstObservedElementVisible('slide', setHideFn)
 
   return (
     <button
-      className={`${buttonSharedCSS} ${buttonOpacityFn(show)}`}
+      className={`${buttonSharedCSS} ${buttonOpacityFn(hide)}`}
       title={`Go to top`}
       onClick={(event) => {
         event.currentTarget.blur()
@@ -188,22 +102,16 @@ export function ScrollToTopButton() {
 }
 
 export function ScrollUpButton() {
-  const [show, setShowFn] = useState(false)
-
-  const observerRef = useSlideObserver((entries, slideObserver) => {
-    entries.forEach((entry) => {
-      slideObserver.isFirstSlide(entry.target) &&
-        setShowFn(!entry.isIntersecting)
-    })
-  })
+  const [hide, setHideFn] = useState(true)
+  useIsFirstObservedElementVisible('slide', setHideFn)
 
   return (
     <button
-      className={`${buttonSharedCSS} ${buttonOpacityFn(show)}`}
+      className={`${buttonSharedCSS} ${buttonOpacityFn(hide)}`}
       title={`Go to previous image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(observerRef.current.getPreviousSlide())
+        scrollToElement(getPreviousObservedElement('slide'))
       }}
     >
       <UpArrow />
@@ -212,22 +120,16 @@ export function ScrollUpButton() {
 }
 
 export function ScrollDownButton() {
-  const [show, setShowFn] = useState(false)
-
-  const observerRef = useSlideObserver((entries, slideObserver) => {
-    entries.forEach((entry) => {
-      slideObserver.isLastSlide(entry.target) &&
-        setShowFn(!entry.isIntersecting)
-    })
-  })
+  const [hide, setHideFn] = useState(false)
+  useIsLastObservedElementVisible('slide', setHideFn)
 
   return (
     <button
-      className={`${buttonSharedCSS} ${buttonOpacityFn(show)}`}
+      className={`${buttonSharedCSS} ${buttonOpacityFn(hide)}`}
       title={`Go to next image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(observerRef.current.getNextSlide())
+        scrollToElement(getNextObservedElement('slide'))
       }}
     >
       <DownArrow />

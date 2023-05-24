@@ -4,6 +4,7 @@ import { isDevEnvironment } from '#/lib/isDevEnvironment'
 import { useContext, useState } from 'react'
 import { EditContext } from '#/pages/posts/[slug]'
 import SlideCaption from '#/components/shared/SlideCaption'
+import { useObserverGroup } from '#/lib/intersection-observer-group/useObserverGroup'
 
 type Props = {
   slide: SlideExternal
@@ -93,8 +94,12 @@ function EditableFigcaption({ slide }) {
 }
 
 function Slide({ slide, id }: Props) {
+  const { ref } = useObserverGroup({
+    group: 'slide',
+  })
+
   return (
-    <div id={id} key={slide?.url} className="mb-16">
+    <div ref={ref} id={id} key={slide?.url} className="mb-16">
       <figure>
         <NextImage
           className={'!bg-auto object-contain w-full max-h-[180vmin]'}
