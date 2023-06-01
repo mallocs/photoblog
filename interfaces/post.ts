@@ -13,6 +13,7 @@ type PostType = {
     url: string
   }
   content: string
+  priority: boolean
 }
 
 export default PostType

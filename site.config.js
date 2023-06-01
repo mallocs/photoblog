@@ -65,6 +65,8 @@ const siteConfig = {
   imageFileTypes: ['jpg', 'jpeg', 'gif', 'webp', 'png', 'avif'],
   ignoreFiles: ['.DS_Store'],
   manifestFileName: 'manifest.json',
+  postObserverGroup: 'post',
+  slideObserverGroup: 'slide',
 }
 
 if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {

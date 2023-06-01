@@ -39,7 +39,12 @@ const Post = ({
 }: Props) => {
   return (
     <>
-      <Slide slide={slides[0]} id={`slide-0`} key={slides[0]?.url} />
+      <Slide
+        slideIndex={0}
+        slide={slides[0]}
+        id={`slide-0`}
+        key={slides[0]?.url}
+      />
       <span className="relative">
         <a id="article-start" className="absolute -top-[50vh]" />
       </span>

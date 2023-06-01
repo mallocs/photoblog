@@ -6,6 +6,7 @@ import { SlideExternal } from '#/interfaces/slide'
 import { SlideshowIndexButton } from '#/interfaces/slideshow'
 import siteConfig from '#/site.config'
 import SlideCaption from '#/components/shared/SlideCaption'
+import { SlideshowSlide } from '#/components/shared/Slide'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -125,12 +126,11 @@ function makeImgSlideshowButtonCSS({
 }
 
 const sliderButtonCommonClassNames =
-  'absolute z-30 w-12 h-18 md:w-20 md:h-36 p-2' +
+  'absolute w-12 h-18 md:w-20 md:h-36 p-2' +
   ' bg-opacity-40 hover:bg-zinc-300 hover:bg-opacity-80' +
   ' dark:bg-opacity-40 dark:hover:bg-zinc-700 dark:hover:bg-opacity-80 dark:fill-zinc-400'
 
 type Props = {
-  id: string
   slides: SlideExternal[]
   indexButtonType?: SlideshowIndexButton
   slug: string
@@ -138,13 +138,12 @@ type Props = {
 }
 
 function Slideshow({
-  id,
   slides,
   indexButtonType = 'circles',
   slug,
   priority,
 }: Props) {
-  const sessionStorageKey = SESSION_STORAGE_KEY + id
+  const sessionStorageKey = SESSION_STORAGE_KEY + slug
   const [slideIndex, setSlideIndex] = useState(0)
 
   // 1 is fading in, -1 is fading out
@@ -232,36 +231,19 @@ function Slideshow({
                 (i) => index === i
               ) ||
                 isFading[index] !== 0) && (
-                <NextLink
-                  className={isFading[index] === 1 ? 'absolute' : 'static'}
+                <SlideshowSlide
                   key={slide.url}
-                  as={`/posts/${slug}#slide-${slideIndex}`}
-                  href="/posts/[slug]"
-                >
-                  <NextImage
-                    style={{
-                      // try to lock the height based on the first slide
-                      maxHeight: `min(100vh, calc(100vw * ${
-                        Number(slides[0].height) / Number(slides[0].width)
-                      }))`,
-                      transitionDuration: `${siteConfig.fadeSpeed}ms`,
-                    }}
-                    // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
-                    // cover for some reason.
-                    className={`!bg-auto object-contain ${getFadeCSS({
-                      index,
-                    })}`}
-                    alt="slideshow"
-                    priority={priority && slideIndex === 0}
-                    loading="eager"
-                    src={slide.url}
-                    width={Number(slide?.width)}
-                    height={Number(slide?.height)}
-                    placeholder={slide?.blurDataURL ? 'blur' : 'empty'}
-                    blurDataURL={slide?.blurDataURL}
-                    sizes="100vw"
-                  />
-                </NextLink>
+                  slide={slide}
+                  isFading={isFading[index] === 1}
+                  fadeCSS={getFadeCSS({ index })}
+                  priority={priority && slideIndex === 0}
+                  slideIndex={slideIndex}
+                  linkAs={`/posts/${slug}#slide-${slideIndex}`}
+                  // try to lock the height based on the first slide
+                  maxHeight={`min(100vh, calc(100vw * ${
+                    Number(slides[0].height) / Number(slides[0].width)
+                  }))`}
+                />
               )
           )}
           {slides.length > 1 && (

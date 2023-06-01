@@ -29,6 +29,9 @@ export function getObservedElements(observerId: string, sortFn) {
       )
 }
 
+// This can behave confusingly when elements are stacked on top of each other and the
+// closest bound may be the top of the element moving out of the viewport when scrolling up.
+// Use rootMargin and threshold options to change the intersection points.
 function getDistanceToViewportBottom(element: Element) {
   return Math.min(
     Math.abs(element.getBoundingClientRect().bottom - window.innerHeight),
@@ -134,6 +137,15 @@ export function registerGroupCallback(observerGroupName, callbackFn) {
     ...(observerGroupCallbacksMap?.get(observerGroupName) ?? []),
     callbackFn,
   ])
+}
+
+export function removeGroupCallback(observerGroupName, callbackFn) {
+  observerGroupCallbacksMap.set(
+    observerGroupName,
+    (observerGroupCallbacksMap?.get(observerGroupName) ?? []).filter(
+      (fn) => fn !== callbackFn
+    )
+  )
 }
 
 function createObserver(

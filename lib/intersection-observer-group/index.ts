@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 export { observe, defaultFallbackInView } from './observe'
+export { useObserverGroupCallback } from './useObserverGroupCallback'
+export { useObserverGroup } from './useObserverGroup'
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 

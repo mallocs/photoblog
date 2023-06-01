@@ -10,7 +10,12 @@ function SlideList({ slides }: Props) {
     <section>
       <div className="mb-8 md:mb-16 sm:mx-0">
         {slides.map((slide, index) => (
-          <Slide slide={slide} id={`slide-${index + 1}`} key={slide?.url} />
+          <Slide
+            slideIndex={index + 1}
+            slide={slide}
+            id={`slide-${index + 1}`}
+            key={slide?.url}
+          />
         ))}
       </div>
     </section>

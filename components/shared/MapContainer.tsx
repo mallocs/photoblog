@@ -1,12 +1,15 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import { Icon } from 'leaflet'
-import { useEffect, useContext, useState } from 'react'
+import { useEffect, useContext, useState, useCallback } from 'react'
 import { SlidesContext } from '#/contexts/SlideContext'
 import SlideCaption from '#/components/shared/SlideCaption'
 import {
   getClosestToViewportBottomIndex,
-  registerGroupCallback,
+  getObservedByDistanceToViewportBottom,
 } from '#/lib/intersection-observer-group/observe'
+import { useObserverGroupCallback } from '#/lib/intersection-observer-group'
+
+import siteConfig from '#/site.config'
 import 'leaflet/dist/leaflet.css'
 
 function MapComponent() {
@@ -59,23 +62,30 @@ const RecenterAutomatically = ({ latitude, longitude }) => {
   return null
 }
 
-const useClosestToViewportBottom = (observerId, callbackFn) =>
-  useEffect(() => {
-    registerGroupCallback(observerId, () => {
-      callbackFn(getClosestToViewportBottomIndex(observerId))
-    })
-  }, [callbackFn, observerId])
-
 export default function Map() {
   const slides = useContext(SlidesContext)
-  const [center, setCenterFn] = useState([
-    slides[0]?.latitude,
-    slides[0]?.longitude,
-  ])
-  const [latitude, longitude] = center
-  useClosestToViewportBottom('slide', (index) => {
-    setCenterFn([slides[index].latitude, slides[index].longitude])
-  })
+
+  const [slideIndex, setSlideIndexFn] = useState(0)
+  const { latitude, longitude } = slides[slideIndex]
+
+  const handleSlideIndexChangeFn = useCallback(() => {
+    const slideindex = getObservedByDistanceToViewportBottom(
+      siteConfig.slideObserverGroup
+    )[0]?.getAttribute('slideindex')
+    if (slideindex !== undefined) {
+      setSlideIndexFn(Number(slideindex))
+    } else {
+      setSlideIndexFn(
+        getClosestToViewportBottomIndex(siteConfig.slideObserverGroup)
+      )
+    }
+  }, [])
+
+  useObserverGroupCallback(
+    siteConfig.slideObserverGroup,
+    handleSlideIndexChangeFn
+  )
+
   return (
     latitude !== undefined &&
     longitude !== undefined && (
