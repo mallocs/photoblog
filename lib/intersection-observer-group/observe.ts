@@ -43,6 +43,10 @@ export function getObservedByDistanceToViewportBottom(observerId: string) {
   return getObservedElements(
     observerId,
     (a, b) => getDistanceToViewportBottom(a) - getDistanceToViewportBottom(b)
+  ).filter(
+    (el) =>
+      el.getBoundingClientRect().width !== 0 &&
+      el.getBoundingClientRect().height !== 0
   )
 }
 
