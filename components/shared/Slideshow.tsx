@@ -236,9 +236,9 @@ function Slideshow({
                   slide={slide}
                   isFading={isFading[index] === 1}
                   fadeCSS={getFadeCSS({ index })}
-                  priority={priority && slideIndex === 0}
-                  slideIndex={slideIndex}
-                  linkAs={`/posts/${slug}#slide-${slideIndex}`}
+                  priority={priority && index === 0}
+                  slideIndex={index}
+                  linkAs={`/posts/${slug}#slide-${index}`}
                   // try to lock the height based on the first slide
                   maxHeight={`min(100vh, calc(100vw * ${
                     Number(slides[0].height) / Number(slides[0].width)

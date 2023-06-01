@@ -119,6 +119,7 @@ function Slide({ slide, id, slideIndex }: Props) {
           alt="slideshow"
           key={slide.url}
           src={slide.url}
+          priority={slideIndex === 0}
           width={Number(slide.width)}
           height={Number(slide.height)}
           placeholder="blur"
@@ -173,7 +174,6 @@ export function SlideshowSlide({
         className={`!bg-auto object-contain ${fadeCSS}`}
         alt="slideshow"
         priority={priority}
-        loading="eager"
         src={slide.url}
         width={Number(slide?.width)}
         height={Number(slide?.height)}
