@@ -76,6 +76,29 @@ async function main() {
       message: 'Choose author:',
       choices: Object.keys(siteConfig.authors),
     })
+
+    const { artist } = await inquirer.prompt({
+      name: 'artist',
+      type: 'input',
+      default:
+        siteConfig.authors.hasOwnProperty(author) &&
+        siteConfig.authors[author].artist
+          ? siteConfig.authors[author].artist
+          : null,
+      message: '(Optional) Choose artist for slideshow EXIF data:',
+    })
+
+    const { copyright } = await inquirer.prompt({
+      name: 'copyright',
+      type: 'input',
+      default:
+        siteConfig.authors.hasOwnProperty(author) &&
+        siteConfig.authors[author].copyright
+          ? siteConfig.authors[author].copyright
+          : null,
+      message: '(Optional) Choose copyright for slideshow EXIF data:',
+    })
+
     const { filename } = await inquirer.prompt({
       name: 'filename',
       message: 'Choose filename:',
@@ -161,6 +184,8 @@ async function main() {
       slideshow: {
         geocode,
         showDatetimes,
+        ...(artist && { artist }),
+        ...(copyright && { copyright }),
         path: slideshowPath,
         indexButtonType,
         captions: getSlideshowCaptionObject({
