@@ -42,7 +42,6 @@ const siteConfig = {
     imageWidth: 1200,
   },
   postsDirectory: '_posts',
-  assetsBaseFolderPath: ASSETS_BASE_FOLDER_PATH,
   slideshowFolderPath: ASSETS_BASE_FOLDER_PATH + 'slideshows',
   slideshowUrlBase: '/assets/' + PROCESSED_DIRECTORY_NAME,
   processedDirectory: ASSETS_BASE_FOLDER_PATH + PROCESSED_DIRECTORY_NAME,

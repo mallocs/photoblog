@@ -26,7 +26,7 @@ type Props = {
   slideshowDateRange?: [string, string]
   author: Author | string
   content: string
-  slides: SlideExternal[]
+  slides?: SlideExternal[]
 }
 
 const Post = ({
@@ -35,16 +35,18 @@ const Post = ({
   slideshowDateRange,
   author,
   content,
-  slides,
+  slides = [],
 }: Props) => {
   return (
     <>
-      <Slide
-        slideIndex={0}
-        slide={slides[0]}
-        id={`slide-0`}
-        key={slides[0]?.url}
-      />
+      {slides.length >= 1 && (
+        <Slide
+          slideIndex={0}
+          slide={slides[0]}
+          id={`slide-0`}
+          key={slides[0]?.url}
+        />
+      )}
       <span className="relative">
         <a id="article-start" className="absolute -top-[50vh]" />
       </span>

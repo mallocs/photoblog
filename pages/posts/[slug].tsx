@@ -161,7 +161,7 @@ export default withSlidesContext(
         const {
           slug,
           post: {
-            slideshow: { slides },
+            slideshow: { slides = [] },
           },
         } = props
         const [editModeEnabled, setEditModeFn] = useState(false)

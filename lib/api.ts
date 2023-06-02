@@ -116,24 +116,32 @@ function getPostSlides({
   )
 }
 
-function getPostSlideshow({
-  captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
-  // will be added to the end of the array of slides.
-  path, // path to slideshow directory in filesystem
-  indexButtonType = 'dots',
-  geocode = false,
-}: {
-  captions: {
-    [key: string]: string
+function getPostSlideshow(
+  {
+    captions, // Captions are optional. Any pictures in the path directory not specified by captions
+    // will be added to the end of the array of slides.
+    path, // path to slideshow directory in filesystem
+    indexButtonType,
+    geocode,
+  }: {
+    captions: {
+      [key: string]: string
+    }
+    path: string
+    indexButtonType: string
+    geocode: boolean | string
+  } = {
+    captions: {},
+    path: undefined,
+    indexButtonType: 'dots',
+    geocode: false,
   }
-  path: string
-  indexButtonType: string
-  geocode: boolean | string
-}) {
+) {
   return {
     showMap: Boolean(geocode) && geocode !== 'no',
     indexButtonType,
-    ...getEarliestAndLatestSlideDatetime(getPostSlides({ captions, path })),
+    ...(path &&
+      getEarliestAndLatestSlideDatetime(getPostSlides({ captions, path }))),
   }
 }
 
@@ -194,9 +202,12 @@ export const getPropsForPosts = async ({
 
   return {
     props: {
-      ogImage: `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
-        (posts[0]?.slideshow?.slides ?? [])[0]?.url
-      )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
+      ogImage:
+        posts[0]?.slideshow?.slides === undefined
+          ? null
+          : `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
+              (posts[0]?.slideshow?.slides ?? [])[0]?.url
+            )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
       posts,
     },
   }

@@ -31,19 +31,23 @@ const CommonSEO = ({
       <meta property="og:site_name" content={siteConfig.siteTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:title" content={title} />
-      <meta property="og:image" content={ogImage} />
-      <meta
-        property="og:image:width"
-        content={`${siteConfig.openGraph.imageWidth}`}
-      />
-      <meta
-        property="og:image:height"
-        content={`${siteConfig.openGraph.imageHeight}`}
-      />
+      {ogImage && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta
+            property="og:image:width"
+            content={`${siteConfig.openGraph.imageWidth}`}
+          />
+          <meta
+            property="og:image:height"
+            content={`${siteConfig.openGraph.imageHeight}`}
+          />
+        </>
+      )}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={twImage} />
+      {twImage && <meta name="twitter:image" content={twImage} />}
       <link
         rel="canonical"
         href={
@@ -63,16 +67,18 @@ export const SlugSEO = ({
 }: PostType) => {
   const publishedAt = new Date(date).toISOString()
   const modifiedAt = new Date(lastModified || date).toISOString()
-
   return (
     <>
       <CommonSEO
         title={title}
         description={summary}
         ogType="article"
-        ogImage={`${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
-          slideshow.slides[0].url
-        )}&title=${encodeURIComponent(title)}`}
+        ogImage={
+          slideshow.slides &&
+          `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
+            slideshow.slides[0].url
+          )}&title=${encodeURIComponent(title)}`
+        }
       />
 
       <Head>
