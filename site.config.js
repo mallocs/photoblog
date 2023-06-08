@@ -6,8 +6,7 @@
 // import mainAuthorPicture from './public/assets/authors/me.jpg'
 import { join } from 'path'
 
-const ASSETS_BASE_FOLDER_PATH = 'public/assets/'
-const PROCESSED_DIRECTORY_NAME = 'processed'
+const postsDirectory = 'posts'
 
 const siteConfig = {
   name: 'Photo',
@@ -41,13 +40,11 @@ const siteConfig = {
     imageHeight: 630,
     imageWidth: 1200,
   },
-  postsDirectory: '_posts',
-  slideshowFolderPath: ASSETS_BASE_FOLDER_PATH + 'slideshows',
-  slideshowUrlBase: '/assets/' + PROCESSED_DIRECTORY_NAME,
-  processedDirectory: ASSETS_BASE_FOLDER_PATH + PROCESSED_DIRECTORY_NAME,
-  resizedDirectoryName: 'resized',
-  watermarkFile: ASSETS_BASE_FOLDER_PATH + 'watermark.png',
-  watermarkOpacity: 0.3,
+  postsDirectory,
+  slideshowInputDirectory: 'inputSlideshows',
+  resizedDirectory: 'resized',
+  watermarkFile: 'public/assets/watermark.png',
+  watermarkOpacity: 0.6,
   saturation: 1.1,
   watermarkSizeRatio: 0.15,
   imageQuality: 75,
@@ -57,20 +54,20 @@ const siteConfig = {
   authors: {
     default: {
       name: 'Anonymous',
-      picture: '/assets/authors/default.png',
+      pictureURL: '/assets/authors/default.png',
     },
-    Joe: { name: 'Joe', picture: '/assets/authors/joe.jpeg' },
+    Joe: { name: 'Joe', pictureURL: '/assets/authors/joe.jpeg' },
   },
   imageFileTypes: ['jpg', 'jpeg', 'gif', 'webp', 'png', 'avif'],
   ignoreFiles: ['.DS_Store'],
   manifestFileName: 'manifest.json',
+  postMarkdownFileName: 'post.md',
   postObserverGroup: 'post',
   slideObserverGroup: 'slide',
 }
 
 if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {
   siteConfig.root = process.cwd()
-  siteConfig.postsDirectoryFullPath = join(process.cwd(), '_posts')
 }
 
 export default siteConfig

@@ -1,14 +1,18 @@
 import fs from 'fs'
 import path from 'path'
 import inquirer from 'inquirer'
-import { input } from '@inquirer/prompts'
+import { input, confirm } from '@inquirer/prompts'
 import DatePrompt from 'inquirer-date-prompt'
 import matter from 'gray-matter'
 import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
+import { processor } from './processingUtils'
 import siteConfig from '#/site.config.js'
 
-function getSlideshowPaths({
-  slideshowsPath = path.join(siteConfig.root, siteConfig.slideshowFolderPath),
+function getSlideshowDirectories({
+  slideshowsPath = path.join(
+    siteConfig.root,
+    siteConfig.slideshowInputDirectory
+  ),
   ignoreFiles = siteConfig.ignoreFiles,
 } = {}): string[] {
   return fs
@@ -29,11 +33,14 @@ function getSlideshowPaths({
 // }
 
 function getSlideshowCaptionObject({
-  slideshowsPath = path.join(siteConfig.root, siteConfig.slideshowFolderPath),
+  slideshowsPath = path.join(
+    siteConfig.root,
+    siteConfig.slideshowInputDirectory
+  ),
   ignoreFiles = siteConfig.ignoreFiles,
-  folderName,
+  directory,
 }) {
-  const slideshowPath = path.join(slideshowsPath, folderName)
+  const slideshowPath = path.join(slideshowsPath, directory)
   return fs
     .readdirSync(slideshowPath)
     .filter((fileName) =>
@@ -99,27 +106,28 @@ async function main() {
       message: '(Optional) Choose copyright for slideshow EXIF data:',
     })
 
-    const { filename } = await inquirer.prompt({
-      name: 'filename',
-      message: 'Choose filename:',
+    const { currentPostDirectory } = await inquirer.prompt({
+      name: 'currentPostDirectory',
+      message: 'Choose post directory name:',
       default: getDefaultDirectory(title),
       validate(input, answers) {
         const fileFullPath = path.join(
-          siteConfig.postsDirectoryFullPath,
-          `${input || getDefaultDirectory(answers)}.md`
+          siteConfig.postsDirectory,
+          input || getDefaultDirectory(answers),
+          siteConfig.postMarkdownFileName
         )
         if (!fs.existsSync(fileFullPath)) {
           return true
         }
-        return 'Filename already exists. Chose another name or delete the existing entry.'
+        return 'Directory already exists. Chose another name or delete the existing entry.'
       },
     })
 
-    const { slideshowPath } = await inquirer.prompt({
-      name: 'slideshowPath',
+    const { slideshowSourceDirectory } = await inquirer.prompt({
+      name: 'slideshowSourceDirectory',
       message: 'Choose slideshow directory:',
       type: 'list',
-      choices: getSlideshowPaths,
+      choices: getSlideshowDirectories,
     })
 
     const { indexButtonType } = await inquirer.prompt({
@@ -145,6 +153,11 @@ async function main() {
       type: 'list',
       default: 'yes',
       choices: ['yes', 'no'],
+    })
+
+    const processNow = await confirm({
+      message: 'Process slideshow now?',
+      default: true,
     })
 
     // TODO types
@@ -186,28 +199,35 @@ async function main() {
         showDatetimes,
         ...(artist && { artist }),
         ...(copyright && { copyright }),
-        path: slideshowPath,
+        sourceDirectory: slideshowSourceDirectory,
         indexButtonType,
         captions: getSlideshowCaptionObject({
-          folderName: slideshowPath,
+          directory: slideshowSourceDirectory,
         }),
       },
     })
 
-    if (!fs.existsSync(siteConfig.postsDirectory))
-      fs.mkdirSync(siteConfig.postsDirectory, { recursive: true })
+    const outputDirectory = path.join(
+      siteConfig.postsDirectory,
+      currentPostDirectory
+    )
+
+    if (!fs.existsSync(outputDirectory))
+      fs.mkdirSync(outputDirectory, { recursive: true })
 
     const fileFullPath = path.join(
-      siteConfig.postsDirectoryFullPath,
-      `${filename}.md`
+      outputDirectory,
+      siteConfig.postMarkdownFileName
     )
+
     fs.writeFile(fileFullPath, frontMatter, { flag: 'wx' }, (err) => {
       if (err) {
-        if (err.code === 'EEXIST') {
-        }
         throw err
       } else {
-        console.log(`Blog post generated successfully at ${filename}`)
+        console.log(`Blog post generated successfully at ${fileFullPath}`)
+        if (processNow) {
+          processor({ slugsToProcess: [currentPostDirectory] })
+        }
       }
     })
   } catch (error) {

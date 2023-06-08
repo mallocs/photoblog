@@ -1,16 +1,26 @@
 import fs from 'fs'
-import { join } from 'path'
+import { join, parse } from 'path'
 import matter from 'gray-matter'
 import { SlideExternal } from '#/interfaces/slide'
 import PostType from '#/interfaces/post'
 import siteConfig from '#/site.config'
 
-// After processing, slideshows should have a subdirectory with this name that includes the processed files
+// After processing, posts directory should have a subdirectory with this name that includes the processed files
 export function getPostSlugs() {
   return fs
-    .readdirSync(siteConfig.postsDirectoryFullPath)
-    .filter((fileName) => fileName.endsWith('md'))
-    .map((filename) => filename.replace(/\.md$/, ''))
+    .readdirSync(siteConfig.postsDirectory, { withFileTypes: true })
+    .filter(
+      (dirent) =>
+        dirent.isDirectory() &&
+        fs.existsSync(
+          join(
+            siteConfig.postsDirectory,
+            dirent.name,
+            siteConfig.postMarkdownFileName
+          )
+        )
+    )
+    .map((dirent) => dirent.name)
 }
 
 function getEarliestAndLatestSlideDatetime(slides: SlideExternal[]): {
@@ -41,48 +51,49 @@ function getEarliestAndLatestSlideDatetime(slides: SlideExternal[]): {
 // Transform markdown slideshow gray matter to external slideshow data
 function getPostSlides({
   captions = {}, // see getPostSlideshow comments
-  path: currentSlideshowDirectory,
+  slug: currentSlideshowDirectory,
+  postsDirectory = siteConfig.postsDirectory,
+  manifestFileName = siteConfig.manifestFileName,
 }: {
-  captions: {
+  captions?: {
     [key: string]: string
   }
-  path: string
+  slug: string
+  postsDirectory?: string
+  manifestFileName?: string
 }): SlideExternal[] {
-  const currentProcessedDirectory = join(
-    siteConfig.processedDirectory,
-    currentSlideshowDirectory
-  )
+  const currentPostDirectory = join(postsDirectory, currentSlideshowDirectory)
   const currentSlideshowDirectoryUrl = join(
-    siteConfig.slideshowUrlBase,
+    '/',
+    postsDirectory,
     currentSlideshowDirectory
   )
-  // check if processed image directory exists and
-  // check internal directory exists but map to external urls, ie slideshowRootDirectory => slideshowPath
-  if (!fs.existsSync(currentProcessedDirectory)) {
+
+  if (!fs.existsSync(currentPostDirectory)) {
     console.error(
-      `Error: Couldn't find directory for slideshow: ${currentProcessedDirectory}`
+      `Error: Couldn't find directory for slideshow: ${currentPostDirectory}`
     )
     return []
   }
-  if (!fs.existsSync(join(currentProcessedDirectory, 'manifest.json'))) {
+  if (!fs.existsSync(join(currentPostDirectory, manifestFileName))) {
     console.error(
       `Error: Couldn't find manifest.json for slideshow: ${join(
-        currentProcessedDirectory,
-        'manifest.json'
+        currentPostDirectory,
+        manifestFileName
       )}`
     )
     return []
   }
 
   const manifest = JSON.parse(
-    String(fs.readFileSync(join(currentProcessedDirectory, 'manifest.json')))
+    String(fs.readFileSync(join(currentPostDirectory, manifestFileName)))
   )
 
   return (
     [
       ...Object.entries(captions),
       ...fs
-        .readdirSync(currentProcessedDirectory)
+        .readdirSync(currentPostDirectory)
         .filter(
           (directoryFilename) =>
             // filter out unsupported filetypes
@@ -100,39 +111,38 @@ function getPostSlides({
     ]
       // filter out images that don't exist in manifest
       .filter(([filename, _]) => {
-        if (filename in manifest) {
+        if (filename in manifest || parse(filename).name in manifest) {
           return true
         }
-        console.error(`File not found in manifest.json: ${filename}`)
+        console.error(`File not found in ${manifestFileName}: ${filename}`)
         return false
       })
       // add in data collected by the processing phase and specified in manifest.json
+      // TODO: use exif data directly and remove manifest.json
       .map(([filename, caption]) => ({
         filename,
         caption,
-        url: join(currentSlideshowDirectoryUrl, filename),
         ...manifest[filename],
+        url: join(currentSlideshowDirectoryUrl, filename),
       }))
   )
 }
 
 function getPostSlideshow(
+  slug,
   {
     captions, // Captions are optional. Any pictures in the path directory not specified by captions
     // will be added to the end of the array of slides.
-    path, // path to slideshow directory in filesystem
     indexButtonType,
     geocode,
   }: {
     captions: {
       [key: string]: string
     }
-    path: string
     indexButtonType: string
     geocode: boolean | string
   } = {
     captions: {},
-    path: undefined,
     indexButtonType: 'dots',
     geocode: false,
   }
@@ -140,15 +150,19 @@ function getPostSlideshow(
   return {
     showMap: Boolean(geocode) && geocode !== 'no',
     indexButtonType,
-    ...(path &&
-      getEarliestAndLatestSlideDatetime(getPostSlides({ captions, path }))),
+    ...(slug &&
+      getEarliestAndLatestSlideDatetime(getPostSlides({ captions, slug }))),
   }
 }
 
 // Assumes a .md file exists in the postsDirectory for the passed slug
 // returns a blank matter file on errors
 export function getPostMatter(slug: string): matter.GrayMatterFile<string> {
-  const fullPath = join(siteConfig.postsDirectoryFullPath, `${slug}.md`)
+  const fullPath = join(
+    siteConfig.postsDirectory,
+    slug,
+    siteConfig.postMarkdownFileName
+  )
   try {
     const fileContents = fs.readFileSync(fullPath, 'utf8')
     return matter(fileContents)
@@ -169,7 +183,7 @@ export function getPostBySlug(
     ...data,
     slug,
     content,
-    slideshow: getPostSlideshow(data.slideshow),
+    slideshow: getPostSlideshow(slug, data.slideshow),
   }
 
   return Object.fromEntries(

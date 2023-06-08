@@ -22,7 +22,11 @@ export default function handler(
 
   const { slug, filename, caption } = req.body
 
-  const filePath = join(siteConfig.postsDirectoryFullPath, `${slug}.md`)
+  const filePath = join(
+    siteConfig.postsDirectory,
+    slug,
+    siteConfig.postMarkdownFileName
+  )
   if (!fs.existsSync(filePath)) {
     return res.status(400).json({ status: `Error: file not found` })
   }
