@@ -36,5 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 # slideshow processing
+/inputSlideshows/
 /public/assets/slideshows/
 /public/posts.json
