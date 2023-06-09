@@ -3,10 +3,13 @@ title: 'Sunsets'
 summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus.'
 date: '2022-10-25'
 slideshow:
-  path: '20230504-sunsets'
+  sourceDirectory: '20230504-sunsets'
   showDatetimes: yes
   geocode: yes
   indexButtonType: 'images'
+  stripExif: 'yes'
+  copyright: 'Marcus Ulrich'
+  artist: 'Marcus Ulrich'
   captions:
     IMG_7305.JPG: 'Slide order is easily maintained in Markdown.'
     IMG_7135.JPG: 'Slides can be optionally geocoded with location infomation added to the caption.'
@@ -15,7 +18,7 @@ slideshow:
     IMG_7293.JPG: 'Portrait mode photos are automatically sized appropriately.'
 author:
   name: Harold
-  picture: '/assets/authors/harold.jpeg'
+  pictureURL: '/assets/authors/harold.jpeg'
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus. Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.

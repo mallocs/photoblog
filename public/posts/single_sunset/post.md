@@ -1,17 +1,17 @@
 ---
-title: 'More Sunsets'
+title: 'Single Photo'
 summary: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus.'
-date: '2021-12-16'
+date: '2021-11-20'
 slideshow:
-  path: '2021_2022-more_sunsets'
+  sourceDirectory: '20220117-single_photo'
   showDatetimes: yes
-  indexButtonType: 'dots'
-  captions:
-    IMG_5436.JPG: 'Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.'
-    IMG_5659.JPG: 'Egestas tellus rutrum tellus pellentesque.'
+  stripExif: 'yes'
+  copyright: 'Marcus Ulrich'
+  artist: 'Marcus Ulrich'
+
 author:
-  name: Joe
-  picture: '/assets/authors/joe.jpeg'
+  name: Harold
+  pictureURL: '/assets/authors/harold.jpeg'
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent elementum facilisis leo vel fringilla est ullamcorper eget. At imperdiet dui accumsan sit amet nulla facilities morbi tempus. Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.
