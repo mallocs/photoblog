@@ -131,20 +131,16 @@ function getPostSlides({
 function getPostSlideshow(
   slug,
   {
-    captions, // Captions are optional. Any pictures in the path directory not specified by captions
+    captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
     // will be added to the end of the array of slides.
-    indexButtonType,
-    geocode,
+    indexButtonType = 'dots',
+    geocode = false,
   }: {
     captions: {
       [key: string]: string
     }
     indexButtonType: string
     geocode: boolean | string
-  } = {
-    captions: {},
-    indexButtonType: 'dots',
-    geocode: false,
   }
 ) {
   return {
