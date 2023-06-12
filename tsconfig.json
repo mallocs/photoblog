@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "#/*": ["./*"],
-      "components/*": ["overrides/*", "components/*"]
+      "@/*": ["./*"],
+      "#/*": ["./overrides/*", "./*"]
     },
     "target": "es5",
     "module": "esnext",
