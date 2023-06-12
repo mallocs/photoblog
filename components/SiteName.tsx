@@ -1,6 +1,5 @@
 import NextLink from 'next/link'
-// import SiteIcon from './site-icon'
-import SiteIcon from '#/components/SiteIcon'
+import { SiteIcon } from '#/components/shared/icons'
 import siteConfig from '#/site.config'
 
 const SiteName = () => {

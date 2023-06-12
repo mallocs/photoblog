@@ -5,6 +5,7 @@ import { SlideshowIndexButton } from '#/interfaces/slideshow'
 import siteConfig from '#/site.config'
 import SlideCaption from '#/components/shared/SlideCaption'
 import { SlideshowSlide } from '#/components/shared/Slide'
+import { LeftArrow, RightArrow } from '#/components/shared/icons'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -12,18 +13,6 @@ const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 //   const lastDotIndex = src.lastIndexOf('.')
 //   return `${src.slice(0, lastDotIndex)}-w${width}${src.slice(lastDotIndex)}`
 // }
-
-const LeftArrow = () => (
-  <svg
-    role="img"
-    pointerEvents="none"
-    viewBox="-2 -1 30 50"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <title>Left Arrow</title>
-    <path d="M20 44 0 24 20 4l2.8 2.85L5.65 24 22.8 41.15Z" />
-  </svg>
-)
 
 function LeftButton({ previousSlideIndex, handleFadeTransitionFn }) {
   return (
@@ -42,18 +31,6 @@ function LeftButton({ previousSlideIndex, handleFadeTransitionFn }) {
     </button>
   )
 }
-
-const RightArrow = () => (
-  <svg
-    role="img"
-    pointerEvents="none"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="6 -2 30 50"
-  >
-    <title>Right Arrow</title>
-    <path d="m15.2 43.9-2.8-2.85L29.55 23.9 12.4 6.75l2.8-2.85 20 20Z" />
-  </svg>
-)
 
 function RightButton({ nextSlideIndex, handleFadeTransitionFn }) {
   return (

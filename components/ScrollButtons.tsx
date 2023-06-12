@@ -1,46 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import { UpDoubleArrow, UpArrow, DownArrow } from '#/components/shared/icons'
 import {
   getNextObservedElement,
   getPreviousObservedElement,
   getObservedByTop,
   registerGroupCallback,
 } from '#/lib/intersection-observer-group/observe'
-
-const UpDoubleArrow = () => (
-  <svg
-    role="img"
-    pointerEvents="none"
-    viewBox="4 4 40 50"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <title>Double Up Arrow</title>
-    <path d="m14.1 36.75-2.1-2.1 12-12 12 12-2.1 2.1-9.9-9.9Zm0-12.65L12 22l12-12 12 12-2.1 2.1-9.9-9.9Z" />
-  </svg>
-)
-
-const UpArrow = () => (
-  <svg
-    role="img"
-    pointerEvents="none"
-    viewBox="4 4 40 50"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <title>Double Up Arrow</title>
-    <path d="M14.15 30.75 12 28.6l12-12 12 11.95-2.15 2.15L24 20.85Z" />
-  </svg>
-)
-
-const DownArrow = () => (
-  <svg
-    role="img"
-    pointerEvents="none"
-    viewBox="4 2 40 40"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <title>Double Up Arrow</title>
-    <path d="m24 30.75-12-12 2.15-2.15L24 26.5l9.85-9.85L36 18.8Z" />
-  </svg>
-)
 
 function scrollToPosition(position: number) {
   window.scrollTo({
