@@ -1,6 +1,12 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { EditContext } from '#/pages/posts/[slug]'
 import DateFormatter from '#/components/shared/DateFormatter'
 import LocationDetails from '#/components/shared/LocationDetails'
+import {
+  UndoButton,
+  SaveButton,
+  DeleteButton,
+} from '#/components/shared/buttons/EditMode'
 
 function CaptionDate({ dateTimeOriginal }) {
   return (
@@ -51,6 +57,76 @@ function SlideCaption({
         </div>
       )}
     </figcaption>
+  )
+}
+
+export function EditableCaption({ slide }) {
+  const { editModeEnabled, saveFn, deleteFn } = useContext(EditContext)
+  const [caption, setCaption] = useState(slide?.caption)
+  const [editCount, setEditCount] = useState(0)
+  const [editedCaption, setEditedCaption] = useState(slide?.caption)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  return (
+    <>
+      <SlideCaption
+        caption={caption}
+        geodata={slide.geodata}
+        dateTimeOriginal={slide.dateTimeOriginal}
+        captionProps={{
+          contentEditable: editModeEnabled && !isSubmitting,
+          onInput: (e) => setEditedCaption(e.currentTarget.innerHTML),
+          key: editCount,
+        }}
+      />
+      {editModeEnabled && (
+        <span className="flex justify-between mx-4 mt-2">
+          <span className="flex justify-between gap-3">
+            <UndoButton
+              disabled={isSubmitting}
+              undoFn={(e) => {
+                setCaption(caption)
+                // since React doesn't see innerHTML, this triggers the update
+                setEditCount((value) => value + 1)
+                e.target.blur()
+              }}
+            />
+            <SaveButton
+              disabled={isSubmitting}
+              saveFn={() => {
+                setIsSubmitting(true)
+                saveFn(
+                  {
+                    filename: slide.filename,
+                    caption: editedCaption,
+                  },
+                  ({ data }) => {
+                    setIsSubmitting(false)
+                    if (data !== undefined && slide.filename in data) {
+                      setCaption(data[slide.filename])
+                    } else {
+                      setCaption(slide?.caption)
+                    }
+                  }
+                )
+              }}
+            />
+          </span>
+          <DeleteButton
+            disabled={isSubmitting}
+            deleteFn={() => {
+              setIsSubmitting(true)
+              deleteFn(
+                {
+                  filename: slide.filename,
+                },
+                () => setIsSubmitting(false)
+              )
+            }}
+          />
+        </span>
+      )}
+    </>
   )
 }
 

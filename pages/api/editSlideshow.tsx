@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs, { unlink } from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -21,13 +21,21 @@ export default function handler(
     return res.status(403)
   }
 
-  const { slug, slides } = req.body
+  const { slug, slides, deleteFilename = undefined } = req.body
+  const directoryPath = join(siteConfig.postsDirectory, slug)
+  const filePath = join(directoryPath, siteConfig.postMarkdownFileName)
 
-  const filePath = join(
-    siteConfig.postsDirectory,
-    slug,
-    siteConfig.postMarkdownFileName
-  )
+  if (deleteFilename !== undefined) {
+    const deleteFullPath = join(directoryPath, deleteFilename)
+    unlink(deleteFullPath, (err) => {
+      if (err) {
+        console.log(`Error deleting ${deleteFullPath}: `, err)
+        return res.status(400).json({ status: `'Error deleting file` })
+      }
+      console.log(`${deleteFullPath} was deleted`)
+    })
+  }
+
   if (!fs.existsSync(filePath)) {
     return res.status(400).json({ status: `Error: file not found` })
   }
@@ -52,5 +60,5 @@ export default function handler(
       return res.status(400).json({ status: `'Error updating file` })
     }
   })
-  return res.status(200).json({ status: `success`, data: slides })
+  return res.status(200).json({ status: `success`, data: { slides } })
 }

@@ -16,6 +16,18 @@ const SiteIcon = () => (
   </div>
 )
 
+const DeleteIcon = () => (
+  <svg
+    role="img"
+    pointerEvents="none"
+    viewBox="0 -960 960 960"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <title>Delete</title>
+    <path d="M201-120v-630h-41v-60h188v-30h264v30h188v60h-41v630H201Zm60-60h438v-570H261v570Zm106-86h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z" />
+  </svg>
+)
+
 const SaveIcon = () => (
   <svg
     role="img"
@@ -179,6 +191,7 @@ export {
   MoonIcon,
   UndoIcon,
   SaveIcon,
+  DeleteIcon,
   ShowMapIcon,
   EditIcon,
   CancelIcon,
