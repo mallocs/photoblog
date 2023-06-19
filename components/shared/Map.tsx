@@ -1,27 +1,8 @@
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
-import { ShowMapIcon, CancelIcon } from '#/components/shared/icons'
 
 const MapWithNoSSR = dynamic(() => import('#/components/shared/MapContainer'), {
   ssr: false,
 })
-
-export function MapButton() {
-  const [showMap, setShowMapFn] = useState(true)
-  return (
-    <>
-      {showMap && <FixedPositionMap />}
-      <button
-        title={showMap ? 'Close Map' : 'Show Map'}
-        onClick={() => setShowMapFn(!showMap)}
-        type="button"
-        className="transition-opacity duration-300 rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500 opacity-40"
-      >
-        {showMap ? <CancelIcon /> : <ShowMapIcon />}
-      </button>
-    </>
-  )
-}
 
 export function FixedPositionMap() {
   return (

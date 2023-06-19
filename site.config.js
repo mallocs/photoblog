@@ -18,6 +18,7 @@ const siteConfig = {
   description: 'A statically generated photoblog',
   siteProtocol: 'https',
   siteHostname: 'photoblog-eight.vercel.app',
+  siteHome: '/',
   get siteUrl() {
     return `${this.siteProtocol}://${this.siteHostname}`
   },

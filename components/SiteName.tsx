@@ -8,10 +8,14 @@ const SiteName = () => {
       <section className="flex justify-center mt-6 md:mx-10 lg:justify-between items-baseline">
         <h1 className="font-site-name-block-google text-7xl md:text-8xl lg:text-9xl font-bold dark:font-medium tracking-tight leading-none md:pr-8 -mb-2 md:-mb-4">
           <NextLink
-            href="/"
+            href={siteConfig.siteHome}
             className="hover:text-black flex align-center items-baseline"
           >
-            {siteConfig.showSiteIcon && <SiteIcon />}
+            {siteConfig.showSiteIcon && (
+              <div className="pt-1 pr-2 w-24 h-24">
+                <SiteIcon />
+              </div>
+            )}
             {siteConfig.name}
             <span
               className={`font-site-suffix uppercase font-thin tracking-normal ${

@@ -9,12 +9,12 @@ import type PostType from '#/interfaces/post'
 import { SlugSEO } from '#/components/shared/SEO'
 import SlideListEditable from '#/components/shared/SlideListEditable'
 import Modal from '#/components/shared/Modal'
-import { MapButton } from '#/components/shared/Map'
+import { MapButton } from '#/components/shared/buttons/MapButton'
 import {
   ScrollDownButton,
   ScrollToTopButton,
   ScrollUpButton,
-} from '#/components/ScrollButtons'
+} from '#/components/shared/buttons/ScrollButtons'
 import withSlidesContext from '#/contexts/SlideContext'
 import {
   CancelButton,
@@ -55,11 +55,11 @@ function Page({ post, morePosts, preview }: Props) {
     <PostTitle>Loading…</PostTitle>
   ) : (
     <div className="mx-auto">
-      <div className="fixed right-6 bottom-0 gap-3 flex flex-col">
+      <div className="fixed right-6 bottom-6 gap-3 flex flex-col">
         <ScrollToTopButton />
         <ScrollUpButton />
         {Boolean(post.slideshow?.showMap) && (
-          <div className="hidden md:block ">
+          <div className="hidden md:block w-12 h-12">
             <MapButton />
           </div>
         )}

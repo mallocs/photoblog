@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { SunIcon, MoonIcon } from '#/components/shared/icons'
+import { HomeButton } from '#/components/shared/buttons/HomeButton'
 import siteConfig from '#/site.config'
+import { useObserverGroup } from '#/lib/intersection-observer-group'
 
 type Link = {
   name: string
@@ -42,37 +44,55 @@ function ColorModeButton() {
 }
 
 export default function Navbar() {
+  const {
+    ref,
+    inView: navbarInView,
+    entry,
+  } = useObserverGroup({
+    threshold: [0, 0.01, 0.99, 1],
+  })
+
   return (
-    <nav className="flex justify-between bg-zinc-600 h-11 px-2 sm:px-8">
-      <ul className="flex items-center justify-start gap-4 px-3">
-        {siteConfig.navbarLinks.map(({ name, iconName, url }: Link) => {
-          return (
-            <li key={name}>
-              {iconName !== undefined ? (
-                <a
-                  href={url}
-                  className="mr-4 sm:mr-10 px-4 py-2 text-3xl/4 text-zinc-100 dark:text-zinc-100 hover:text-primary dark:hover:text-primaryDark"
-                >
-                  <SIIcons name={`Si${iconName}`} title={name} />
-                </a>
-              ) : (
-                <a
-                  href={url}
-                  className="mr-4 sm:mr-10 px-4 py-2 uppercase rounded font-sans text-xl font-medium text-zinc-50 dark:text-zinc-50 hover:no-underline hover:bg-zinc-600"
-                >
-                  {name}
-                </a>
-              )}
-            </li>
-          )
-        })}
-      </ul>
-      <ul className="flex items-center justify-end">
-        <li>
-          <ColorModeButton />
-        </li>
-      </ul>
-    </nav>
+    <>
+      <nav
+        ref={ref}
+        className="flex justify-between bg-zinc-600 h-11 px-2 sm:px-8"
+      >
+        <ul className="flex items-center justify-start gap-4 px-3">
+          {siteConfig.navbarLinks.map(({ name, iconName, url }: Link) => {
+            return (
+              <li key={name}>
+                {iconName !== undefined ? (
+                  <a
+                    href={url}
+                    className="mr-4 sm:mr-10 px-4 py-2 text-3xl/4 text-zinc-100 dark:text-zinc-100 hover:text-primary dark:hover:text-primaryDark"
+                  >
+                    <SIIcons name={`Si${iconName}`} title={name} />
+                  </a>
+                ) : (
+                  <a
+                    href={url}
+                    className="mr-4 sm:mr-10 px-4 py-2 uppercase rounded font-sans text-xl font-medium text-zinc-50 dark:text-zinc-50 hover:no-underline hover:bg-zinc-600"
+                  >
+                    {name}
+                  </a>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+        <ul className="flex items-center justify-end">
+          <li>
+            <ColorModeButton />
+          </li>
+        </ul>
+      </nav>
+      {entry !== undefined && (
+        <span className="fixed top-4 left-4 z-10">
+          <HomeButton hide={navbarInView} />
+        </span>
+      )}
+    </>
   )
 }
 

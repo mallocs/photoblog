@@ -6,6 +6,8 @@ import {
   getObservedByTop,
   registerGroupCallback,
 } from '#/lib/intersection-observer-group/observe'
+import { buttonOpacityFn, buttonSharedCSS } from './utils'
+import siteConfig from '#/site.config'
 
 function scrollToPosition(position: number) {
   window.scrollTo({
@@ -24,12 +26,9 @@ function scrollToTopFn() {
   scrollToPosition(0)
 }
 
-const buttonOpacityFn = (hide: boolean) => (hide ? 'opacity-0' : 'opacity-40')
-const buttonSharedCSS = `transition-opacity duration-300 rounded-full pointer h-12 w-12 bg-zinc-100 dark:bg-zinc-500`
-
 const useIsFirstObservedElementVisible = (observerId, callbackFn) =>
   useEffect(() => {
-    registerGroupCallback('slide', (entries) => {
+    registerGroupCallback(siteConfig.slideObserverGroup, (entries) => {
       const topSlide = getObservedByTop(observerId)[0]
       entries.forEach((entry) => {
         entry.target === topSlide && callbackFn(entry.isIntersecting)
@@ -39,7 +38,7 @@ const useIsFirstObservedElementVisible = (observerId, callbackFn) =>
 
 const useIsLastObservedElementVisible = (observerId, callbackFn) =>
   useEffect(() => {
-    registerGroupCallback('slide', (entries) => {
+    registerGroupCallback(siteConfig.slideObserverGroup, (entries) => {
       const lastSlide = getObservedByTop(observerId).at(-1)
       entries.forEach((entry) => {
         entry.target === lastSlide && callbackFn(entry.isIntersecting)
@@ -50,7 +49,7 @@ const useIsLastObservedElementVisible = (observerId, callbackFn) =>
 export function ScrollToTopButton() {
   const [hide, setHideFn] = useState(true)
 
-  useIsFirstObservedElementVisible('slide', setHideFn)
+  useIsFirstObservedElementVisible(siteConfig.slideObserverGroup, setHideFn)
 
   return (
     <button
@@ -68,7 +67,7 @@ export function ScrollToTopButton() {
 
 export function ScrollUpButton() {
   const [hide, setHideFn] = useState(true)
-  useIsFirstObservedElementVisible('slide', setHideFn)
+  useIsFirstObservedElementVisible(siteConfig.slideObserverGroup, setHideFn)
 
   return (
     <button
@@ -76,7 +75,9 @@ export function ScrollUpButton() {
       title={`Go to previous image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(getPreviousObservedElement('slide'))
+        scrollToElement(
+          getPreviousObservedElement(siteConfig.slideObserverGroup)
+        )
       }}
     >
       <UpArrow />
@@ -86,7 +87,7 @@ export function ScrollUpButton() {
 
 export function ScrollDownButton() {
   const [hide, setHideFn] = useState(false)
-  useIsLastObservedElementVisible('slide', setHideFn)
+  useIsLastObservedElementVisible(siteConfig.slideObserverGroup, setHideFn)
 
   return (
     <button
@@ -94,7 +95,7 @@ export function ScrollDownButton() {
       title={`Go to next image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(getNextObservedElement('slide'))
+        scrollToElement(getNextObservedElement(siteConfig.slideObserverGroup))
       }}
     >
       <DownArrow />
