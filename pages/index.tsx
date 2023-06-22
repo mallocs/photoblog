@@ -15,13 +15,18 @@ type Props = {
   ogImage?: string
   posts: Post[]
 }
+
 const MapButtonWithCurrentSlides = withSlidesContext(MapButton)
 
+// The first image of the first post should have priority set to high
+// for server rendering.
+// The post index in view is used to update the image loading attribute to 'eager'
+// for slides in the preload range since the browser won't preload them normally.
 export default function Index({ posts: firstPost, ogImage }: Props) {
-  const [currentPostIndex, setCurrentPostIndex] = useState(0)
+  const [inViewPostIndex, setInViewPostIndexFn] = useState(0)
 
   const handleChangePostFn = useCallback(() => {
-    setCurrentPostIndex(
+    setInViewPostIndexFn(
       getClosestToViewportBottomIndex(siteConfig.postObserverGroup)
     )
   }, [])
@@ -44,12 +49,12 @@ export default function Index({ posts: firstPost, ogImage }: Props) {
       <IndexSEO ogImage={ogImage} />
       <div className="mx-auto">
         <div className="fixed right-6 bottom-0 gap-3 flex flex-col"></div>
-        <PostList posts={allPosts} />
+        <PostList posts={allPosts} inViewPostIndex={inViewPostIndex} />
       </div>
       <div className="fixed right-6 bottom-0 gap-3 flex flex-col">
-        {Boolean(allPosts[currentPostIndex].slideshow?.showMap) && (
+        {Boolean(allPosts[inViewPostIndex].slideshow?.showMap) && (
           <div className="hidden md:block ">
-            <MapButtonWithCurrentSlides post={allPosts[currentPostIndex]} />
+            <MapButtonWithCurrentSlides post={allPosts[inViewPostIndex]} />
           </div>
         )}
       </div>
@@ -57,20 +62,17 @@ export default function Index({ posts: firstPost, ogImage }: Props) {
   )
 }
 
-export const getStaticProps = async () => {
-  await writePostsJson()
-  return await getPropsForPosts({ startIndex: 0, stopIndex: 1 })
+export const getStaticProps = () => {
+  writePostsJson()
+  return getPropsForPosts({ startIndex: 0, stopIndex: 1 })
 }
 
-async function writePostsJson() {
+function writePostsJson() {
   const filePath = path.join(process.cwd(), 'public', 'posts.json')
-
-  const posts = JSON.stringify(await getPropsForPosts())
-
+  const posts = JSON.stringify(getPropsForPosts())
   if (fs.existsSync(filePath)) {
-    await fs.promises.unlink(filePath)
+    fs.promises.unlink(filePath)
   }
-
   fs.writeFile(filePath, posts, (err) => {
     if (err) {
       console.log('Error writing posts JSON file: ', err)

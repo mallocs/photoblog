@@ -41,7 +41,8 @@ function PostCompact({
   summary,
   author,
   priority,
-}: Post) {
+  inView,
+}: Post & { inView: boolean }) {
   const { ref } = useObserverGroup({
     group: siteConfig.postObserverGroup,
     rootMargin: '0px 0px 50px 0px',
@@ -90,6 +91,7 @@ function PostCompact({
               slides={slideshow.slides}
               indexButtonType={slideshow.indexButtonType}
               priority={priority}
+              inView={inView}
               slug={slug}
             />
           </div>

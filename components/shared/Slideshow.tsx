@@ -6,6 +6,7 @@ import siteConfig from '#/site.config'
 import SlideCaption from '#/components/shared/SlideCaption'
 import { SlideshowSlide } from '#/components/shared/Slide'
 import { LeftArrow, RightArrow } from '#/components/shared/icons'
+import useIsClientSide from '#/hooks/isClientSide'
 
 const SESSION_STORAGE_KEY = 'photoblog-slideshow'
 
@@ -110,6 +111,19 @@ type Props = {
   indexButtonType?: SlideshowIndexButton
   slug: string
   priority: boolean
+  inView: boolean
+}
+
+function isInPreloadRange(
+  slideIndex: number,
+  currentIndex: number,
+  slideCount: number,
+  preloadCount = siteConfig.preloadCount ?? 1
+) {
+  return (
+    Math.abs(slideIndex - currentIndex) <= preloadCount ||
+    Math.abs(slideIndex - currentIndex) >= slideCount - preloadCount
+  )
 }
 
 function Slideshow({
@@ -117,9 +131,11 @@ function Slideshow({
   indexButtonType = 'circles',
   slug,
   priority,
+  inView,
 }: Props) {
+  const isClientSide = useIsClientSide()
   const sessionStorageKey = SESSION_STORAGE_KEY + slug
-  const [slideIndex, setSlideIndex] = useState(0)
+  const [currentSlideIndex, setSlideIndex] = useState(0)
 
   // 1 is fading in, -1 is fading out
   const [isFading, setIsFading] = useState(Array(slides.length).fill(0))
@@ -139,13 +155,13 @@ function Slideshow({
     return (rawIndex + slides.length) % slides.length
   }
 
-  const previousSlideIndex = getSlideIndex(slideIndex - 1)
-  const nextSlideIndex = getSlideIndex(slideIndex + 1)
+  const previousSlideIndex = getSlideIndex(currentSlideIndex - 1)
+  const nextSlideIndex = getSlideIndex(currentSlideIndex + 1)
   function getFadeCSS({ index }: { index: number }): string {
     let css = ` transition-opacity ease-out`
-    if (isFading[index] !== 0 && index !== slideIndex) {
+    if (isFading[index] !== 0 && index !== currentSlideIndex) {
       return css + ' opacity-0'
-    } else if (index === slideIndex) {
+    } else if (index === currentSlideIndex) {
       return css + ' opacity-100'
     } else {
       return css + ' hidden'
@@ -164,7 +180,7 @@ function Slideshow({
       clearTimeout(fadeTimeoutId)
     }
     const fading = Array(slides.length).fill(0)
-    fading[slideIndex] = -1
+    fading[currentSlideIndex] = -1
     fading[goToSlideIndex] = 1
     setIsFading(fading)
     sessionStorage.setItem(sessionStorageKey, String(goToSlideIndex))
@@ -202,7 +218,7 @@ function Slideshow({
           )}
           {slides.map(
             (slide, index) =>
-              ([slideIndex, nextSlideIndex, previousSlideIndex].some(
+              ([currentSlideIndex, nextSlideIndex, previousSlideIndex].some(
                 (i) => index === i
               ) ||
                 isFading[index] !== 0) && (
@@ -211,7 +227,15 @@ function Slideshow({
                   slide={slide}
                   isFading={isFading[index] === 1}
                   fadeCSS={getFadeCSS({ index })}
-                  priority={priority && index === 0}
+                  priority={priority && index === 0 ? true : undefined}
+                  loading={
+                    !priority &&
+                    isClientSide &&
+                    inView &&
+                    isInPreloadRange(currentSlideIndex, index, slides.length)
+                      ? 'eager'
+                      : undefined
+                  }
                   slideIndex={index}
                   linkAs={`/posts/${slug}#slide-${index}`}
                   // try to lock the height based on the first slide
@@ -230,15 +254,15 @@ function Slideshow({
         </div>
         <div className="max-w-full">
           <SlideCaption
-            caption={slides[slideIndex].caption}
-            geodata={slides[slideIndex].geodata}
-            dateTimeOriginal={slides[slideIndex].dateTimeOriginal}
+            caption={slides[currentSlideIndex].caption}
+            geodata={slides[currentSlideIndex].geodata}
+            dateTimeOriginal={slides[currentSlideIndex].dateTimeOriginal}
             // The caption box should have a stable width, but don't let it be less than the current image width.
             style={{
               maxWidth: `100vw`,
               width: `max(calc(100vh * ${
-                Number(slides[slideIndex].width) /
-                Number(slides[slideIndex].height)
+                Number(slides[currentSlideIndex].width) /
+                Number(slides[currentSlideIndex].height)
               }), calc(100vh * ${
                 Number(slides[0].width) / Number(slides[0].height)
               })`,
@@ -258,7 +282,7 @@ function Slideshow({
                       : `${index + 1}`
                   }
                   className={makeSlideshowButtonCSS({
-                    isPressed: index === slideIndex,
+                    isPressed: index === currentSlideIndex,
                     type: indexButtonType,
                   })}
                   style={

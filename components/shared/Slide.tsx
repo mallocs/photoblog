@@ -61,6 +61,7 @@ export function SlideshowSlide({
   fadeCSS,
   slide,
   priority,
+  loading,
   linkAs,
   slideIndex,
   maxHeight,
@@ -90,6 +91,7 @@ export function SlideshowSlide({
         className={`!bg-auto object-contain ${fadeCSS}`}
         alt="slideshow"
         priority={priority}
+        loading={loading}
         src={slide.url}
         width={Number(slide?.width)}
         height={Number(slide?.height)}

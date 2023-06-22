@@ -3,9 +3,10 @@ import PostCompact from './PostCompact'
 
 type Props = {
   posts: Post[]
+  inViewPostIndex: number
 }
 
-const PostList = ({ posts }: Props) => {
+const PostList = ({ posts, inViewPostIndex }: Props) => {
   return (
     <section className="mt-8">
       {posts.map((postProps, index) => (
@@ -13,6 +14,7 @@ const PostList = ({ posts }: Props) => {
           key={postProps.slug}
           {...postProps}
           priority={index === 0}
+          inView={index === inViewPostIndex}
         />
       ))}
     </section>

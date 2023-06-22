@@ -196,7 +196,7 @@ export function getAllPosts(fields: string[] = []) {
   return posts
 }
 
-export const getPropsForPosts = async ({
+export const getPropsForPosts = ({
   startIndex = 0,
   stopIndex = undefined,
 } = {}) => {
@@ -209,7 +209,6 @@ export const getPropsForPosts = async ({
     'summary',
     'content',
   ]).slice(startIndex, stopIndex)
-
   return {
     props: {
       ogImage:
