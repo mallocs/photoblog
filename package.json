@@ -1,7 +1,7 @@
 {
   "private": true,
   "type": "module",
-  "node": ">=14.16",
+  "node": ">=18",
   "scripts": {
     "dev": "next",
     "build": "next build",

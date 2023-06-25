@@ -208,7 +208,8 @@ export const getPropsForPosts = ({
     'author',
     'summary',
     'content',
-  ]).slice(startIndex, stopIndex)
+  ])
+
   return {
     props: {
       ogImage:
@@ -217,7 +218,37 @@ export const getPropsForPosts = ({
           : `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
               (posts[0]?.slideshow?.slides ?? [])[0]?.url
             )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
-      posts,
+      posts: posts.slice(startIndex, stopIndex),
+      postCount: posts.length,
     },
   }
 }
+
+// // write files as 1-indexed starting with the oldest post as post-1.json
+// // with the newest post as the highest numbered so newer posts won't
+// // overwrite older posts.
+// function postIndexToJsonFilename(postIndex, postCount) {
+//   return `post-${postCount - postIndex}.json`
+// }
+
+// export function writePostJsonFiles() {
+//   if (!fs.existsSync(siteConfig.jsonDirectory)) {
+//     fs.mkdirSync(siteConfig.jsonDirectory)
+//   }
+//   const fileFolderPath = path.join(process.cwd(), siteConfig.jsonDirectory)
+//   const {
+//     props: { posts },
+//   } = getPropsForPosts()
+
+//   posts.forEach((post, index) => {
+//     fs.writeFile(
+//       path.join(fileFolderPath, postIndexToJsonFilename(index, posts.length)),
+//       JSON.stringify(post),
+//       (err) => {
+//         if (err) {
+//           console.log('Error writing posts JSON file: ', err)
+//         }
+//       }
+//     )
+//   })
+// }

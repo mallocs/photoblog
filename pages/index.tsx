@@ -14,6 +14,8 @@ import { useObserverGroupCallback } from '#/lib/intersection-observer-group'
 type Props = {
   ogImage?: string
   posts: Post[]
+  postCount: number
+  preload: number
 }
 
 const MapButtonWithCurrentSlides = withSlidesContext(MapButton)
@@ -22,39 +24,59 @@ const MapButtonWithCurrentSlides = withSlidesContext(MapButton)
 // for server rendering.
 // The post index in view is used to update the image loading attribute to 'eager'
 // for slides in the preload range since the browser won't preload them normally.
-export default function Index({ posts: firstPost, ogImage }: Props) {
+export default function Index({
+  posts: firstPost,
+  ogImage,
+  postCount,
+  preload = 2,
+}: Props) {
   const [inViewPostIndex, setInViewPostIndexFn] = useState(0)
 
   const handleChangePostFn = useCallback(() => {
-    setInViewPostIndexFn(
-      getClosestToViewportBottomIndex(siteConfig.postObserverGroup)
+    const closestPostIndex = getClosestToViewportBottomIndex(
+      siteConfig.postObserverGroup
     )
+    setInViewPostIndexFn(closestPostIndex)
   }, [])
   useObserverGroupCallback(siteConfig.postObserverGroup, handleChangePostFn)
 
-  const [morePosts, setMorePosts] = useState([])
+  const [posts, setPostsFn] = useState([
+    ...firstPost,
+    ...Array(postCount - 1).fill(undefined),
+  ])
 
   useEffect(() => {
     ;(async () => {
-      const {
-        props: { posts },
-      } = await (await fetch('/posts.json')).json()
-      setMorePosts(posts.slice(1))
+      // higher numbered posts are newer
+      for (
+        let postIndex = inViewPostIndex;
+        postIndex <= Math.min(inViewPostIndex + preload, postCount - 1);
+        postIndex++
+      ) {
+        if (posts[postIndex] === undefined) {
+          const updatedPosts = [...posts]
+          updatedPosts[postIndex] = await (
+            await fetch(
+              `${siteConfig.jsonUrl}/post-${postCount - postIndex}.json`
+            )
+          ).json()
+          setPostsFn(updatedPosts)
+        }
+      }
     })()
-  }, [])
+  }, [inViewPostIndex, postCount, posts, preload])
 
-  const allPosts = [...firstPost, ...morePosts]
   return (
     <>
       <IndexSEO ogImage={ogImage} />
       <div className="mx-auto">
         <div className="fixed right-6 bottom-0 gap-3 flex flex-col"></div>
-        <PostList posts={allPosts} inViewPostIndex={inViewPostIndex} />
+        <PostList posts={posts} inViewPostIndex={inViewPostIndex} />
       </div>
       <div className="fixed right-6 bottom-0 gap-3 flex flex-col">
-        {Boolean(allPosts[inViewPostIndex].slideshow?.showMap) && (
+        {Boolean(posts[inViewPostIndex]?.slideshow?.showMap) && (
           <div className="hidden md:block ">
-            <MapButtonWithCurrentSlides post={allPosts[inViewPostIndex]} />
+            <MapButtonWithCurrentSlides post={posts[inViewPostIndex]} />
           </div>
         )}
       </div>
@@ -63,18 +85,33 @@ export default function Index({ posts: firstPost, ogImage }: Props) {
 }
 
 export const getStaticProps = () => {
-  writePostsJson()
+  writePostJsonFiles()
   return getPropsForPosts({ startIndex: 0, stopIndex: 1 })
 }
 
-function writePostsJson() {
-  const filePath = path.join(process.cwd(), 'public', 'posts.json')
-  const posts = JSON.stringify(getPropsForPosts())
-  if (fs.existsSync(filePath)) {
-    fs.promises.unlink(filePath)
+// write files as 1-indexed starting with the oldest post as post-1.json
+// with the newest post as the highest numbered so newer posts won't
+// overwrite older posts.
+// function postIndexToJsonFilename(postIndex, postCount) {
+//   return 'post-' + postCount + '-' + postIndex + '.json'
+// }
+
+function writePostJsonFiles() {
+  if (!fs.existsSync(siteConfig.jsonDirectory)) {
+    fs.mkdirSync(siteConfig.jsonDirectory)
   }
-  fs.writeFile(filePath, posts, (err) => {
-    if (err) {
+  const fileFolderPath = path.join(process.cwd(), siteConfig.jsonDirectory)
+  const {
+    props: { posts },
+  } = getPropsForPosts()
+
+  posts.forEach((post, index) => {
+    try {
+      fs.writeFileSync(
+        path.join(fileFolderPath, `post-${posts.length - index}.json`),
+        JSON.stringify(post)
+      )
+    } catch (err) {
       console.log('Error writing posts JSON file: ', err)
     }
   })

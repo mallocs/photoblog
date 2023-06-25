@@ -39,3 +39,4 @@ next-env.d.ts
 /inputSlideshows/
 /public/assets/slideshows/
 /public/posts.json
+/public/json/

@@ -4,7 +4,6 @@
 // in the compose script
 // import defaultPicture from './public/assets/authors/default.png'
 // import mainAuthorPicture from './public/assets/authors/me.jpg'
-import { join } from 'path'
 
 const postsDirectory = 'posts'
 
@@ -65,10 +64,12 @@ const siteConfig = {
   postMarkdownFileName: 'post.md',
   postObserverGroup: 'post',
   slideObserverGroup: 'slide',
+  jsonDirectory: 'public/json',
+  jsonUrl: 'json',
 }
 
-if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {
-  siteConfig.root = process.cwd()
-}
+// if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {
+//   siteConfig.root =  process.cwd()
+// }
 
 export default siteConfig

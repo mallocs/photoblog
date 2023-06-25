@@ -9,7 +9,7 @@ type Props = {
 const PostList = ({ posts, inViewPostIndex }: Props) => {
   return (
     <section className="mt-8">
-      {posts.map((postProps, index) => (
+      {posts.filter(Boolean).map((postProps, index) => (
         <PostCompact
           key={postProps.slug}
           {...postProps}
