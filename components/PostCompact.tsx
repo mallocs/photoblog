@@ -51,7 +51,7 @@ function PostCompact({
   return (
     <article
       ref={ref}
-      className="mb-12 mx-6 pb-8 border-b border-solid border-zinc-400 last:border-none"
+      className="mb-12 pb-8 border-b border-solid border-zinc-400 last:border-none"
     >
       <div className="max-w-4xl px-4 mx-auto">
         <h2 className="mb-3 text-4xl lg:text-5xl leading-tight">

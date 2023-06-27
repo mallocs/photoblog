@@ -54,38 +54,33 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        ref={ref}
-        className="flex justify-between bg-zinc-600 h-11 px-2 sm:px-8"
-      >
-        <ul className="flex items-center justify-start gap-4 px-3">
-          {siteConfig.navbarLinks.map(({ name, iconName, url }: Link) => {
-            return (
-              <li key={name}>
-                {iconName !== undefined ? (
+      <nav ref={ref} className="bg-zinc-600">
+        <div className="mx-auto px-2 sm:px-6 lg:px-8">
+          <div className="relative flex h-12 items-center justify-between">
+            <div className="flex flex-1 justify-start items-center space-x-4">
+              {siteConfig.navbarLinks.map(({ name, iconName, url }: Link) => {
+                return (
                   <a
+                    key={name}
                     href={url}
-                    className="mr-4 sm:mr-10 px-4 py-2 text-3xl/4 text-zinc-100 dark:text-zinc-100 hover:text-primary dark:hover:text-primaryDark"
+                    className={`${
+                      iconName !== undefined ? 'text-3xl/4' : 'text-2xl'
+                    } px-4 py-2 uppercase rounded font-sans font-medium  text-zinc-100 dark:text-zinc-100 hover:no-underline hover:text-primary dark:hover:text-primaryDark`}
                   >
-                    <SIIcons name={`Si${iconName}`} title={name} />
+                    {iconName !== undefined ? (
+                      <SIIcons name={`Si${iconName}`} title={name} />
+                    ) : (
+                      name
+                    )}
                   </a>
-                ) : (
-                  <a
-                    href={url}
-                    className="mr-4 sm:mr-10 px-4 py-2 uppercase rounded font-sans text-xl font-medium text-zinc-50 dark:text-zinc-50 hover:no-underline hover:bg-zinc-600"
-                  >
-                    {name}
-                  </a>
-                )}
-              </li>
-            )
-          })}
-        </ul>
-        <ul className="flex items-center justify-end">
-          <li>
-            <ColorModeButton />
-          </li>
-        </ul>
+                )
+              })}
+            </div>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              <ColorModeButton />
+            </div>
+          </div>
+        </div>
       </nav>
       {entry !== undefined && (
         <span className="fixed top-4 left-4 z-10">

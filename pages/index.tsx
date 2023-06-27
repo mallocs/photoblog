@@ -70,10 +70,9 @@ export default function Index({
     <>
       <IndexSEO ogImage={ogImage} />
       <div className="mx-auto">
-        <div className="fixed right-6 bottom-0 gap-3 flex flex-col"></div>
         <PostList posts={posts} inViewPostIndex={inViewPostIndex} />
       </div>
-      <div className="fixed right-6 bottom-0 gap-3 flex flex-col">
+      <div className="fixed right-6 bottom-0 flex flex-col">
         {Boolean(posts[inViewPostIndex]?.slideshow?.showMap) && (
           <div className="hidden md:block ">
             <MapButtonWithCurrentSlides post={posts[inViewPostIndex]} />
