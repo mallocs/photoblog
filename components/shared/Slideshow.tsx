@@ -36,7 +36,7 @@ function LeftButton({ previousSlideIndex, handleFadeTransitionFn }) {
 function RightButton({ nextSlideIndex, handleFadeTransitionFn }) {
   return (
     <button
-      className={`absolute top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 ${sliderButtonCommonClassNames}`}
+      className={`top-[calc(50%_-_2.4rem)] md:top-[calc(50%_-_5.5rem)] right-0 ${sliderButtonCommonClassNames}`}
       title={`Go to slide ${nextSlideIndex + 1}`}
       onClick={(event) => {
         handleFadeTransitionFn({
@@ -102,7 +102,7 @@ function makeImgSlideshowButtonCSS({
 }
 
 const sliderButtonCommonClassNames =
-  'absolute w-12 h-18 md:w-20 md:h-36 p-2' +
+  'absolute z-20 w-12 h-18 md:w-20 md:h-36 p-2' +
   ' bg-opacity-40 hover:bg-zinc-300 hover:bg-opacity-80' +
   ' dark:bg-opacity-40 dark:hover:bg-zinc-700 dark:hover:bg-opacity-80 dark:fill-zinc-400'
 
@@ -158,9 +158,14 @@ function Slideshow({
   const previousSlideIndex = getSlideIndex(currentSlideIndex - 1)
   const nextSlideIndex = getSlideIndex(currentSlideIndex + 1)
   function getFadeCSS({ index }: { index: number }): string {
-    let css = ` transition-opacity ease-out`
+    // NOTE: passing transition duration as a style since tailwind doesn't seem to update
+    // when using arbitrary values and changing them.
+    // TODO: pointer-events-none since the slide width is acting weird while fading.
+    let css = `transition-opacity ease-in-out ${
+      isFading[index] === 1 ? 'absolute left-0 pointer-events-none' : ''
+    }`
     if (isFading[index] !== 0 && index !== currentSlideIndex) {
-      return css + ' opacity-0'
+      return css + ' opacity-0 pointer-events-none'
     } else if (index === currentSlideIndex) {
       return css + ' opacity-100'
     } else {
@@ -205,52 +210,63 @@ function Slideshow({
     preventScrollOnSwipe: true,
     trackMouse: true,
   })
-
   return (
     <>
       <figure {...swipeHandlers}>
-        <div className={'flex items-end justify-center relative'}>
+        <div className="relative">
           {slides.length > 1 && (
-            <LeftButton
-              handleFadeTransitionFn={handleFadeTransition}
-              previousSlideIndex={previousSlideIndex}
-            />
+            <>
+              <LeftButton
+                handleFadeTransitionFn={handleFadeTransition}
+                previousSlideIndex={previousSlideIndex}
+              />
+              <RightButton
+                handleFadeTransitionFn={handleFadeTransition}
+                nextSlideIndex={nextSlideIndex}
+              />
+            </>
           )}
-          {slides.map(
-            (slide, index) =>
-              ([currentSlideIndex, nextSlideIndex, previousSlideIndex].some(
-                (i) => index === i
-              ) ||
-                isFading[index] !== 0) && (
-                <SlideshowSlide
-                  key={slide.url}
-                  slide={slide}
-                  isFading={isFading[index] === 1}
-                  fadeCSS={getFadeCSS({ index })}
-                  priority={priority && index === 0 ? true : undefined}
-                  loading={
-                    !priority &&
-                    isClientSide &&
-                    inView &&
-                    isInPreloadRange(currentSlideIndex, index, slides.length)
-                      ? 'eager'
-                      : undefined
-                  }
-                  slideIndex={index}
-                  linkAs={`/posts/${slug}#slide-${index}`}
-                  // try to lock the height based on the first slide
-                  maxHeight={`min(100vh, calc(100vw * ${
-                    Number(slides[0].height) / Number(slides[0].width)
-                  }))`}
-                />
-              )
-          )}
-          {slides.length > 1 && (
-            <RightButton
-              handleFadeTransitionFn={handleFadeTransition}
-              nextSlideIndex={nextSlideIndex}
-            />
-          )}
+          <div
+            className={
+              'flex items-center justify-center bg-zinc-200 dark:bg-zinc-500 mx-auto'
+            }
+            style={{
+              maxWidth: `100vw`,
+              width: `calc(100vh * ${
+                Number(slides[0].width) / Number(slides[0].height)
+              })`,
+            }}
+          >
+            {slides.map(
+              (slide, index) =>
+                ([currentSlideIndex, nextSlideIndex, previousSlideIndex].some(
+                  (i) => index === i
+                ) ||
+                  isFading[index] !== 0) && (
+                  <SlideshowSlide
+                    key={slide.url}
+                    slide={slide}
+                    style={{ transitionDuration: `${siteConfig.fadeSpeed}ms` }}
+                    css={getFadeCSS({ index })}
+                    priority={priority && index === 0 ? true : undefined}
+                    loading={
+                      !priority &&
+                      isClientSide &&
+                      inView &&
+                      isInPreloadRange(currentSlideIndex, index, slides.length)
+                        ? 'eager'
+                        : undefined
+                    }
+                    slideIndex={index}
+                    linkAs={`/posts/${slug}#slide-${index}`}
+                    // try to lock the height based on the first slide
+                    maxHeight={`min(100vh, calc(100vw * ${
+                      Number(slides[0].height) / Number(slides[0].width)
+                    }))`}
+                  />
+                )
+            )}
+          </div>
         </div>
         <div className="max-w-full">
           <SlideCaption

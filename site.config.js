@@ -50,7 +50,7 @@ const siteConfig = {
   imageQuality: 75,
   storePicturesInWEBP: false,
   blurSize: 40,
-  fadeSpeed: 900,
+  fadeSpeed: 1200,
   authors: {
     default: {
       name: 'Anonymous',

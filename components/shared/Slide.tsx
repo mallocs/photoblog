@@ -57,8 +57,8 @@ function Slide({ slide, id, slideIndex }: Props) {
 }
 
 export function SlideshowSlide({
-  isFading,
-  fadeCSS,
+  style,
+  css,
   slide,
   priority,
   loading,
@@ -73,10 +73,11 @@ export function SlideshowSlide({
   })
   return (
     <NextLink
+      style={style}
+      className={css}
       // @ts-ignore
       slideindex={slideIndex}
       ref={ref}
-      className={isFading ? 'absolute' : 'static'}
       key={slide.url}
       as={linkAs}
       href="/posts/[slug]"
@@ -84,11 +85,10 @@ export function SlideshowSlide({
       <NextImage
         style={{
           maxHeight,
-          transitionDuration: `${siteConfig.fadeSpeed}ms`,
         }}
         // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
         // cover for some reason.
-        className={`!bg-auto object-contain ${fadeCSS}`}
+        className={`!bg-auto object-contain`}
         alt="slideshow"
         priority={priority}
         loading={loading}
