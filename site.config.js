@@ -66,6 +66,8 @@ const siteConfig = {
   slideObserverGroup: 'slide',
   jsonDirectory: 'public/json',
   jsonUrl: 'json',
+  preloadImages: 2,
+  preloadPosts: 2,
 }
 
 // if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {

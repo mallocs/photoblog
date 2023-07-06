@@ -118,11 +118,11 @@ function isInPreloadRange(
   slideIndex: number,
   currentIndex: number,
   slideCount: number,
-  preloadCount = siteConfig.preloadCount ?? 1
+  preload = siteConfig.preloadImages ?? 2
 ) {
   return (
-    Math.abs(slideIndex - currentIndex) <= preloadCount ||
-    Math.abs(slideIndex - currentIndex) >= slideCount - preloadCount
+    Math.abs(slideIndex - currentIndex) <= preload ||
+    Math.abs(slideIndex - currentIndex) >= slideCount - preload
   )
 }
 
@@ -250,7 +250,6 @@ function Slideshow({
                     css={getFadeCSS({ index })}
                     priority={priority && index === 0 ? true : undefined}
                     loading={
-                      !priority &&
                       isClientSide &&
                       inView &&
                       isInPreloadRange(currentSlideIndex, index, slides.length)

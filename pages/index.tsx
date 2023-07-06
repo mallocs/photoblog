@@ -28,7 +28,7 @@ export default function Index({
   posts: firstPost,
   ogImage,
   postCount,
-  preload = 2,
+  preload = siteConfig.preloadPosts,
 }: Props) {
   const [inViewPostIndex, setInViewPostIndexFn] = useState(0)
 
