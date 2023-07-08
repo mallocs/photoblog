@@ -8,12 +8,13 @@ import Post from '#/interfaces/post'
 import { MapButton } from '#/components/shared/buttons/MapButton'
 import withSlidesContext from '#/contexts/SlideContext'
 import { getClosestToViewportBottomIndex } from '#/lib/intersection-observer-group/observe'
-import siteConfig from '#/site.config'
 import { useObserverGroupCallback } from '#/lib/intersection-observer-group'
+import siteConfig from '#/site.config'
 
 type Props = {
   ogImage?: string
   posts: Post[]
+  shouldFetch: boolean[]
   postCount: number
   preload: number
 }
@@ -25,7 +26,8 @@ const MapButtonWithCurrentSlides = withSlidesContext(MapButton)
 // The post index in view is used to update the image loading attribute to 'eager'
 // for slides in the preload range since the browser won't preload them normally.
 export default function Index({
-  posts: firstPost,
+  posts: serverRenderedPosts,
+  shouldFetch,
   ogImage,
   postCount,
   preload = siteConfig.preloadPosts,
@@ -41,7 +43,7 @@ export default function Index({
   useObserverGroupCallback(siteConfig.postObserverGroup, handleChangePostFn)
 
   const [posts, setPostsFn] = useState([
-    ...firstPost,
+    ...serverRenderedPosts,
     ...Array(postCount - 1).fill(undefined),
   ])
 
@@ -53,18 +55,22 @@ export default function Index({
         postIndex <= Math.min(inViewPostIndex + preload, postCount - 1);
         postIndex++
       ) {
-        if (posts[postIndex] === undefined) {
+        if (
+          posts[postIndex] === undefined &&
+          shouldFetch &&
+          shouldFetch[postIndex]
+        ) {
           const updatedPosts = [...posts]
           updatedPosts[postIndex] = await (
             await fetch(
-              `${siteConfig.jsonUrl}/post-${postCount - postIndex}.json`
+              `/${siteConfig.jsonUrl}/post-${postCount - postIndex}.json`
             )
           ).json()
           setPostsFn(updatedPosts)
         }
       }
     })()
-  }, [inViewPostIndex, postCount, posts, preload])
+  }, [inViewPostIndex, postCount, posts, preload, shouldFetch])
 
   return (
     <>
@@ -94,7 +100,6 @@ export const getStaticProps = () => {
 // function postIndexToJsonFilename(postIndex, postCount) {
 //   return 'post-' + postCount + '-' + postIndex + '.json'
 // }
-
 function writePostJsonFiles() {
   if (!fs.existsSync(siteConfig.jsonDirectory)) {
     fs.mkdirSync(siteConfig.jsonDirectory)

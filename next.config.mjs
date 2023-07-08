@@ -14,7 +14,6 @@ const nextConfig = {
       {
         protocol: siteProtocol,
         hostname: siteHostname,
-        pathname: 'assets',
       },
     ],
   },

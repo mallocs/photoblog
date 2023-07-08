@@ -8,6 +8,7 @@ type PostType = {
   lastModified?: string
   author: Author
   summary: string
+  tags?: string[]
   slideshow?: SlideshowExternal
   ogImage?: {
     url: string
