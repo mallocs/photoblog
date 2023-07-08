@@ -10,7 +10,7 @@ type Params = {
 
 export function getStaticProps({ params }: Params) {
   return getPropsForPosts({
-    tag: params.tag,
+    tag: normalizeTag(params.tag),
     startIndex: 0,
     stopIndex: 1,
   })
