@@ -2,7 +2,12 @@ module.exports = {
   future: {
     hoverOnlyWhenSupported: true,
   },
-  content: ['./components/**/*.tsx', './pages/**/*.tsx', './layouts/**/*.tsx'],
+  content: [
+    './overrides/**/*.tsx',
+    './components/**/*.tsx',
+    './pages/**/*.tsx',
+    './layouts/**/*.tsx',
+  ],
   darkMode: 'class',
   theme: {
     extend: {
