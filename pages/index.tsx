@@ -32,11 +32,12 @@ export default function Index({
   postCount,
   preload = siteConfig.preloadPosts,
 }: Props) {
-  const [inViewPostIndex, setInViewPostIndexFn] = useState(0)
+  const [inViewPostIndex, setInViewPostIndexFn] = useState(null)
 
   const handleChangePostFn = useCallback(() => {
     const closestPostIndex = getClosestToViewportBottomIndex(
-      siteConfig.postObserverGroup
+      siteConfig.postObserverGroup,
+      true
     )
     setInViewPostIndexFn(closestPostIndex)
   }, [])

@@ -58,12 +58,31 @@ export function getObservedByTop(observerId: string) {
   )
 }
 
+export function isElementVisible(el) {
+  const rect = el.getBoundingClientRect()
+
+  return (
+    rect.bottom >= 0 &&
+    rect.right >= 0 &&
+    rect.top <= window.innerHeight &&
+    rect.left <= window.innerWidth
+  )
+}
+
 function isElementBottomVisible(element: Element, padding = 0) {
   return element.getBoundingClientRect().bottom <= window.innerHeight + padding
 }
 
-export function getClosestToViewportBottomIndex(observerId: string) {
+export function getClosestToViewportBottomIndex(
+  observerId: string,
+  onlyIfVisible = false // return null if the closest to viewport bottom is not visible
+) {
   const observedByViewport = getObservedByDistanceToViewportBottom(observerId)
+  if (onlyIfVisible) {
+    if (!isElementVisible(observedByViewport[0])) {
+      return null
+    }
+  }
   const observedElementsByTop = getObservedByTop(observerId)
   return observedElementsByTop.findIndex(
     (element) => element === observedByViewport[0]
