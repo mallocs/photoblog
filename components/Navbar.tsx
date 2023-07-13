@@ -54,7 +54,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav ref={ref} className="bg-zinc-600">
+      <nav ref={ref} className="bg-zinc-600 mb-16">
         <div className="mx-auto px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-12 items-center justify-between">
             <div className="flex flex-1 justify-start items-center space-x-4">
