@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { SunIcon, MoonIcon } from '#/components/shared/icons'
 import { HomeButton } from '#/components/shared/buttons/HomeButton'
-import siteConfig from '#/site.config'
 import { useObserverGroup } from '#/lib/intersection-observer-group'
+import siteConfig from '#/site.config'
 
 type Link = {
   name: string
@@ -22,7 +22,11 @@ function ColorModeButton() {
   }
   useEffect(() => {
     if (theme === undefined) {
-      setTheme(localStorage.getItem('theme') || 'light')
+      let initialTheme = localStorage.getItem('theme')
+      if (initialTheme === null) {
+        initialTheme = siteConfig.defaultToDarkMode ? 'dark' : 'light'
+      }
+      setTheme(initialTheme)
     } else {
       window.localStorage.setItem('theme', theme)
       if (theme === 'dark') {

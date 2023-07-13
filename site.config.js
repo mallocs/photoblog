@@ -68,10 +68,7 @@ const siteConfig = {
   jsonUrl: 'json',
   preloadImages: 2,
   preloadPosts: 2,
+  defaultToDarkMode: false,
 }
-
-// if (process !== undefined && process.env?.NEXT_RUNTIME !== 'edge') {
-//   siteConfig.root =  process.cwd()
-// }
 
 export default siteConfig
