@@ -81,7 +81,7 @@ export default function Index({
       </div>
       <div className="fixed right-6 bottom-0 flex flex-col">
         {Boolean(posts[inViewPostIndex]?.slideshow?.showMap) && (
-          <div className="hidden md:block ">
+          <div className="hidden md:block">
             <MapButtonWithCurrentSlides post={posts[inViewPostIndex]} />
           </div>
         )}

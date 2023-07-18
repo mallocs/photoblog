@@ -4,7 +4,20 @@ import { FixedPositionMap } from '#/components/shared/Map'
 import { buttonOpacityFn, buttonSharedCSS } from './utils'
 
 export function MapButton() {
-  const [showMap, setShowMapFn] = useState(true)
+  return (
+    <>
+      <div className="hidden sm:block lg:hidden">
+        <_MapButton show={false} />
+      </div>
+      <div className="hidden lg:block">
+        <_MapButton show />
+      </div>
+    </>
+  )
+}
+
+function _MapButton({ show }) {
+  const [showMap, setShowMapFn] = useState(show)
   return (
     <>
       {showMap && <FixedPositionMap />}
