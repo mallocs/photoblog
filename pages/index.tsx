@@ -79,7 +79,7 @@ export default function Index({
       <div className="mx-auto">
         <PostList posts={posts} inViewPostIndex={inViewPostIndex} />
       </div>
-      <div className="fixed right-6 bottom-0 flex flex-col">
+      <div className="fixed right-6 bottom-4 flex flex-col">
         {Boolean(posts[inViewPostIndex]?.slideshow?.showMap) && (
           <div className="hidden md:block">
             <MapButtonWithCurrentSlides post={posts[inViewPostIndex]} />

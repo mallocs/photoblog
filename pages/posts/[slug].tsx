@@ -55,7 +55,7 @@ function Page({ post, morePosts, preview }: Props) {
     <PostTitle>Loading…</PostTitle>
   ) : (
     <div className="mx-auto">
-      <div className="fixed right-6 bottom-6 gap-3 flex flex-col">
+      <div className="fixed right-6 bottom-4 gap-3 flex flex-col">
         <ScrollToTopButton />
         <ScrollUpButton />
         {Boolean(post.slideshow?.showMap) && (

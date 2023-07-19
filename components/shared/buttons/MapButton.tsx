@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ShowMapIcon, CancelIcon } from '#/components/shared/icons'
+import { ShowMapIcon, CloseIcon } from '#/components/shared/icons'
 import { FixedPositionMap } from '#/components/shared/Map'
 import { buttonOpacityFn, buttonSharedCSS } from './utils'
 
@@ -27,7 +27,7 @@ function _MapButton({ show }) {
         type="button"
         className={`${buttonOpacityFn(false)} ${buttonSharedCSS}`}
       >
-        {showMap ? <CancelIcon /> : <ShowMapIcon />}
+        {showMap ? <CloseIcon /> : <ShowMapIcon />}
       </button>
     </>
   )

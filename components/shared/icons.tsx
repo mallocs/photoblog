@@ -162,6 +162,13 @@ const DownArrow = () => (
   </svg>
 )
 
+const CloseIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+    <title>Hide Map</title>
+    <path d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z" />
+  </svg>
+)
+
 const ShowMapIcon = () => (
   <svg
     role="img"
@@ -236,6 +243,7 @@ export {
   SaveIcon,
   DeleteIcon,
   ShowMapIcon,
+  CloseIcon,
   EditIcon,
   CancelIcon,
 }
