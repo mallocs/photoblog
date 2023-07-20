@@ -16,9 +16,12 @@ function scrollToPosition(position: number) {
   })
 }
 
-function scrollToElement(element: Element) {
+function scrollToElement(element: Element, offset = 0) {
   scrollToPosition(
-    element.getBoundingClientRect().bottom + window.scrollY - window.innerHeight
+    element.getBoundingClientRect().bottom +
+      window.scrollY -
+      window.innerHeight +
+      offset
   )
 }
 
@@ -95,7 +98,10 @@ export function ScrollDownButton() {
       title={`Go to next image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(getNextObservedElement(siteConfig.slideObserverGroup))
+        scrollToElement(
+          getNextObservedElement(siteConfig.slideObserverGroup),
+          1 // TODO: figure out why sometimes the scrolling gets stuck without this offset.
+        )
       }}
     >
       <DownArrow />
