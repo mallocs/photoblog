@@ -42,6 +42,7 @@ const siteConfig = {
   },
   postsDirectory,
   slideshowInputDirectory: 'inputSlideshows',
+  root: './',
   resizedDirectory: 'resized',
   watermarkFile: 'public/assets/watermark.png',
   watermarkOpacity: 0.6,
