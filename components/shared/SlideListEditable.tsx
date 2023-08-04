@@ -1,9 +1,10 @@
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import { SlideExternal } from '#/interfaces/slide'
 import React from 'react'
 import { default as NextImage } from 'next/image'
-import siteConfig from '#/site.config'
 import { resetServerContext } from 'react-beautiful-dnd'
+import { SlideExternal } from '#/interfaces/slide'
+import getImageLoader from '#/lib/imageLoaders'
+import siteConfig from '#/site.config'
 
 type Props = {
   initialOrderMap: Map<string, number>
@@ -55,10 +56,10 @@ function SlideListEditable({
                 ref={provided.innerRef}
               >
                 {slides.map((slide, index) =>
-                  slide?.url ? (
+                  slide?.src ? (
                     <Draggable
-                      key={String(slide.url)}
-                      draggableId={String(slide.url)}
+                      key={String(slide.src)}
+                      draggableId={String(slide.src)}
                       index={index}
                     >
                       {(provided, snapshot) => (
@@ -76,14 +77,15 @@ function SlideListEditable({
                               {index + 1}
                             </span>
                             <span>
-                              Initial: {initialOrderMap.get(slide.url) + 1}
+                              Initial: {initialOrderMap.get(slide.src) + 1}
                             </span>
                           </div>
                           <NextImage
+                            loader={getImageLoader(slide.loader)}
                             className="m-auto"
                             alt="slideshow"
                             loading="eager"
-                            src={slide.url}
+                            src={slide.src}
                             width={Number(slide?.width) / 20}
                             height={Number(slide?.height) / 20}
                             placeholder={siteConfig.blurSize ? 'blur' : 'empty'}

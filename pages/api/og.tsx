@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import siteConfig from '#/site.config'
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 }
 
 export default async function handler(req: NextRequest) {
@@ -16,7 +16,7 @@ export default async function handler(req: NextRequest) {
       <div
         style={{
           display: 'flex',
-          fontSize: 60,
+          fontSize: 50,
           color: 'black',
           background: '#f6f6f6',
           width: '100%',
@@ -30,7 +30,7 @@ export default async function handler(req: NextRequest) {
         <img
           width={`${siteConfig.openGraph.imageWidth}`}
           height={`${siteConfig.openGraph.imageHeight}`}
-          src={`${siteConfig.siteUrl}${imgUrl}`}
+          src={imgUrl}
           alt={title}
           style={{
             objectFit: 'cover',
@@ -44,7 +44,7 @@ export default async function handler(req: NextRequest) {
               backgroundColor: 'white',
               position: 'absolute',
               color: 'white',
-              top: '50%',
+              top: '60%',
               left: '5%',
               padding: '5px 20px',
               borderRadius: '10px',
@@ -59,7 +59,7 @@ export default async function handler(req: NextRequest) {
               opacity: '1',
               color: 'black',
               position: 'absolute',
-              top: '50%',
+              top: '60%',
               left: '5%',
               padding: '5px 20px',
             }}

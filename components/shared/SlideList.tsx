@@ -14,7 +14,7 @@ function SlideList({ slides }: Props) {
             slideIndex={index + 1}
             slide={slide}
             id={`slide-${index + 1}`}
-            key={slide?.url}
+            key={slide?.src}
           />
         ))}
       </div>

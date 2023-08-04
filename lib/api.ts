@@ -5,6 +5,8 @@ import { SlideExternal } from '#/interfaces/slide'
 import PostType from '#/interfaces/post'
 import normalizeTag from '@/lib/normalizeTag'
 import siteConfig from '#/site.config'
+import { vercelLoader, ImageLoaderName } from '#/interfaces/imageLoader'
+import { getImageUrl } from './imageLoaders'
 
 // After processing, posts directory should have a subdirectory with this name that includes the processed files
 export function getPostSlugs() {
@@ -55,6 +57,7 @@ function getPostSlides({
   slug: currentSlideshowDirectory,
   postsDirectory = siteConfig.postsDirectory,
   manifestFileName = siteConfig.manifestFileName,
+  loader = vercelLoader,
 }: {
   captions?: {
     [key: string]: string
@@ -62,6 +65,7 @@ function getPostSlides({
   slug: string
   postsDirectory?: string
   manifestFileName?: string
+  loader: ImageLoaderName
 }): SlideExternal[] {
   const currentPostDirectory = join(postsDirectory, currentSlideshowDirectory)
   const currentSlideshowDirectoryUrl = join(
@@ -123,8 +127,10 @@ function getPostSlides({
       .map(([filename, caption]) => ({
         filename,
         caption,
+        loader,
+        src: join(currentSlideshowDirectoryUrl, filename),
+        // manifest.json should be able to override src and other values as needed.
         ...manifest[filename],
-        url: join(currentSlideshowDirectoryUrl, filename),
       }))
   )
 }
@@ -135,20 +141,21 @@ function getPostSlideshow(
     captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
     // will be added to the end of the array of slides.
     indexButtonType = 'dots',
-    geocode = false,
+    loader = vercelLoader,
   }: {
     captions: {
       [key: string]: string
     }
     indexButtonType: string
-    geocode: boolean | string
+    loader: ImageLoaderName
   }
 ) {
+  const postSlides = getPostSlides({ captions, slug, loader })
   return {
-    showMap: Boolean(geocode) && geocode !== 'no',
+    showMap:
+      Boolean(postSlides[0]?.latitude) && Boolean(postSlides[0]?.longitude),
     indexButtonType,
-    ...(slug &&
-      getEarliestAndLatestSlideDatetime(getPostSlides({ captions, slug }))),
+    ...(slug && getEarliestAndLatestSlideDatetime(postSlides)),
   }
 }
 
@@ -242,7 +249,7 @@ export const getPropsForPosts = ({
         outputPosts[0]?.slideshow?.slides === undefined
           ? null
           : `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
-              (posts[0]?.slideshow?.slides ?? [])[0]?.url
+              getImageUrl(outputPosts[0]?.slideshow?.slides[0])
             )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
       posts: outputPosts,
       shouldFetch,

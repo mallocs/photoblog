@@ -1,10 +1,20 @@
+import 'dotenv/config'
+import path from 'path'
+import cloudinary from 'cloudinary'
 import fs from 'fs'
 import sharp from 'sharp'
-import path from 'path'
 import matter from 'gray-matter'
 import { getPostMatter, getPostSlugs } from '#/lib/api'
 import { getProgressBar, getExifData, ensureDirectoryExists } from '#/bin/utils'
+import { cloudinaryLoader, loaderNames } from '#/interfaces/imageLoader'
 import siteConfig from '#/site.config'
+
+const GITIGNORE_TEMPLATE = './resources/template.gitignore'
+
+// Return "https" URLs by setting secure: true
+cloudinary.v2.config({
+  secure: true,
+})
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')
@@ -91,7 +101,9 @@ function getMatterProcessingOptions(fileDirectory) {
     getPostedArticlesMatter().get(fileDirectory)?.data.slideshow
 
   return {
+    loader: slideshowMatterData.loader,
     geocode: falsyNo(slideshowMatterData.geocode),
+    showCoordinates: falsyNo(slideshowMatterData.showCoordinates),
     showDatetimes: falsyNo(slideshowMatterData.showDatetimes),
     stripExif: falsyNo(slideshowMatterData.stripExif),
     artist: slideshowMatterData.artist,
@@ -251,6 +263,8 @@ export async function processor({
     fileDirectory,
     { files, manifestData, outputDirectory, manifestFilePath, sourceDirectory },
   ] of Object.entries(directoryData.directories)) {
+    const processingOptions = getMatterProcessingOptions(fileDirectory)
+
     for (const file of files) {
       const processedPath = path.join(outputDirectory, file)
       // Begin sharp transformation logic
@@ -261,7 +275,7 @@ export async function processor({
 
       manifestData[file] = {
         ...(await processImage({
-          ...getMatterProcessingOptions(fileDirectory),
+          ...processingOptions,
           processedPath,
           transformer,
           metadata,
@@ -272,7 +286,7 @@ export async function processor({
           blurSize,
         })),
         ...(await processMetadata({
-          ...getMatterProcessingOptions(fileDirectory),
+          ...processingOptions,
           metadata,
         })),
         ...(await generateWidths({
@@ -283,7 +297,45 @@ export async function processor({
           transformer,
           incrementProgressbar,
         })),
+        // src: processedPath, A custom src can be added here if a host doesn't
+        // have a loader that can map to the default path. A src set in
+        // manifest.json should override the default used by api.ts
       }
+      if (
+        loaderNames.find(
+          (loaderName) => loaderName === processingOptions.loader
+        )
+      ) {
+        if (processingOptions.loader === cloudinaryLoader) {
+          const outputGitignore = `${outputDirectory}/.gitignore`
+          !fs.existsSync(outputGitignore) &&
+            fs.copyFile(GITIGNORE_TEMPLATE, outputGitignore, (err) => {
+              if (err) throw err
+              console.log(`.gitignore copied to ${outputDirectory}`)
+            })
+
+          const options = {
+            tags: [fileDirectory],
+            media_metadata: true,
+            folder: outputDirectory,
+            use_filename: true,
+            unique_filename: false,
+            overwrite: true,
+          }
+
+          try {
+            const result = await cloudinary.v2.uploader.upload(
+              processedPath,
+              options
+            )
+            // TODO: debug levels console.log(result)
+          } catch (err) {
+            console.error(err)
+            process.exit(1)
+          }
+        }
+      }
+
       incrementProgressbar(processedPath)
       fs.writeFileSync(manifestFilePath, JSON.stringify(manifestData, null, 4))
     }
@@ -377,11 +429,16 @@ async function generateWidths({
   }
 }
 
-async function processMetadata({ metadata, geocode, showDatetimes }) {
+async function processMetadata({
+  metadata,
+  geocode,
+  showDatetimes,
+  showCoordinates,
+}) {
   return {
     ...(await getExifData({
       rawExif: metadata.exif,
-      coordinates: geocode,
+      showCoordinates,
       geocode,
       dateTimeOriginal: showDatetimes,
     })),

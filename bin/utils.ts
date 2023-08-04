@@ -1,5 +1,4 @@
 import fs from 'fs'
-import path from 'path'
 import cliProgress from 'cli-progress'
 import exifReader from 'exif-reader'
 import { getLatLngDecimalFromExif, geocodeFromExif } from './geoUtils'
@@ -87,14 +86,14 @@ async function getExifData({
   rawExif,
   exif = exifReader(rawExif),
   dateTimeOriginal = true,
-  coordinates = true,
+  showCoordinates = true,
   geocode = true,
 }) {
   return {
     ...(dateTimeOriginal && {
       dateTimeOriginal: getExifDateTimeOriginal(exif),
     }),
-    ...(coordinates && { ...getLatLngDecimalFromExif(exif) }),
+    ...(showCoordinates && { ...getLatLngDecimalFromExif(exif) }),
     ...(geocode && { geodata: await geocodeFromExif(exif) }),
   }
 }

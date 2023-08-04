@@ -15,6 +15,7 @@ const nextConfig = {
         protocol: siteProtocol,
         hostname: siteHostname,
       },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
     ],
   },
   webpack: (config) => {

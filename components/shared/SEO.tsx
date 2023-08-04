@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import siteConfig from '#/site.config'
 import type PostType from '#/interfaces/post'
+import { getImageUrl } from '#/lib/imageLoaders'
 
 type Props = {
   ogImage?: string
@@ -75,8 +76,8 @@ export const SlugSEO = ({
         ogType="article"
         ogImage={
           slideshow.slides &&
-          `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
-            slideshow.slides[0].url
+          `/api/og?imgUrl=${encodeURIComponent(
+            getImageUrl(slideshow.slides[0])
           )}&title=${encodeURIComponent(title)}`
         }
       />

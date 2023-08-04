@@ -100,7 +100,7 @@ export default withSlidesContext(
         const [isSubmitting, setIsSubmitting] = useState(false)
 
         const initialOrderMap = slides.reduce((accumulator, current, index) => {
-          accumulator.set(current.url, index)
+          accumulator.set(current.src, index)
           return accumulator
         }, new Map<string, number>())
 

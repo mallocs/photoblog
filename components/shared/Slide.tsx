@@ -4,6 +4,7 @@ import { default as NextLink } from 'next/link'
 import { isDevEnvironment } from '#/lib/isDevEnvironment'
 import { useObserverGroup } from '#/lib/intersection-observer-group'
 import SlideCaption, { EditableCaption } from '#/components/shared/SlideCaption'
+import getImageLoader from '#/lib/imageLoaders'
 import siteConfig from '#/site.config'
 
 type Props = {
@@ -23,7 +24,7 @@ function Slide({ slide, id, slideIndex }: Props) {
     <div
       ref={ref}
       id={id}
-      key={slide?.url}
+      key={slide?.src}
       className="mb-16"
       // @ts-ignore
       // eslint-disable-next-line react/no-unknown-property
@@ -31,10 +32,11 @@ function Slide({ slide, id, slideIndex }: Props) {
     >
       <figure>
         <NextImage
+          loader={getImageLoader(slide.loader)}
           className={'!bg-auto object-contain w-full max-h-[180vmin]'}
           alt="slideshow"
-          key={slide.url}
-          src={slide.url}
+          key={slide.filename}
+          src={slide.src}
           priority={slideIndex === 0}
           width={Number(slide.width)}
           height={Number(slide.height)}
@@ -78,7 +80,7 @@ export function SlideshowSlide({
       // @ts-ignore
       slideindex={slideIndex}
       ref={ref}
-      key={slide.url}
+      key={slide.src}
       as={linkAs}
       href="/posts/[slug]"
     >
@@ -89,10 +91,11 @@ export function SlideshowSlide({
         // TODO: !bg-auto seems to be necessary atm because nextjs sets the blur image background-size to
         // cover for some reason.
         className={`!bg-auto object-contain`}
+        loader={getImageLoader(slide.loader)}
         alt="slideshow"
         priority={priority}
         loading={loading}
-        src={slide.url}
+        src={slide.src}
         width={Number(slide?.width)}
         height={Number(slide?.height)}
         placeholder={siteConfig.blurSize ? 'blur' : 'empty'}

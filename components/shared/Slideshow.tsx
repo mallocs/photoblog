@@ -244,7 +244,7 @@ function Slideshow({
                 ) ||
                   isFading[index] !== 0) && (
                   <SlideshowSlide
-                    key={slide.url}
+                    key={slide.src}
                     slide={slide}
                     style={{ transitionDuration: `${siteConfig.fadeSpeed}ms` }}
                     css={getFadeCSS({ index })}
@@ -287,7 +287,7 @@ function Slideshow({
             <div className="xl:max-w-[80vw] mx-auto w-fit p-2">
               {slides.map((slide, index) => (
                 <button
-                  key={slide.url}
+                  key={slide.src}
                   title={
                     slide.caption
                       ? `${index + 1}: ${slide?.caption.replace(
