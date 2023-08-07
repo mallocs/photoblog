@@ -87,7 +87,10 @@ function DeleteButton({ deleteFn, disabled }) {
     <button
       className={`${buttonCSS} w-10 h-10 p-1 `}
       title="Delete slide"
-      onClick={deleteFn}
+      onClick={(e) => {
+        e.stopPropagation()
+        deleteFn()
+      }}
       disabled={disabled}
     >
       <DeleteIcon />

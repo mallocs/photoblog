@@ -3,7 +3,7 @@ import { join, parse } from 'path'
 import matter from 'gray-matter'
 import { SlideExternal } from '#/interfaces/slide'
 import PostType from '#/interfaces/post'
-import normalizeTag from '@/lib/normalizeTag'
+import normalizeTag from '#/lib/normalizeTag'
 import siteConfig from '#/site.config'
 import { vercelLoader, ImageLoaderName } from '#/interfaces/imageLoader'
 import { getImageUrl } from './imageLoaders'
@@ -135,10 +135,10 @@ function getPostSlides({
   )
 }
 
-function getPostSlideshow(
+export function getPostSlideshow(
   slug,
   {
-    captions = {}, // Captions are optional. Any pictures in the path directory not specified by captions
+    captions, // Captions are optional. Any pictures in the path directory not specified by captions
     // will be added to the end of the array of slides.
     indexButtonType = 'dots',
     loader = vercelLoader,
@@ -148,7 +148,7 @@ function getPostSlideshow(
     }
     indexButtonType: string
     loader: ImageLoaderName
-  }
+  } = getPostMatter(slug).data.slideshow
 ) {
   const postSlides = getPostSlides({ captions, slug, loader })
   return {

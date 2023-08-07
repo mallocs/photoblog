@@ -100,14 +100,7 @@ export function EditableCaption({ slide }) {
                     filename: slide.filename,
                     caption: editedCaption,
                   },
-                  ({ data }) => {
-                    setIsSubmitting(false)
-                    if (data !== undefined && slide.filename in data) {
-                      setCaption(data[slide.filename])
-                    } else {
-                      setCaption(slide?.caption)
-                    }
-                  }
+                  () => setIsSubmitting(false)
                 )
               }}
             />
