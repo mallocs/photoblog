@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { join, parse } from 'path'
+import path, { join, parse } from 'path'
 import matter from 'gray-matter'
 import { SlideExternal } from '#/interfaces/slide'
 import PostType from '#/interfaces/post'
@@ -205,11 +205,9 @@ export function getAllPosts(fields: string[] = []) {
 }
 
 export const getPropsForPosts = ({
-  tag = undefined,
+  tag = null,
   startIndex = 0,
-  stopIndex = undefined,
-} = {}) => {
-  let posts = getAllPosts([
+  posts = getAllPosts([
     'title',
     'date',
     'slug',
@@ -218,29 +216,22 @@ export const getPropsForPosts = ({
     'author',
     'summary',
     'content',
-  ])
-
-  const outputPosts = posts
-    .filter(
-      (post) =>
-        tag === undefined ||
-        post.tags?.some(
-          (postTag) => normalizeTag(postTag) === normalizeTag(tag)
-        )
+  ]),
+  stopIndex = posts.length,
+} = {}) => {
+  // json files with the post data are written out by writePostJsonFiles
+  const postUrlMap = posts.reduce((accumulator, current, index) => {
+    accumulator.set(
+      current.slug,
+      // higher numbered posts are newer
+      `/${siteConfig.jsonUrl}/post-${posts.length - index}.json`
     )
-    .slice(startIndex, stopIndex)
-
-  // This is an indicator for which posts should be fetched client-side.
-  // Don't fetch outputPosts since they're in the initial render.
-  const shouldFetch = posts.map((post) =>
-    tag === undefined ||
-    post.tags?.some(
-      (postTag) =>
-        normalizeTag(postTag) === normalizeTag(tag) &&
-        !outputPosts.some((outputPost) => outputPost === post)
-    )
-      ? true
-      : false
+    return accumulator
+  }, new Map())
+  const outputPosts = posts.filter(
+    (post) =>
+      tag === null ||
+      post.tags?.some((postTag) => normalizeTag(postTag) === normalizeTag(tag))
   )
 
   return {
@@ -251,9 +242,40 @@ export const getPropsForPosts = ({
           : `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
               getImageUrl(outputPosts[0]?.slideshow?.slides[0])
             )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
-      posts: outputPosts,
-      shouldFetch,
-      postCount: posts.length,
+      posts: outputPosts.slice(startIndex, stopIndex),
+      fetchUrls: outputPosts.map((post, index) => {
+        if (index < stopIndex) {
+          return null
+        }
+        return postUrlMap.get(post.slug)
+      }),
+      tag,
+      // reset state whenever tags changes
+      key: tag,
     },
   }
+}
+
+// write files as 1-indexed starting with the oldest post as post-1.json
+// with the newest post as the highest numbered so newer posts won't
+// overwrite older posts.
+export function writePostJsonFiles() {
+  if (!fs.existsSync(siteConfig.jsonDirectory)) {
+    fs.mkdirSync(siteConfig.jsonDirectory)
+  }
+  const fileFolderPath = path.join(process.cwd(), siteConfig.jsonDirectory)
+  const {
+    props: { posts },
+  } = getPropsForPosts()
+
+  posts.forEach((post, index) => {
+    try {
+      fs.writeFileSync(
+        path.join(fileFolderPath, `post-${posts.length - index}.json`),
+        JSON.stringify(post)
+      )
+    } catch (err) {
+      console.log('Error writing posts JSON file: ', err)
+    }
+  })
 }

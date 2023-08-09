@@ -1,9 +1,7 @@
-import path from 'path'
-import fs from 'fs'
 import { useCallback, useEffect, useState } from 'react'
 import { IndexSEO } from '#/components/shared/SEO'
 import PostList from '#/components/PostList'
-import { getPropsForPosts } from '#/lib/api'
+import { getPropsForPosts, writePostJsonFiles } from '#/lib/api'
 import Post from '#/interfaces/post'
 import { MapButton } from '#/components/shared/buttons/MapButton'
 import withSlidesContext from '#/contexts/SlideContext'
@@ -14,8 +12,7 @@ import siteConfig from '#/site.config'
 type Props = {
   ogImage?: string
   posts: Post[]
-  shouldFetch: boolean[]
-  postCount: number
+  fetchUrls: string | null[]
   preload: number
 }
 
@@ -27,9 +24,8 @@ const MapButtonWithCurrentSlides = withSlidesContext(MapButton)
 // for slides in the preload range since the browser won't preload them normally.
 export default function Index({
   posts: serverRenderedPosts,
-  shouldFetch,
+  fetchUrls,
   ogImage,
-  postCount,
   preload = siteConfig.preloadPosts,
 }: Props) {
   const [inViewPostIndex, setInViewPostIndexFn] = useState(null)
@@ -45,33 +41,26 @@ export default function Index({
 
   const [posts, setPostsFn] = useState([
     ...serverRenderedPosts,
-    ...Array(postCount - 1).fill(undefined),
+    ...Array(fetchUrls.length - 1).fill(undefined),
   ])
 
   useEffect(() => {
     ;(async () => {
-      // higher numbered posts are newer
       for (
         let postIndex = inViewPostIndex;
-        postIndex <= Math.min(inViewPostIndex + preload, postCount - 1);
+        postIndex <= Math.min(inViewPostIndex + preload, fetchUrls.length - 1);
         postIndex++
       ) {
-        if (
-          posts[postIndex] === undefined &&
-          shouldFetch &&
-          shouldFetch[postIndex]
-        ) {
+        if (posts[postIndex] === undefined && fetchUrls[postIndex]) {
           const updatedPosts = [...posts]
           updatedPosts[postIndex] = await (
-            await fetch(
-              `/${siteConfig.jsonUrl}/post-${postCount - postIndex}.json`
-            )
+            await fetch(fetchUrls[postIndex])
           ).json()
           setPostsFn(updatedPosts)
         }
       }
     })()
-  }, [inViewPostIndex, postCount, posts, preload, shouldFetch])
+  }, [inViewPostIndex, posts, preload, fetchUrls])
 
   return (
     <>
@@ -93,31 +82,4 @@ export default function Index({
 export const getStaticProps = () => {
   writePostJsonFiles()
   return getPropsForPosts({ startIndex: 0, stopIndex: 1 })
-}
-
-// write files as 1-indexed starting with the oldest post as post-1.json
-// with the newest post as the highest numbered so newer posts won't
-// overwrite older posts.
-// function postIndexToJsonFilename(postIndex, postCount) {
-//   return 'post-' + postCount + '-' + postIndex + '.json'
-// }
-function writePostJsonFiles() {
-  if (!fs.existsSync(siteConfig.jsonDirectory)) {
-    fs.mkdirSync(siteConfig.jsonDirectory)
-  }
-  const fileFolderPath = path.join(process.cwd(), siteConfig.jsonDirectory)
-  const {
-    props: { posts },
-  } = getPropsForPosts()
-
-  posts.forEach((post, index) => {
-    try {
-      fs.writeFileSync(
-        path.join(fileFolderPath, `post-${posts.length - index}.json`),
-        JSON.stringify(post)
-      )
-    } catch (err) {
-      console.log('Error writing posts JSON file: ', err)
-    }
-  })
 }
