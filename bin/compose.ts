@@ -7,6 +7,7 @@ import matter from 'gray-matter'
 import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
 import { processor } from './processingUtils'
 import siteConfig from '#/site.config.js'
+import { loaderNames } from '#/interfaces/imageLoader'
 
 function getSlideshowDirectories({
   slideshowsPath = path.join(
@@ -140,9 +141,26 @@ async function main() {
     const summary = await input({
       message: 'Enter post summary:',
     })
+    const tags = await input({
+      message: 'Any Tags? Separate them with , or leave empty if no tags.',
+    })
+    const { loader } = await inquirer.prompt({
+      name: 'loader',
+      message: 'Which image loader',
+      type: 'list',
+      default: 'yes',
+      choices: loaderNames,
+    })
     const { geocode } = await inquirer.prompt({
       name: 'geocode',
-      message: 'Extract latitude and longitude and reverse geocode',
+      message: 'Reverse geocode',
+      type: 'list',
+      default: 'yes',
+      choices: ['yes', 'no'],
+    })
+    const { showCoordinates } = await inquirer.prompt({
+      name: 'showCoordinates',
+      message: 'Extract latitude and longitude',
       type: 'list',
       default: 'yes',
       choices: ['yes', 'no'],
@@ -174,11 +192,6 @@ async function main() {
     //   choices: ['yes', 'no'],
     // },
     // {
-    //   name: 'tags',
-    //   message: 'Any Tags? Separate them with , or leave empty if no tags.',
-    //   type: 'input',
-    // },
-    // {
     //   name: 'layout',
     //   message: 'Select layout',
     //   type: 'list',
@@ -194,8 +207,11 @@ async function main() {
       title: title !== undefined ? title : 'Untitled',
       author,
       summary: summary !== undefined ? summary : ' ',
+      tags: tags.split(',').map((tag) => tag.trim()),
       slideshow: {
+        loader,
         geocode,
+        showCoordinates,
         showDatetimes,
         ...(artist && { artist }),
         ...(copyright && { copyright }),
