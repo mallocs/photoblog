@@ -10,7 +10,7 @@
     "lint": "next lint",
     "process": "tsx ./bin/process",
     "reprocess": "tsx ./bin/process --rebuild",
-    "compose": "tsx  ./bin/compose",
+    "compose": "tsx ./bin/compose",
     "exportImages": "tsx ./bin/process --export",
     "export": "next build && next export"
   },
@@ -37,7 +37,6 @@
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.7",
     "cli-progress": "^3.11.2",
-    "dotenv": "^16.3.1",
     "eslint": "8.22.0",
     "eslint-config-next": "12.2.5",
     "exif-reader": "^1.2.0",

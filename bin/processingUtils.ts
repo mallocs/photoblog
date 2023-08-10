@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import env from '@next/env'
 import path from 'path'
 import cloudinary from 'cloudinary'
 import fs from 'fs'
@@ -9,10 +9,15 @@ import { getProgressBar, getExifData, ensureDirectoryExists } from '#/bin/utils'
 import { cloudinaryLoader, loaderNames } from '#/interfaces/imageLoader'
 import siteConfig from '#/site.config'
 
+env.loadEnvConfig(process.cwd())
+console.log(process)
 const GITIGNORE_TEMPLATE = './resources/template.gitignore'
 
 // Return "https" URLs by setting secure: true
 cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 })
 
