@@ -5,7 +5,7 @@ import { input, confirm } from '@inquirer/prompts'
 import DatePrompt from 'inquirer-date-prompt'
 import matter from 'gray-matter'
 import { slideshowIndexButtonOptions } from '#/interfaces/slideshow'
-import { processor } from './processingUtils'
+import { getSlideshowCaptionObject, processor } from '#/bin/processingUtils'
 import siteConfig from '#/site.config.js'
 import { loaderNames } from '#/interfaces/imageLoader'
 
@@ -32,26 +32,6 @@ function getSlideshowDirectories({
 //     .filter((file) => file.toLowerCase().includes('post'))
 //   return layoutList
 // }
-
-function getSlideshowCaptionObject({
-  slideshowsPath = path.join(
-    siteConfig.root,
-    siteConfig.slideshowInputDirectory
-  ),
-  ignoreFiles = siteConfig.ignoreFiles,
-  directory,
-}) {
-  const slideshowPath = path.join(slideshowsPath, directory)
-  return fs
-    .readdirSync(slideshowPath)
-    .filter((fileName) =>
-      ignoreFiles.every((ignoreFileName) => ignoreFileName != fileName)
-    )
-    .reduce((accumulator, current) => {
-      accumulator[current] = ''
-      return accumulator
-    }, {})
-}
 
 // Remove special characters and replace space with -
 const getDefaultDirectory = (input) => {
@@ -218,7 +198,7 @@ async function main() {
         sourceDirectory: slideshowSourceDirectory,
         indexButtonType,
         captions: getSlideshowCaptionObject({
-          directory: slideshowSourceDirectory,
+          slug: slideshowSourceDirectory,
         }),
       },
     })

@@ -41,6 +41,9 @@ const siteConfig = {
     imageWidth: 1200,
   },
   postsDirectory,
+  get postsFullPath() {
+    return `public/${this.postsDirectory}`
+  },
   slideshowInputDirectory: 'inputSlideshows',
   root: './',
   resizedDirectory: 'resized',

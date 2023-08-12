@@ -1,6 +1,4 @@
-import env from '@next/env'
 import path from 'path'
-import cloudinary from 'cloudinary'
 import fs from 'fs'
 import sharp from 'sharp'
 import matter from 'gray-matter'
@@ -9,17 +7,7 @@ import { getProgressBar, getExifData, ensureDirectoryExists } from '#/bin/utils'
 import { cloudinaryLoader, loaderNames } from '#/interfaces/imageLoader'
 import siteConfig from '#/site.config'
 
-env.loadEnvConfig(process.cwd())
-console.log(process)
 const GITIGNORE_TEMPLATE = './resources/template.gitignore'
-
-// Return "https" URLs by setting secure: true
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-})
 
 const ErrorScaleRatio = new Error('Scale Ratio must be less than one!')
 const ErrorOpacity = new Error('Opacity must be less than one!')
@@ -92,19 +80,50 @@ async function makeBlurDataURL({ path, size, saturation = 1, brightness = 1 }) {
   return `data:image/${blurInfo.format};base64,${blurData.toString('base64')}`
 }
 
-const getPostedArticlesMatter = () =>
+export function getSlideshowFiles({
+  slug,
+  slideshowsPath = path.join(
+    siteConfig.root,
+    siteConfig.slideshowInputDirectory
+  ),
+  slideshowPath = path.join(slideshowsPath, slug),
+  fileTypes = siteConfig.imageFileTypes,
+}) {
+  try {
+    return fs
+      .readdirSync(slideshowPath)
+      .filter((fileName) =>
+        fileTypes.some((imageFileType) =>
+          fileName.toLowerCase().endsWith(imageFileType.toLowerCase())
+        )
+      )
+  } catch (err) {
+    console.error(`Couldn't read directory ${slideshowPath}: ${err}`)
+    return undefined
+  }
+}
+
+export function getSlideshowCaptionObject(opts) {
+  return getSlideshowFiles(opts).reduce((accumulator, current) => {
+    accumulator[current] = ''
+    return accumulator
+  }, {})
+}
+
+export const getPostedArticlesMatter = () =>
   getPostSlugs().reduce(
     (accumulator, currentSlug) =>
       accumulator.set(currentSlug, getPostMatter(currentSlug)),
     new Map<string, matter.GrayMatterFile<string>>()
   )
+
 function falsyNo(value) {
   return Boolean(value) && value !== 'no'
 }
-function getMatterProcessingOptions(fileDirectory) {
-  const slideshowMatterData =
-    getPostedArticlesMatter().get(fileDirectory)?.data.slideshow
 
+export function getMatterProcessingOptions(slug) {
+  const slideshowMatterData =
+    getPostedArticlesMatter().get(slug)?.data.slideshow
   return {
     loader: slideshowMatterData.loader,
     geocode: falsyNo(slideshowMatterData.geocode),
@@ -318,26 +337,6 @@ export async function processor({
               if (err) throw err
               console.log(`.gitignore copied to ${outputDirectory}`)
             })
-
-          const options = {
-            tags: [fileDirectory],
-            media_metadata: true,
-            folder: outputDirectory,
-            use_filename: true,
-            unique_filename: false,
-            overwrite: true,
-          }
-
-          try {
-            const result = await cloudinary.v2.uploader.upload(
-              processedPath,
-              options
-            )
-            // TODO: debug levels console.log(result)
-          } catch (err) {
-            console.error(err)
-            process.exit(1)
-          }
         }
       }
 
