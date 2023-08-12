@@ -60,9 +60,10 @@ function navbarLinks({ block, showText } = { block: false, showText: false }) {
           key={name}
           href={url}
           className={`${
-            block &&
-            'block border-b border-zinc-700 rounded-none last:border-none'
-          } text-3xl/4 flex items-center gap-3 px-4 py-2 uppercase rounded font-sans font-medium text-zinc-100 dark:text-zinc-100 hover:no-underline hover:text-primary dark:hover:text-primaryDark`}
+            block
+              ? 'block border-b border-zinc-700 rounded-none last:border-none'
+              : ''
+          } text-3xl flex items-center gap-3 px-4 py-2 uppercase rounded font-sans font-medium text-zinc-100 dark:text-zinc-100 hover:no-underline hover:text-primary dark:hover:text-primaryDark`}
         >
           {iconName !== undefined && (
             <SIIcons name={`Si${iconName}`} title={name} />
