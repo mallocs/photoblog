@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import {
   SunIcon,
   MoonIcon,
@@ -13,6 +14,7 @@ import siteConfig from '#/site.config'
 type Link = {
   name: string
   iconName?: string
+  modifier?: string
   url: string
 }
 
@@ -54,26 +56,28 @@ function ColorModeButton() {
 
 function navbarLinks({ block, showText } = { block: false, showText: false }) {
   {
-    return siteConfig.navbarLinks.map(({ name, iconName, url }: Link) => {
-      return (
-        <a
-          key={name}
-          href={url}
-          className={`${
-            block
-              ? 'block border-b border-zinc-700 rounded-none last:border-none'
-              : ''
-          } text-3xl flex items-center gap-3 px-4 py-2 uppercase rounded font-sans font-medium text-zinc-100 dark:text-zinc-100 hover:no-underline hover:text-primary dark:hover:text-primaryDark`}
-        >
-          {iconName !== undefined && (
-            <SIIcons name={`Si${iconName}`} title={name} />
-          )}
-          {(showText || iconName === undefined) && (
-            <span className="text-2xl">{name}</span>
-          )}
-        </a>
-      )
-    })
+    return siteConfig.navbarLinks.map(
+      ({ name, iconName, modifier = 'Fill', url }: Link) => {
+        return (
+          <Link
+            key={name}
+            href={url}
+            className={`${
+              block
+                ? 'block border-b border-zinc-700 rounded-none last:border-none'
+                : ''
+            } text-3xl flex items-center gap-3 px-4 py-2 rounded font-sans font-medium text-zinc-100 dark:text-zinc-100 hover:no-underline hover:text-primary dark:hover:text-primaryDark`}
+          >
+            {iconName !== undefined && (
+              <AIIcons name={`Ai${modifier}${iconName}`} title={name} />
+            )}
+            {(showText || iconName === undefined) && (
+              <span className="text-xl">{name}</span>
+            )}
+          </Link>
+        )
+      }
+    )
   }
 }
 
@@ -134,10 +138,10 @@ export default function Navbar() {
   )
 }
 
-const SIIcons = ({ title, name }) => {
+const AIIcons = ({ title, name }) => {
   // TODO: react-icons seems to be adding the title but keeps a blank title element as well.
   // It seems to do this even when it isn't dynamically imported.
-  const Comp = dynamic(async () => (await import('react-icons/si'))[name])
+  const Comp = dynamic(async () => (await import('react-icons/ai'))[name])
   // @ts-ignore The imported props don't seem to be recognized
   return <Comp title={title} />
 }
