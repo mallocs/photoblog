@@ -71,10 +71,7 @@ export default function Document() {
   )
 }
 
-const blockingSetInitialColorMode = `!function() {
-	${setInitialColorMode.toString()}
-	setInitialColorMode();
-}()`
+const blockingSetInitialColorMode = `!${setInitialColorMode.toString()}()`
 
 function setInitialColorMode() {
   if (
