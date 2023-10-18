@@ -6,7 +6,9 @@ const SiteName = () => {
   return (
     <>
       <section className="flex justify-center mt-6 md:mx-10 lg:justify-between items-baseline">
-        <h1 className="font-site-name-block-google text-[3.75rem] leading-[2.5rem] sm:text-[4.25rem] sm:leading-[3rem] md:text-[5.8rem] md:leading-[3.7rem] lg:text-[7rem] lg:leading-[4.5rem] font-bold dark:font-medium tracking-tight md:pr-8">
+        <h1
+          className={`font-logo text-[3.75rem] leading-[2.5rem] sm:text-[4.25rem] sm:leading-[3rem] md:text-[5.8rem] md:leading-[3.7rem] lg:text-[7rem] lg:leading-[4.5rem] font-bold dark:font-medium tracking-tight md:pr-8`}
+        >
           <NextLink
             href={siteConfig.siteHome}
             className="hover:text-black flex align-center items-baseline"
@@ -18,7 +20,7 @@ const SiteName = () => {
             )}
             {siteConfig.name}
             <span
-              className={`ml-0.5 font-site-suffix uppercase font-thin tracking-normal ${
+              className={`ml-0.5 font-sans uppercase font-thin tracking-normal ${
                 siteConfig.nameSuffixMatchSize
                   ? 'text-[2.6rem] sm:text-[3rem] md:text-[4rem] lg:text-[4.9rem]'
                   : 'text-[1.75rem] md:text-[2.25rem] lg:text-[2.5rem]'

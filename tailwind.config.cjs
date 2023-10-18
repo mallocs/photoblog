@@ -1,3 +1,5 @@
+const { fontFamily } = require('tailwindcss/defaultTheme')
+
 module.exports = {
   future: {
     hoverOnlyWhenSupported: true,
@@ -29,10 +31,8 @@ module.exports = {
         tight: 1.2,
       },
       fontFamily: {
-        /* ending a fontFamily tag name with block-google or optional-google will trigger the link
-        tag to be automatically included but only for the first entry in the value array */
-        'site-name-block-google': ['Kalam'],
-        'site-suffix': ['Helvetica'],
+        logo: ['var(--font-logo)', ...fontFamily.sans],
+        sans: ['Helvetica', 'Arial', 'sans-serif'],
       },
     },
   },

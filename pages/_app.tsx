@@ -2,6 +2,7 @@ import { AppProps } from 'next/app'
 import { DefaultLayout } from '#/layouts/Default'
 import type { NextPage } from 'next'
 import type { PropsWithChildren } from 'react'
+import { kalam } from '#/styles/fonts'
 import '#/styles/index.css'
 
 type NextPageWithLayout = NextPage & {
@@ -15,8 +16,10 @@ type AppPropsWithLayout = AppProps & {
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const ComponentLayout = Component.Layout ?? DefaultLayout
   return (
-    <ComponentLayout>
-      <Component {...pageProps} />
-    </ComponentLayout>
+    <div className={`${kalam.variable}`}>
+      <ComponentLayout>
+        <Component {...pageProps} />
+      </ComponentLayout>
+    </div>
   )
 }
