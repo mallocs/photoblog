@@ -37,3 +37,11 @@ export function getImageUrl(slide: SlideExternal): string {
   }
   return loaderFn({ src: slide.src, width: Number(slide.width) })
 }
+
+export function getOGImageUrl(backgroundImageUrl, title) {
+  return backgroundImageUrl === undefined
+    ? undefined
+    : `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
+        getImageUrl(backgroundImageUrl)
+      )}&title=${encodeURIComponent(title)}`
+}

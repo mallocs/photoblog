@@ -6,6 +6,9 @@ type Props = {
 }
 
 const DateFormatter = ({ dateString, format = 'LLLL	d, yyyy' }: Props) => {
+  if (!dateString) {
+    return null
+  }
   const date = parseISO(dateString)
   return <time dateTime={dateString}>{formatFn(date, format)}</time>
 }

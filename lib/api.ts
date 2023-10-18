@@ -6,7 +6,7 @@ import PostType from '#/interfaces/post'
 import normalizeTag from '#/lib/normalizeTag'
 import siteConfig from '#/site.config'
 import { vercelLoader, ImageLoaderName } from '#/interfaces/imageLoader'
-import { getImageUrl } from './imageLoaders'
+import { getOGImageUrl } from '#/lib/imageLoaders'
 
 // After processing, posts directory should have a subdirectory with this name that includes the processed files
 export function getPostSlugs() {
@@ -148,8 +148,11 @@ export function getPostSlideshow(
     }
     indexButtonType: string
     loader: ImageLoaderName
-  } = getPostMatter(slug).data.slideshow
+  } = getPostMatter(slug).data.slideshow ?? {}
 ) {
+  if (!captions) {
+    return {}
+  }
   const postSlides = getPostSlides({ captions, slug, loader })
   return {
     showMap:
@@ -236,12 +239,10 @@ export const getPropsForPosts = ({
 
   return {
     props: {
-      ogImage:
-        outputPosts[0]?.slideshow?.slides === undefined
-          ? null
-          : `${siteConfig.siteUrl}/api/og?imgUrl=${encodeURIComponent(
-              getImageUrl(outputPosts[0]?.slideshow?.slides[0])
-            )}&title=${encodeURIComponent(siteConfig.siteTitle)}`,
+      ogImage: getOGImageUrl(
+        outputPosts[0]?.slideshow?.slides[0],
+        siteConfig.siteTitle
+      ),
       posts: outputPosts.slice(startIndex, stopIndex),
       fetchUrls: outputPosts.map((post, index) => {
         if (index < stopIndex) {
