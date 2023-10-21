@@ -22,6 +22,7 @@ import {
   ReorderButton,
   SubmitReorderButton,
 } from '#/components/shared/buttons/EditMode'
+import { useObserverGroup } from '#/lib/intersection-observer-group'
 
 export const EditContext = createContext(null)
 
@@ -51,15 +52,27 @@ const Page = withSlidesContext(({ post, morePosts, preview }: Props) => {
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
+  const {
+    ref,
+    inView: topInView,
+    entry,
+  } = useObserverGroup({
+    threshold: [0, 0.01, 0.99, 1],
+  })
   return router.isFallback ? (
     <PostTitle>Loading…</PostTitle>
   ) : (
     <div className="mx-auto">
+      <div ref={ref} className="absolute top-56" />
       <div className="fixed right-6 bottom-4 gap-3 flex flex-col">
         <ScrollToTopButton />
         <ScrollUpButton />
-        {Boolean(post.slideshow?.showMap) && (
-          <div className="hidden md:block w-12 h-12">
+        {Boolean(post.slideshow?.showMap) && entry !== undefined && (
+          <div
+            className={`hidden md:block w-12 h-12 transition-opacity duration-300 ${
+              Boolean(topInView) ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
             <MapButton />
           </div>
         )}
