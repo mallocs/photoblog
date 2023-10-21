@@ -12,9 +12,17 @@ type TitleProps = {
   children?: ReactNode
 }
 
+const PostTitleInImage = ({ children }: TitleProps) => {
+  return (
+    <h1 className="absolute top-48 left-8 bg-zinc-600/70 border-2 border-zinc-400/30 dark:border-zinc-800/30 max-w-[50%] text-zinc-200 dark:text-zinc-900 rounded-xl text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-tight md:leading-none mb-12 p-4 text-center md:text-left">
+      {children}
+    </h1>
+  )
+}
+
 const PostTitle = ({ children }: TitleProps) => {
   return (
-    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-tight md:leading-none mb-12 text-center md:text-left">
+    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight md:leading-none mb-4 md:mb-8 mt-4 text-center md:text-left">
       {children}
     </h1>
   )
@@ -39,6 +47,9 @@ const Post = ({
 }: Props) => {
   return (
     <>
+      <span className="relative">
+        <a id="article-start" />
+      </span>
       {slides.length >= 1 && (
         <Slide
           slideIndex={0}
@@ -47,11 +58,13 @@ const Post = ({
           key={slides[0]?.src}
         />
       )}
-      <span className="relative">
-        <a id="article-start" className="absolute -top-[50vh]" />
-      </span>
+
       <div className="max-w-3xl mx-auto px-4">
-        <PostTitle>{title}</PostTitle>
+        {slides.length >= 1 ? (
+          <PostTitleInImage>{title}</PostTitleInImage>
+        ) : (
+          <PostTitle>{title}</PostTitle>
+        )}
         <div className="block mb-6">
           <Avatar author={author} />
         </div>
