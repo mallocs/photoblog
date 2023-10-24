@@ -26,6 +26,7 @@ const Avatar = (props: Props) => {
           alt={name}
           width="48"
           height="48"
+          crossOrigin="anonymous"
         />
       }
       <div className="text-xl font-bold">{name}</div>

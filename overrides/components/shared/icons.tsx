@@ -6,6 +6,7 @@ export const HomeIcon = () => (
     alt="Home"
     fill
     unoptimized
+    crossOrigin="anonymous"
   />
 )
 

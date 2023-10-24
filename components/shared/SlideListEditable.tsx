@@ -91,6 +91,7 @@ function SlideListEditable({
                             placeholder={siteConfig.blurSize ? 'blur' : 'empty'}
                             blurDataURL={slide?.blurDataURL}
                             sizes="10vw"
+                            crossOrigin="anonymous"
                           />
                         </div>
                       )}

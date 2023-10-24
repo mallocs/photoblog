@@ -43,6 +43,7 @@ function Slide({ slide, id, slideIndex }: Props) {
           placeholder="blur"
           blurDataURL={slide.blurDataURL}
           sizes="100vw"
+          crossOrigin="anonymous"
         />
         {isDevEnvironment ? (
           <EditableCaption slide={slide} />
@@ -101,6 +102,7 @@ export function SlideshowSlide({
         placeholder={siteConfig.blurSize ? 'blur' : 'empty'}
         blurDataURL={slide?.blurDataURL}
         sizes="100vw"
+        crossOrigin="anonymous"
       />
     </NextLink>
   )
