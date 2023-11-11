@@ -22,7 +22,7 @@ export default withSlugMatter(
     }
 
     const { slug, filename, caption } = req.body
-    m.data.slideshow.captions[filename] = caption.replace(/&nbsp;/g, ' ').trim()
+    m.data.slideshow.captions[filename] = caption
     return writeSlug(slug, m, res)
   }
 )

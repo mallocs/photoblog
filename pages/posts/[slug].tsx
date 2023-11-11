@@ -1,6 +1,7 @@
 import { useState, createContext } from 'react'
 import { useRouter } from 'next/router'
 import { isDevEnvironment } from '#/lib/isDevEnvironment'
+import noop from '#/lib/noop'
 import ErrorPage from 'next/error'
 import Post, { PostTitle } from '#/components/Post'
 import { getPostBySlug, getAllPosts } from '#/lib/api'
@@ -24,14 +25,32 @@ import {
 } from '#/components/shared/buttons/EditMode'
 import { useObserverGroup } from '#/lib/intersection-observer-group'
 
-export const EditContext = createContext(null)
+type SaveCaptionFnType = (
+  { filename, caption }: { filename: string; caption: string },
+  cb: ({ data, status }?) => void
+) => void
+
+type DeleteFnType = ({ filename }, cb: ({ data, status }?) => void) => void
+
+export type EditContextType = {
+  editModeEnabled: boolean
+  saveCaptionFn: SaveCaptionFnType
+  deletePhotoFn: DeleteFnType
+}
+
+export const EditContext = createContext<EditContextType>({
+  editModeEnabled: false,
+  saveCaptionFn: noop,
+  deletePhotoFn: noop,
+})
 
 type Props = {
   post: PostType
-  morePosts: PostType[]
+  morePosts?: PostType[]
   editMode?: boolean
   preview?: boolean
-  slug: string
+  saveCaptionFn?: SaveCaptionFnType
+  deletePhotoFn?: DeleteFnType
 }
 
 async function postData(url = '', data = {}) {
@@ -96,126 +115,125 @@ const Page = withSlidesContext(({ post, morePosts, preview }: Props) => {
   )
 })
 
-export default !isDevEnvironment
-  ? Page
-  : function EditablePage(props: Props) {
-      const {
+export function EditablePage(props: Props) {
+  const {
+    post: { slug, slideshow: { slides = [] } = {} },
+    saveCaptionFn: saveCaptionFn = async ({ filename, caption }, cb) => {
+      console.log(caption)
+      const { data, status } = await postData('/api/editCaption', {
         slug,
-        post: {
-          slideshow: { slides = [] },
-        },
-      } = props
-      const [editModeEnabled, setEditModeFn] = useState(false)
-      const [reorderModeEnabled, setReorderModeFn] = useState(false)
-      const [editedSlides, setEditedSlidesFn] = useState(slides)
-      const [orderedSlides, setOrderedSlidesFn] = useState(slides)
-      const setSlidesFn = (slides) => {
-        setEditedSlidesFn(slides)
-        setOrderedSlidesFn(slides)
-      }
+        filename,
+        caption: caption.replace(/&nbsp;/g, ' ').trim(),
+      })
+      setSlidesFn(data.slideshow.slides)
+      cb({ data, status })
+    },
+    deletePhotoFn: deletePhotoFn = async ({ filename }, cb) => {
+      const { data, status } = await postData('/api/editSlideshow', {
+        slug,
+        slides: editedSlides,
+        deleteFilename: filename,
+      })
+      setSlidesFn(data.slideshow.slides)
+      cb({ data, status })
+    },
+  } = props
+  const [editModeEnabled, setEditModeFn] = useState(false)
+  const [reorderModeEnabled, setReorderModeFn] = useState(false)
+  const [editedSlides, setEditedSlidesFn] = useState(slides)
+  const [orderedSlides, setOrderedSlidesFn] = useState(slides)
+  const setSlidesFn = (slides) => {
+    setEditedSlidesFn(slides)
+    setOrderedSlidesFn(slides)
+  }
 
-      const [errorMessage, setErrorMessage] = useState('')
-      const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-      const initialOrderMap = slides.reduce((accumulator, current, index) => {
-        accumulator.set(current.src, index)
-        return accumulator
-      }, new Map<string, number>())
+  const initialOrderMap = slides.reduce((accumulator, current, index) => {
+    accumulator.set(current.src, index)
+    return accumulator
+  }, new Map<string, number>())
 
-      const onCloseFn = () => {
-        setReorderModeFn(false)
-        setSlidesFn(editedSlides)
-      }
+  const onCloseFn = () => {
+    setReorderModeFn(false)
+    setSlidesFn(editedSlides)
+  }
 
-      return (
-        <EditContext.Provider
-          value={{
-            editModeEnabled,
-            saveFn: async ({ filename, caption }, cb) => {
-              const { data, status } = await postData('/api/editCaption', {
-                slug,
-                filename,
-                caption,
-              })
-              setSlidesFn(data.slideshow.slides)
-              cb({ data, status })
-            },
-            deleteFn: async ({ filename }, cb) => {
-              const { data, status } = await postData('/api/editSlideshow', {
-                slug,
-                slides: editedSlides,
-                deleteFilename: filename,
-              })
-              setSlidesFn(data.slideshow.slides)
-              cb({ data, status })
-            },
-          }}
-        >
-          <div className="fixed h-30 top-8 right-8 flex flex-col items-end gap-3 p-3">
-            <EditModeButton
-              editModeEnabled={editModeEnabled}
-              setEditModeFn={setEditModeFn}
-            />
-            {editModeEnabled && (
-              <ReorderButton
-                reorderModeEnabled={reorderModeEnabled}
-                setReorderModeFn={setReorderModeFn}
-              />
-            )}
-            <Modal
-              show={reorderModeEnabled}
-              title="Reorder Slides"
-              onClose={onCloseFn}
-            >
-              <div
-                className={`fixed w-[500px] text-center h-14 bg-red-300/80 text-lg py-4 ${
-                  errorMessage === '' ? 'hidden' : ''
-                }`}
-              >
-                {errorMessage}
-              </div>
-              <div className="fixed mt-2 ml-[440px]">
-                <CancelButton cancelFn={onCloseFn} />
-              </div>
-              <div className="fixed mt-2 ml-4">
-                <SubmitReorderButton
-                  disabled={isSubmitting}
-                  submitFn={async () => {
-                    setIsSubmitting(true)
-                    const { data, status } = await postData(
-                      '/api/editSlideshow',
-                      {
-                        slug,
-                        slides: orderedSlides,
-                      }
-                    )
-                    setIsSubmitting(false)
-                    setSlidesFn(data.slideshow.slides)
-                    if (!data) {
-                      setErrorMessage(status)
-                    }
-                  }}
-                />
-              </div>
-              <div className="mt-14">
-                <SlideListEditable
-                  initialOrderMap={initialOrderMap}
-                  slides={orderedSlides}
-                  setSlideOrderFn={setOrderedSlidesFn}
-                />
-              </div>
-            </Modal>
-          </div>
-          <Page
-            {...props}
-            post={{
-              ...props.post,
-              slideshow: { ...props.post.slideshow, slides: editedSlides },
-            }}
+  return (
+    <EditContext.Provider
+      value={{
+        editModeEnabled,
+        saveCaptionFn,
+        deletePhotoFn,
+      }}
+    >
+      <div className="fixed h-30 top-8 right-8 flex flex-col items-end gap-3 p-3">
+        <EditModeButton
+          editModeEnabled={editModeEnabled}
+          setEditModeFn={setEditModeFn}
+        />
+        {editModeEnabled && (
+          <ReorderButton
+            reorderModeEnabled={reorderModeEnabled}
+            setReorderModeFn={setReorderModeFn}
           />
-        </EditContext.Provider>
-      )
-    }
+        )}
+        <Modal
+          show={reorderModeEnabled}
+          title="Reorder Slides"
+          onClose={onCloseFn}
+        >
+          <div
+            className={`fixed w-[500px] text-center h-14 bg-red-300/80 text-lg py-4 ${
+              errorMessage === '' ? 'hidden' : ''
+            }`}
+          >
+            {errorMessage}
+          </div>
+          <div className="fixed mt-2 ml-[440px]">
+            <CancelButton cancelFn={onCloseFn} />
+          </div>
+          <div className="fixed mt-2 ml-4">
+            <SubmitReorderButton
+              disabled={isSubmitting}
+              submitFn={async () => {
+                setIsSubmitting(true)
+                const { data, status } = await postData('/api/editSlideshow', {
+                  slug,
+                  slides: orderedSlides,
+                })
+                setIsSubmitting(false)
+                setSlidesFn(data.slideshow.slides)
+                if (!data) {
+                  setErrorMessage(status)
+                }
+              }}
+            />
+          </div>
+          <div className="mt-14">
+            <SlideListEditable
+              initialOrderMap={initialOrderMap}
+              slides={orderedSlides}
+              setSlideOrderFn={setOrderedSlidesFn}
+            />
+          </div>
+        </Modal>
+      </div>
+      <Page
+        {...props}
+        post={{
+          ...props.post,
+          ...(props.post?.slideshow && {
+            slideshow: { ...props.post?.slideshow, slides: editedSlides },
+          }),
+        }}
+      />
+    </EditContext.Provider>
+  )
+}
+
+export default !isDevEnvironment ? Page : EditablePage
 
 type Params = {
   params: {
@@ -246,7 +264,7 @@ export async function getStaticProps({ params }: Params) {
   }
 }
 
-export async function getStaticPaths() {
+export function getStaticPaths() {
   const posts = getAllPosts(['slug'])
 
   return {

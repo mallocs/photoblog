@@ -61,7 +61,8 @@ function SlideCaption({
 }
 
 export function EditableCaption({ slide }) {
-  const { editModeEnabled, saveFn, deleteFn } = useContext(EditContext)
+  const { editModeEnabled, saveCaptionFn, deletePhotoFn } =
+    useContext(EditContext)
   const [caption, setCaption] = useState(slide?.caption)
   const [editCount, setEditCount] = useState(0)
   const [editedCaption, setEditedCaption] = useState(slide?.caption)
@@ -95,7 +96,7 @@ export function EditableCaption({ slide }) {
               disabled={isSubmitting}
               saveFn={() => {
                 setIsSubmitting(true)
-                saveFn(
+                saveCaptionFn(
                   {
                     filename: slide.filename,
                     caption: editedCaption,
@@ -109,7 +110,7 @@ export function EditableCaption({ slide }) {
             disabled={isSubmitting}
             deleteFn={() => {
               setIsSubmitting(true)
-              deleteFn(
+              deletePhotoFn(
                 {
                   filename: slide.filename,
                 },
