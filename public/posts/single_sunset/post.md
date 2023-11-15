@@ -8,7 +8,8 @@ slideshow:
   stripExif: 'yes'
   copyright: 'Marcus Ulrich'
   artist: 'Marcus Ulrich'
-
+  captions:
+    IMG_5730.JPG: 'Praesent elementum facilisis leo vel fringilla. Congue mauris rhoncus aenean vel. Egestas sed tempus urna et pharetra pharetra massa massa ultricies.'
 author:
   name: Harold
   pictureURL: '/assets/authors/harold.jpeg'
