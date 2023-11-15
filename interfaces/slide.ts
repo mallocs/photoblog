@@ -1,4 +1,5 @@
 import { ImageLoaderName } from '#/interfaces/imageLoader'
+import { AddressObject } from 'local-reverse-geocoder'
 
 export type SlideExternal = {
   loader: ImageLoaderName
@@ -12,6 +13,6 @@ export type SlideExternal = {
   blurDataURL?: string
   latitude?: number
   longitude?: number
-  geodata?: unknown
+  geodata?: AddressObject
   dateTimeOriginal?: string
 }

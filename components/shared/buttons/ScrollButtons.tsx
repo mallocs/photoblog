@@ -78,9 +78,12 @@ export function ScrollUpButton() {
       title={`Go to previous image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(
-          getPreviousObservedElement(siteConfig.slideObserverGroup)
+        const previousElement = getPreviousObservedElement(
+          siteConfig.slideObserverGroup
         )
+        previousElement !== undefined
+          ? scrollToElement(previousElement)
+          : scrollBy(0, -window.innerHeight * 0.95)
       }}
     >
       <UpArrow />
@@ -98,10 +101,15 @@ export function ScrollDownButton() {
       title={`Go to next image`}
       onClick={(event) => {
         event.currentTarget.blur()
-        scrollToElement(
-          getNextObservedElement(siteConfig.slideObserverGroup),
-          1 // TODO: figure out why sometimes the scrolling gets stuck without this offset.
+        const nextElement = getNextObservedElement(
+          siteConfig.slideObserverGroup
         )
+        nextElement !== undefined
+          ? scrollToElement(
+              nextElement,
+              1 // TODO: figure out why sometimes the scrolling gets stuck without this offset.
+            )
+          : scrollBy(0, window.innerHeight * 0.95)
       }}
     >
       <DownArrow />

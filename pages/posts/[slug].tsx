@@ -119,7 +119,6 @@ export function EditablePage(props: Props) {
   const {
     post: { slug, slideshow: { slides = [] } = {} },
     saveCaptionFn: saveCaptionFn = async ({ filename, caption }, cb) => {
-      console.log(caption)
       const { data, status } = await postData('/api/editCaption', {
         slug,
         filename,

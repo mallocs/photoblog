@@ -37,6 +37,9 @@ function getEarliestAndLatestSlideDatetime(slides: SlideExternal[]): {
   let latestSlide = slides[0].dateTimeOriginal
 
   for (let slide of slides) {
+    if (slide.dateTimeOriginal === undefined) {
+      continue
+    }
     let currentDate = new Date(slide.dateTimeOriginal)
     if (currentDate < new Date(earliestSlide)) {
       earliestSlide = slide.dateTimeOriginal
@@ -203,7 +206,12 @@ export function getAllPosts(fields: string[] = []) {
   const posts = slugs
     .map((slug) => getPostBySlug(slug, fields))
     // sort posts by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
+    .sort((post1, post2) =>
+      post2.date === undefined ||
+      (post1.date !== undefined && new Date(post1.date) > new Date(post2.date))
+        ? -1
+        : 1
+    )
   return posts
 }
 

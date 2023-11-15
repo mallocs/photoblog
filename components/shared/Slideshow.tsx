@@ -145,10 +145,12 @@ function Slideshow({
 
   useEffect(() => {
     setSlideIndex(Number(window.sessionStorage.getItem(sessionStorageKey)) || 0)
-    window.addEventListener('beforeunload', () =>
+    const removeSessionStorageItemFn = () =>
       window.sessionStorage.removeItem(sessionStorageKey)
-    )
-    return () => (window.onbeforeunload = null)
+    window.addEventListener('beforeunload', removeSessionStorageItemFn)
+    return () => {
+      window.removeEventListener('beforeunload', removeSessionStorageItemFn)
+    }
   }, [sessionStorageKey])
 
   function getSlideIndex(rawIndex: number) {

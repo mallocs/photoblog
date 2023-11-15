@@ -12,7 +12,7 @@ import siteConfig from '#/site.config'
 type Props = {
   ogImage?: string
   posts: Post[]
-  fetchUrls: string | null[]
+  fetchUrls: string[]
   preload: number
 }
 
@@ -24,11 +24,13 @@ const MapButtonWithCurrentSlides = withSlidesContext(MapButton)
 // for slides in the preload range since the browser won't preload them normally.
 export default function Index({
   posts: serverRenderedPosts,
-  fetchUrls,
+  fetchUrls = [],
   ogImage,
   preload = siteConfig.preloadPosts,
 }: Props) {
-  const [inViewPostIndex, setInViewPostIndexFn] = useState(null)
+  const [inViewPostIndex, setInViewPostIndexFn] = useState<number | undefined>(
+    undefined
+  )
 
   const handleChangePostFn = useCallback(() => {
     const closestPostIndex = getClosestToViewportBottomIndex(
@@ -46,6 +48,9 @@ export default function Index({
 
   useEffect(() => {
     ;(async () => {
+      if (inViewPostIndex === undefined) {
+        return
+      }
       for (
         let postIndex = inViewPostIndex;
         postIndex <= Math.min(inViewPostIndex + preload, fetchUrls.length - 1);
@@ -61,7 +66,6 @@ export default function Index({
       }
     })()
   }, [inViewPostIndex, posts, preload, fetchUrls])
-
   return (
     <>
       <IndexSEO ogImage={ogImage} />
@@ -69,11 +73,12 @@ export default function Index({
         <PostList posts={posts} inViewPostIndex={inViewPostIndex} />
       </div>
       <div className="fixed right-6 bottom-4 flex flex-col">
-        {Boolean(posts[inViewPostIndex]?.slideshow?.showMap) && (
-          <div className="hidden md:block">
-            <MapButtonWithCurrentSlides post={posts[inViewPostIndex]} />
-          </div>
-        )}
+        {inViewPostIndex !== undefined &&
+          Boolean(posts[inViewPostIndex]?.slideshow?.showMap) && (
+            <div className="hidden md:block">
+              <MapButtonWithCurrentSlides post={posts[inViewPostIndex]} />
+            </div>
+          )}
       </div>
     </>
   )

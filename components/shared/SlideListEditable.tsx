@@ -76,9 +76,12 @@ function SlideListEditable({
                             <span className="font-bold text-lg">
                               {index + 1}
                             </span>
-                            <span>
-                              Initial: {initialOrderMap.get(slide.src) + 1}
-                            </span>
+                            {slide.src !== undefined &&
+                              initialOrderMap.get(slide.src) !== undefined && (
+                                <span>
+                                  Initial: {initialOrderMap.get(slide.src)! + 1}
+                                </span>
+                              )}
                           </div>
                           <NextImage
                             loader={getImageLoader(slide.loader)}

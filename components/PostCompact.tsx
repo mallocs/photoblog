@@ -64,7 +64,8 @@ function PostCompact({
           </Link>
         </h2>
         <div className="mb-1 font-medium uppercase">
-          {Array.isArray(slideshow.dateRange) ? (
+          {Array.isArray(slideshow?.dateRange) &&
+          slideshow?.dateRange.length === 2 ? (
             <DateRangeFormatter dateRange={slideshow.dateRange} />
           ) : (
             <DateFormatter dateString={date} />
@@ -83,7 +84,7 @@ function PostCompact({
           />
         </div>
       </div>
-      {Boolean(slideshow) &&
+      {slideshow !== undefined &&
         Array.isArray(slideshow.slides) &&
         slideshow.slides.length > 0 && (
           <div className="mb-2">

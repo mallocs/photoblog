@@ -104,7 +104,7 @@ export function getSlideshowFiles({
 }
 
 export function getSlideshowCaptionObject(opts) {
-  return getSlideshowFiles(opts).reduce((accumulator, current) => {
+  return (getSlideshowFiles(opts) ?? []).reduce((accumulator, current) => {
     accumulator[current] = ''
     return accumulator
   }, {})
@@ -164,12 +164,16 @@ function preprocess(
   ensureDirectoryExists(outputDirectory)
   return slugsToProcess.reduce(
     (fileData, currentSlug) => {
+      const slugMatterData = getPostedArticlesMatter().get(currentSlug)?.data
+
       // Check if directory has already been processed
       const currentOutputDirectory = path.join(outputDirectory, currentSlug)
 
-      const currentSourceDirectory =
-        getPostedArticlesMatter().get(currentSlug).data.slideshow
-          .sourceDirectory
+      const currentSourceDirectory: string = slugMatterData?.sourceDirectory
+
+      if (!currentSourceDirectory) {
+        console.error(`Couldn't find source directory for ${currentSlug}`)
+      }
       ensureDirectoryExists(currentOutputDirectory)
 
       const currentManifestFilePath = path.join(
@@ -206,7 +210,11 @@ export async function processor({
   widths = undefined,
   rebuild = false,
   ...opts
-} = {}) {
+}: {
+  slugsToProcess?: string[]
+  widths?: number[]
+  rebuild?: boolean
+}) {
   const {
     manifestFileName,
     watermarkFile,

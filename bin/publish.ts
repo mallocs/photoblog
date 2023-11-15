@@ -86,7 +86,7 @@ async function main() {
     loaderNames.find((loaderName) => loaderName === processingOptions.loader)
   ) {
     if (processingOptions.loader === cloudinaryLoader) {
-      slideshowFiles.forEach((file) => {
+      slideshowFiles?.forEach((file) => {
         publishToCloudinary(path.join(directoryToPublish, file), {
           tags: [slug],
           folder: directoryToPublish,
@@ -95,10 +95,14 @@ async function main() {
     }
   } else {
     //no loader specified so use built in vercel which reads images committed to the repo
-    slideshowFiles.forEach((file) => {
+    slideshowFiles?.forEach((file) => {
       addFile(repoPath, path.join(directoryToPublishNoSym, file))
     })
   }
-  await commitAsync(repoPath, `Post: ${slugMatter.data.title}`, {})
+  await commitAsync(
+    repoPath,
+    `Post: ${slugMatter?.data.title ?? new Date().toLocaleDateString('en-US')}`,
+    {}
+  )
 }
 main()

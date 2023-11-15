@@ -19,7 +19,7 @@ type Link = {
 }
 
 function ColorModeButton() {
-  const [theme, setTheme] = useState(undefined)
+  const [theme, setTheme] = useState<string | null>(null)
   const toggleTheme = () => {
     if (theme === 'light') {
       setTheme('dark')
@@ -28,14 +28,16 @@ function ColorModeButton() {
     }
   }
   useEffect(() => {
-    if (theme === undefined) {
+    if (theme === null) {
       let initialTheme = localStorage.getItem('theme')
       if (initialTheme === null) {
         initialTheme = siteConfig.defaultToDarkMode ? 'dark' : 'light'
       }
       setTheme(initialTheme)
     } else {
-      window.localStorage.setItem('theme', theme)
+      if (theme !== null) {
+        window.localStorage.setItem('theme', theme)
+      }
       if (theme === 'dark') {
         document.documentElement.classList.add('dark')
       } else {
@@ -43,7 +45,7 @@ function ColorModeButton() {
       }
     }
   }, [theme])
-  return typeof theme === 'undefined' ? null : (
+  return theme === null ? null : (
     <button
       className="px-1 py-1 rounded w-9 h-9 align-middle text-zinc-100 hover:bg-zinc-600 hover:text-primary dark:hover:text-primaryDark"
       title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}

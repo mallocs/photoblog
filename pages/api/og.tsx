@@ -8,8 +8,8 @@ export const config = {
 
 export default async function handler(req: NextRequest) {
   const { searchParams } = req.nextUrl
-  const imgUrl = searchParams.get('imgUrl')
-  const title = searchParams.get('title')
+  const imgUrl = searchParams.get('imgUrl') ?? undefined
+  const title = searchParams.get('title') ?? undefined
 
   return new ImageResponse(
     (

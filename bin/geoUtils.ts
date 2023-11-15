@@ -1,4 +1,4 @@
-import geocoder from 'local-reverse-geocoder'
+import geocoder, { AddressObject } from 'local-reverse-geocoder'
 import { promisify } from './utils'
 
 type CoordinateDegrees = [number, number, number]
@@ -16,7 +16,7 @@ function convertDMSToDD(degrees, minutes, seconds, direction) {
   return dd
 }
 
-function getLatLngDecimalFromExif(exif): CoordinateDecimals {
+function getLatLngDecimalFromExif(exif): CoordinateDecimals | undefined {
   try {
     const {
       gps: { GPSLatitudeRef, GPSLatitude, GPSLongitudeRef, GPSLongitude },
@@ -76,7 +76,7 @@ async function geocodeFromExif(exif) {
     return undefined
   }
   try {
-    const data = await geocode(point)
+    const data = (await geocode(point)) as AddressObject[][]
     return data[0][0]
   } catch (error) {
     console.error('Error geocoding point')

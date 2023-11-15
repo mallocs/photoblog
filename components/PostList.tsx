@@ -3,7 +3,7 @@ import PostCompact from './PostCompact'
 
 type Props = {
   posts: Post[]
-  inViewPostIndex: number
+  inViewPostIndex?: number
 }
 
 const PostList = ({ posts, inViewPostIndex }: Props) => {
@@ -14,7 +14,7 @@ const PostList = ({ posts, inViewPostIndex }: Props) => {
           key={postProps.slug}
           {...postProps}
           priority={index === 0}
-          inView={index === inViewPostIndex}
+          inView={inViewPostIndex !== undefined && index === inViewPostIndex}
         />
       ))}
     </section>

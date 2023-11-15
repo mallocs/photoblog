@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react'
+import { AddressObject } from 'local-reverse-geocoder'
 import { EditContext } from '#/pages/posts/[slug]'
 import DateFormatter from '#/components/shared/DateFormatter'
 import LocationDetails from '#/components/shared/LocationDetails'
@@ -18,14 +19,22 @@ function CaptionDate({ dateTimeOriginal }) {
   )
 }
 
+type Props = {
+  caption?: string
+  geodata?: AddressObject
+  dateTimeOriginal?: string
+  captionProps?
+  style?
+  extendClassName?
+}
 function SlideCaption({
-  caption,
-  geodata = null,
-  dateTimeOriginal = null,
+  caption = '\u00A0',
+  geodata,
+  dateTimeOriginal,
   captionProps = {},
   style = {},
   extendClassName = '',
-}) {
+}: Props) {
   const [showMetadetails, setShowMetadetails] = useState(true)
   const hasMetaDetails = Boolean(geodata) || Boolean(dateTimeOriginal)
   return (
@@ -37,9 +46,8 @@ function SlideCaption({
         <span
           className="captionText w-full"
           {...captionProps}
-          // Using || so empty strings don't collapse. 0, null, and undefined also get replaced
           dangerouslySetInnerHTML={{
-            __html: caption || '\u00A0',
+            __html: caption,
           }}
         ></span>
         {hasMetaDetails && (

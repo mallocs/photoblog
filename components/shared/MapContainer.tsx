@@ -22,7 +22,7 @@ function MapComponent() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {slides.map(
+      {slides?.map(
         (slide) =>
           slide.latitude !== undefined &&
           slide.longitude !== undefined && (
@@ -67,7 +67,7 @@ export default function Map() {
   const slides = useContext(SlidesContext)
 
   const [slideIndex, setSlideIndexFn] = useState(0)
-  const { latitude, longitude } = slides[slideIndex]
+  const { latitude, longitude } = slides?.[slideIndex] ?? {}
 
   const handleSlideIndexChangeFn = useCallback(() => {
     const slideindex = getObservedByDistanceToViewportBottom(
@@ -76,9 +76,14 @@ export default function Map() {
     if (slideindex !== undefined) {
       setSlideIndexFn(Number(slideindex))
     } else {
-      setSlideIndexFn(
-        getClosestToViewportBottomIndex(siteConfig.slideObserverGroup)
+      // TODO: distance to viewport bottom doesn't work for horizontal
+      // slideshows so currently uses slideindex but could use something
+      // other measure.
+      const nearestToViewportBottom = getClosestToViewportBottomIndex(
+        siteConfig.slideObserverGroup
       )
+      nearestToViewportBottom !== undefined &&
+        setSlideIndexFn(nearestToViewportBottom)
     }
   }, [])
 

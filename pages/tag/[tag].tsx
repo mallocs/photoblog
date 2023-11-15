@@ -16,14 +16,16 @@ export function getStaticProps({ params }: Params) {
   })
 }
 
+type WithPost = Required<{ tags: string[] }>
+
 export async function getStaticPaths() {
   const posts = getAllPosts(['tags'])
 
   return {
     paths: posts
-      .filter((post) => post.tags !== undefined)
+      .filter((post): post is WithPost => post.tags !== undefined)
       .flatMap((post) =>
-        post.tags.map((tag) => ({
+        post.tags!.map((tag) => ({
           params: {
             tag: normalizeTag(tag),
           },

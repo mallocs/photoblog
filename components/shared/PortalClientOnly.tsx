@@ -10,5 +10,7 @@ export default function ClientOnlyPortal({ children, selector }) {
     setMounted(true)
   }, [selector])
 
-  return mounted ? createPortal(children, ref.current) : null
+  return mounted && ref.current !== undefined
+    ? createPortal(children, ref.current)
+    : null
 }

@@ -23,10 +23,10 @@ const observerGroupCallbacksMap = new Map<
 
 export function getObservedElements(observerId: string, sortFn) {
   return sortFn === undefined
-    ? Array.from(observerMap?.get(observerId).elementCallbacksMap.keys())
-    : Array.from(observerMap?.get(observerId).elementCallbacksMap.keys()).sort(
-        sortFn
-      )
+    ? Array.from(observerMap.get(observerId)?.elementCallbacksMap.keys() ?? [])
+    : Array.from(
+        observerMap.get(observerId)?.elementCallbacksMap.keys() ?? []
+      ).sort(sortFn)
 }
 
 // This can behave confusingly when elements are stacked on top of each other and the
@@ -75,12 +75,12 @@ function isElementBottomVisible(element: Element, padding = 0) {
 
 export function getClosestToViewportBottomIndex(
   observerId: string,
-  onlyIfVisible = false // return null if the closest to viewport bottom is not visible
+  onlyIfVisible = false // return undefined if the closest to viewport bottom is not visible
 ) {
   const observedByViewport = getObservedByDistanceToViewportBottom(observerId)
   if (onlyIfVisible) {
     if (!isElementVisible(observedByViewport[0])) {
-      return null
+      return undefined
     }
   }
   const observedElementsByTop = getObservedByTop(observerId)
@@ -97,7 +97,8 @@ function _getObservedElementByDelta(observerId: string, delta: number) {
     delta += 1
   }
 
-  return closestIndex + delta < observedElementsByTop.length &&
+  return closestIndex !== undefined &&
+    closestIndex + delta < observedElementsByTop.length &&
     closestIndex + delta >= 0
     ? observedElementsByTop[closestIndex + delta]
     : undefined
@@ -209,15 +210,17 @@ function createObserver(
           callback(inView, entry)
         })
         inView
-          ? instance.visibleEntriesSet.add(entry)
-          : instance.visibleEntriesSet.delete(entry)
+          ? instance?.visibleEntriesSet.add(entry)
+          : instance?.visibleEntriesSet.delete(entry)
       })
 
-      observerGroupCallbacksMap
-        .get(options.group)
-        ?.forEach((callbackFn) =>
-          callbackFn(entries, entries.filter(calculateInView), observer)
-        )
+      if (options.group !== undefined) {
+        observerGroupCallbacksMap
+          .get(options.group)
+          ?.forEach((callbackFn) =>
+            callbackFn(entries, entries.filter(calculateInView), observer)
+          )
+      }
     }, options)
 
     // Ensure we have a valid thresholds array. If not, use the threshold from the options

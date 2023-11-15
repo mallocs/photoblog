@@ -3,13 +3,13 @@ import siteConfig from '#/site.config'
 import { processor } from './processingUtils'
 
 if (process.argv.includes('--export')) {
-  const { imageSizes, blurSize } = {
+  const { imageSizes, deviceSizes, blurSize } = {
     ...siteConfig,
     ...nextJsConfig.images,
   }
 
   processor({
-    widths: [blurSize, ...imageSizes],
+    widths: [blurSize, ...(imageSizes ?? []), ...(deviceSizes ?? [])],
     rebuild: true, // process.argv.includes('--rebuild'),
   })
 } else {

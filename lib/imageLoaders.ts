@@ -23,7 +23,9 @@ export function cloudinaryLoaderFn({
   )}/fl_keep_attribution/${src}`
 }
 
-export default function getImageLoader(loader: ImageLoaderName): ImageLoader {
+export default function getImageLoader(
+  loader: ImageLoaderName
+): ImageLoader | undefined {
   if (loader === cloudinaryLoader) {
     return cloudinaryLoaderFn
   }

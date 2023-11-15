@@ -57,7 +57,7 @@ function ensureDirectoryExists(dir) {
   fs.mkdirSync(dir, { recursive: true })
 }
 
-function promisify(f) {
+function promisify(f: Function) {
   return function (...args) {
     return new Promise((resolve, reject) => {
       function callback(err, result) {
