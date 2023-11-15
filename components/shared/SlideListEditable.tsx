@@ -1,7 +1,11 @@
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import React from 'react'
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DroppableProps,
+} from 'react-beautiful-dnd'
+import React, { useEffect, useState } from 'react'
 import { default as NextImage } from 'next/image'
-import { resetServerContext } from 'react-beautiful-dnd'
 import { SlideExternal } from '#/interfaces/slide'
 import getImageLoader from '#/lib/imageLoaders'
 import siteConfig from '#/site.config'
@@ -46,7 +50,7 @@ function SlideListEditable({
         <DragDropContext
           onDragEnd={(result) => onDragEnd(result, slides, setSlideOrderFn)}
         >
-          <Droppable droppableId="droppable">
+          <StrictModeDroppable droppableId="droppable">
             {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
@@ -104,12 +108,31 @@ function SlideListEditable({
                 {provided.placeholder}
               </div>
             )}
-          </Droppable>
+          </StrictModeDroppable>
         </DragDropContext>
       </div>
     </section>
   )
 }
-resetServerContext()
+
+// from https://github.com/atlassian/react-beautiful-dnd/issues/2399#issuecomment-1175638194
+export const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
+  const [enabled, setEnabled] = useState(false)
+
+  useEffect(() => {
+    const animation = requestAnimationFrame(() => setEnabled(true))
+
+    return () => {
+      cancelAnimationFrame(animation)
+      setEnabled(false)
+    }
+  }, [])
+
+  if (!enabled) {
+    return null
+  }
+
+  return <Droppable {...props}>{children}</Droppable>
+}
 
 export default SlideListEditable
