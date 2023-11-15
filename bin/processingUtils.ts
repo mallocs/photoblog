@@ -169,7 +169,8 @@ function preprocess(
       // Check if directory has already been processed
       const currentOutputDirectory = path.join(outputDirectory, currentSlug)
 
-      const currentSourceDirectory: string = slugMatterData?.sourceDirectory
+      const currentSourceDirectory: string =
+        slugMatterData?.slideshow.sourceDirectory
 
       if (!currentSourceDirectory) {
         console.error(`Couldn't find source directory for ${currentSlug}`)
