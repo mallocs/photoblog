@@ -18,7 +18,7 @@ const PostTitleInImage = ({ children }: TitleProps) => {
       <span className="sm:hidden">
         <PostTitle>{children}</PostTitle>
       </span>
-      <h1 className="hidden sm:block absolute top-40 lg:top-48 left-8 lg:left-12 bg-zinc-600/70 border-2 border-zinc-400/30 dark:border-zinc-800/30 max-w-[50%] text-zinc-200 dark:text-zinc-900 rounded-xl text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight md:leading-none mb-12 p-4 text-center md:text-left">
+      <h1 className="hidden sm:block absolute top-40 lg:top-48 left-8 lg:left-12 bg-zinc-600/70 border-2 border-zinc-400/30 dark:border-zinc-800/30 max-w-[50%] text-zinc-200 dark:text-zinc-900 rounded-xl text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight md:leading-none mb-12 p-4 text-center md:text-left">
         {children}
       </h1>
     </>
@@ -27,7 +27,7 @@ const PostTitleInImage = ({ children }: TitleProps) => {
 
 const PostTitle = ({ children }: TitleProps) => {
   return (
-    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight md:leading-none mb-4 md:mb-8 mt-4 px-4 text-center md:text-left">
+    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight md:leading-none mb-4 md:mb-8 mt-4 px-4 text-center md:text-left">
       {children}
     </h1>
   )

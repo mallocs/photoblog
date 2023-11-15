@@ -5,7 +5,7 @@ import siteConfig from '#/site.config'
 const SiteName = () => {
   return (
     <>
-      <section className="flex justify-center mt-6 md:mx-10 lg:justify-between items-baseline">
+      <section className="flex justify-center mt-3 md:mx-10 lg:justify-between items-baseline">
         <h1
           className={`font-logo text-[3.75rem] leading-[2.5rem] sm:text-[4.25rem] sm:leading-[3rem] md:text-[5.8rem] md:leading-[3.7rem] lg:text-[7rem] lg:leading-[4.5rem] font-bold dark:font-medium tracking-tight md:pr-8`}
         >
