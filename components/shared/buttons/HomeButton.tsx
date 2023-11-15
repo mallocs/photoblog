@@ -8,7 +8,7 @@ export function HomeButton({ hide }) {
     <NextLink
       className={`${buttonOpacityFn(
         hide
-      )} grid place-items-center ${buttonSharedCSS} p-1 bg-transparent`}
+      )} grid place-items-center ${buttonSharedCSS} p-1`}
       title="Home"
       href={siteConfig.siteHome}
     >

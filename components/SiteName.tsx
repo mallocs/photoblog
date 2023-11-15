@@ -6,22 +6,22 @@ const SiteName = () => {
   return (
     <>
       <section className="flex justify-center mt-6 md:mx-10 lg:justify-between items-baseline">
-        <h1 className="font-site-name-block-google text-7xl md:text-8xl lg:text-9xl font-bold dark:font-medium tracking-tight leading-none md:pr-8 -mb-2 md:-mb-4">
+        <h1 className="font-site-name-block-google text-[3.75rem] leading-[2.5rem] sm:text-[4.25rem] sm:leading-[3rem] md:text-[5.8rem] md:leading-[3.7rem] lg:text-[7rem] lg:leading-[4.5rem] font-bold dark:font-medium tracking-tight md:pr-8">
           <NextLink
             href={siteConfig.siteHome}
             className="hover:text-black flex align-center items-baseline"
           >
             {siteConfig.showSiteIcon && (
-              <div className="pt-1 pr-2 w-24 h-24">
+              <div className="pt-2 pr-2 w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
                 <SiteIcon />
               </div>
             )}
             {siteConfig.name}
             <span
-              className={`font-site-suffix uppercase font-thin tracking-normal ${
+              className={`ml-0.5 font-site-suffix uppercase font-thin tracking-normal ${
                 siteConfig.nameSuffixMatchSize
-                  ? 'text-[3.1rem] md:text-7xl lg:text-[5.6rem]'
-                  : 'text-3xl md:text-5xl lg:text-6xl'
+                  ? 'text-[2.6rem] sm:text-[3rem] md:text-[4rem] lg:text-[4.9rem]'
+                  : 'text-[1.75rem] md:text-[2.25rem] lg:text-[2.5rem]'
               }`}
             >
               {siteConfig.nameSuffix}
