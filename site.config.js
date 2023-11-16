@@ -5,8 +5,6 @@
 // import defaultPicture from './public/assets/authors/default.png'
 // import mainAuthorPicture from './public/assets/authors/me.jpg'
 
-const postsDirectory = 'posts'
-
 const siteConfig = {
   name: 'Photo',
   nameSuffix: 'blog',
@@ -40,14 +38,8 @@ const siteConfig = {
     imageHeight: 630,
     imageWidth: 1200,
   },
-  postsDirectory,
-  get postsFullPath() {
-    return `public/${this.postsDirectory}`
-  },
-  slideshowInputDirectory: 'inputSlideshows',
-  root: './',
+  postsDirectory: 'posts',
   resizedDirectory: 'resized',
-  watermarkFile: 'public/assets/watermark.png',
   watermarkOpacity: 0.6,
   saturation: 1.1,
   watermarkSizeRatio: 0.15,
@@ -68,11 +60,17 @@ const siteConfig = {
   postMarkdownFileName: 'post.md',
   postObserverGroup: 'post',
   slideObserverGroup: 'slide',
-  jsonDirectory: 'public/json',
   jsonUrl: 'json',
   preloadImages: 2,
   preloadPosts: 2,
   defaultToDarkMode: false,
+  jsonDirectory: 'public/json',
+  watermarkFile: 'public/assets/watermark.png',
+  get postsFullPath() {
+    return `public/${this.postsDirectory}`
+  },
+  slideshowInputDirectory: 'inputSlideshows',
+  root: process?.cwd(),
 }
 
 export default siteConfig

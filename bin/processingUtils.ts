@@ -124,6 +124,10 @@ function falsyNo(value) {
 export function getMatterProcessingOptions(slug) {
   const slideshowMatterData =
     getPostedArticlesMatter().get(slug)?.data.slideshow
+  if (slideshowMatterData == undefined) {
+    return undefined
+  }
+
   return {
     loader: slideshowMatterData.loader,
     geocode: falsyNo(slideshowMatterData.geocode),

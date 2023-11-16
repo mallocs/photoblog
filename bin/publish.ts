@@ -9,7 +9,7 @@ import {
   getPostedArticlesMatter,
   getSlideshowFiles,
 } from '#/bin/processingUtils'
-import { commitAsync, addFile, getGitRootPath } from '#/bin/git/'
+import { commitAsync, addFile, getGitRootPath, isCommitted } from './git/'
 import siteConfig from '#/site.config'
 
 env.loadEnvConfig(process.cwd())
@@ -33,7 +33,7 @@ async function publishToCloudinary(
   }
 ) {
   try {
-    console.log(`Push to cloudinary: ${fileFullPath}`)
+    console.log(`Pushing to cloudinary: ${fileFullPath}`)
     const result = await cloudinary.v2.uploader.upload(fileFullPath, options)
     // TODO: debug levels console.log(result)
   } catch (err) {
@@ -42,10 +42,8 @@ async function publishToCloudinary(
   }
 }
 
-const postsDirectory = path.join(siteConfig.root, siteConfig.postsDirectory)
-
 function getPostDirectories({
-  slideshowsPath = postsDirectory,
+  slideshowsPath = siteConfig.postsDirectory,
   ignoreFiles = siteConfig.ignoreFiles,
 } = {}): string[] {
   return fs
@@ -57,14 +55,32 @@ function getPostDirectories({
 }
 
 async function main() {
+  console.log(siteConfig.root)
+  const publishableDirectories = getPostDirectories().filter(
+    (directory) =>
+      !isCommitted(
+        siteConfig.root,
+        path.join(
+          siteConfig.postsDirectory,
+          directory,
+          siteConfig.postMarkdownFileName
+        )
+      )
+  )
+  if (publishableDirectories.length === 0) {
+    console.log(
+      'No posts ready to publish. Run compose and process to prepare a post to publish'
+    )
+    return
+  }
   const { slug } = await inquirer.prompt({
     name: 'slug',
     message: 'Choose a post to publish:',
     type: 'list',
-    choices: getPostDirectories,
+    choices: publishableDirectories,
   })
 
-  const directoryToPublish = path.join(postsDirectory, slug)
+  const directoryToPublish = path.join(siteConfig.postsDirectory, slug)
   // TODO: git doesn't seem to add the symlink path.
   const directoryToPublishNoSym = path.join(
     siteConfig.root,
@@ -76,8 +92,14 @@ async function main() {
   const slugMatter = getPostedArticlesMatter().get(slug)
   const repoPath = getGitRootPath()
 
-  addFile(repoPath, path.join(directoryToPublishNoSym, 'post.md'))
-  addFile(repoPath, path.join(directoryToPublishNoSym, 'manifest.json'))
+  addFile(
+    repoPath,
+    path.join(directoryToPublishNoSym, siteConfig.postMarkdownFileName)
+  )
+  addFile(
+    repoPath,
+    path.join(directoryToPublishNoSym, siteConfig.manifestFileName)
+  )
   const slideshowFiles = getSlideshowFiles({
     slug,
     slideshowPath: directoryToPublish,
@@ -99,10 +121,13 @@ async function main() {
       addFile(repoPath, path.join(directoryToPublishNoSym, file))
     })
   }
-  await commitAsync(
+  const result = await commitAsync(
     repoPath,
     `Post: ${slugMatter?.data.title ?? new Date().toLocaleDateString('en-US')}`,
     {}
   )
+  if (result === true) {
+    console.log('Run git push to finish publishing.')
+  }
 }
 main()

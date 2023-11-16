@@ -40,3 +40,4 @@ next-env.d.ts
 /public/assets/slideshows/
 /public/posts.json
 /public/json/
+/public/posts/

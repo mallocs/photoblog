@@ -43,7 +43,7 @@ function commit(repoPath, message, options, done) {
         })
       )
     } else {
-      done(null)
+      done(null, true)
     }
   })
 }
